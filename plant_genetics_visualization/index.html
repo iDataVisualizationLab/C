@@ -93,7 +93,22 @@
     width:100%;
     display: inline-block;
   }
+
+  .button {
+    background-color: #e7e7e7;
+    border: none;
+    color: black;
+    padding: 6px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 10px;
+    margin: 2px 1px;
+    border-radius: 1px;
+  }
+
 </style>
+
 
 <body>
   <!-- Where the unemployment visualization svgs go -->
@@ -151,11 +166,43 @@
       <br>
       <button id="updateCharts">Update Chart Options</button>
     </div>
+
+    <div>
+<!--      <button id="bt1" class="button button1" onclick="changeColor()">2px</button>-->
+      <button id="bt1" class="button">Button 1</button>
+      <button id="bt2" class="button">Button 2</button>
+      <button id="bt3" class="button">Button 3</button>
+      <button id="bt4" class="button">Button 4</button>
+      <button id="bt5" class="button">Button 5</button>
+
+
+    </div>
     
   </div>
   
   <script type="text/javascript">
-    
+
+    let color_arr = ["rgb(231, 231, 231)", "rgb(70, 130, 180)", "rgb(252,141,89)"]; // gray, blue, orange
+
+    $('#bt1, #bt2, #bt3, #bt4, #bt5').click(function(){
+     let cur_color = $(this).css( "background-color" );
+     let cur_index = color_arr.indexOf(cur_color);
+     let nex_index = cur_index< color_arr.length-1 ? cur_index+1: 0;
+      $(this).css('background-color', color_arr[nex_index]);
+    });
+
+
+    // var changeColor = function(){
+    //   d3.select("#bt1").style("background-color", "red");
+    //
+    //   console.log("d3.select(this)", d3.select(this));
+    //   d3.select(this).style("background-color", "orange");
+    //   console.log("color");
+    //
+    // }
+
+
+
     // Set up selection controls.
     $(document.getElementsByName("comparison")).on("click", function() {
       var _this = this;
@@ -373,7 +420,7 @@
         .attr("d", function(d) {
           return zeroLine(d.series[d.state]);
         });
-      
+
       // Add the areas.
       svgCharts.append("path")
         .attr("clip-path", "url(#sideClip)")
@@ -416,9 +463,6 @@
         .attr("dy", ".75em")
         .attr("transform", "rotate(-90)")
         .text("Value (norm)");
-
-
-
 
       
       // Add focus circle and value.
@@ -497,8 +541,6 @@
         focus.select("text").text((d_new.month + ": " + d_new.unemployment));
       }
 
-
-
       updateCharts();
       
       // Add an on-click for the update chart options button.
@@ -515,12 +557,10 @@
       var stateChart = d3.select("#unemploymentCharts")
                         .select("#" + id);
 
-      // var stateMap = d3.select("#usMap").select("#" + id);
-
       var stateCheckBox = d3.select("#stateOptions").select("#" + id);
-
       var active = stateChart.classed("chartActive");
 
+      console.log("changeChartDisplay.......");
       if (!active) {
         stateCheckBox.property("checked", true);
         stateChart.transition()
