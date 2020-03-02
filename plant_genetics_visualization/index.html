@@ -2,7 +2,8 @@
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
-<title>Plant Genes Visualizations</title>
+  <script src="https://gmousse.github.io/dataframe-js/dist/dataframe.min.js"></script>
+  <title>Plant Genes Visualizations</title>
 </head>
 <style>
   html {
@@ -182,6 +183,21 @@
   
   <script type="text/javascript">
 
+    const DataFrame = dfjs.DataFrame;
+
+
+    // Here we load the titanic data set from the well known Rdatasets (http://vincentarelbundock.github.io/Rdatasets/datasets.html).
+    // We get the result via a Promise, as a new DataFrame. We rename it 'df'.
+    DataFrame.fromCSV(
+            "http://vincentarelbundock.github.io/Rdatasets/csv/COUNT/titanic.csv"
+    )
+            .then(df => {
+              // Let's go to display quicly our table.
+              df.show();
+
+
+            });
+
     let color_arr = ["rgb(231, 231, 231)", "rgb(70, 130, 180)", "rgb(252,141,89)"]; // gray, blue, orange
 
     $('#bt1, #bt2, #bt3, #bt4, #bt5').click(function(){
@@ -322,7 +338,7 @@
       });
 
 
-      // console.log("dataAllStates", dataAllStates);
+      console.log("dataAllStates", dataAllStates);
 
       // Sort each state's unemployment time series by date.
       // for (var state in dataAllStates) {
@@ -580,8 +596,10 @@
     
     function updateChartNoComparison(d, fromYear, toYear) {
       // Adjust the y scale.
-      var min;
-      this.each(function(d) {
+      var min=0;
+
+      //////// Scale
+      // this.each(function(d) {
         // min = d3.min(d.series[d.state],
         //              function(a) {
         //                 // Check if the date is outside the displayed range.
@@ -600,7 +618,7 @@
         //                     }
         //                     return a.unemployment;
         //                   })]);
-      });
+      // });
       
       this.select(".area.below")
         .attr("fill", "steelblue")
@@ -612,6 +630,8 @@
         .attr("d", function(d) {
           return zeroArea.y0(y(min))(d.series[d.state]);
         });
+
+      console.log(y(min));
       
       this.select(".baseline")
         .attr("d", function(d) {
@@ -680,88 +700,15 @@
         .call(yAxis);
     }
     
-    function updateChartYearComparison(d, year1, year2) {
-      var fromYear1 = new Date(year1, 1, 0, 0, 0, 0, 0);
-      var toYear1 = new Date(year1, 1, 0, 0, 0, 0, 0);
-      var fromYear2 = new Date(year2, 1, 0, 0, 0, 0, 0);
-      var toYear2 = new Date(year2, 1, 0, 0, 0, 0, 0);
-      
-      this.each(function(d) {
-        y.domain([d3.min(d.series[d.state], 
-                         function(a) {
-                            // Check if the date is outside the displayed range.
-                            var datumDate = parseDate( a.year);
-                            if (!((datumDate <= toYear1 && datumDate >= fromYear1) || (datumDate <= toYear2 && datumDate >= fromYear2))) {
-                              return 100;
-                            }
-                            return a.unemployment;
-                          }),
-                  d3.max(d.series[d.state], 
-                         function(a) {
-                            var datumDate = a.year;
-                            if (!((datumDate <= toYear1 && datumDate >= fromYear1) || (datumDate <= toYear2 && datumDate >= fromYear2))) {
-                              return 0;
-                            }
-                            return a.unemployment;
-                          })]);
-      });
-      
-      x.domain([fromYear1, toYear1]);
-      
-      // Offset to obtain compared year unemployment value.
-      var iteratorOffset = 1 * (year1 - year2);
-      
-      // Update areas.
-      this.select(".area.below")
-        .attr("fill", "rgb(145,207,96)")
-        .attr("d", function(d) {
-          var y0 = function(a,i) {
-            // If the new iterator is within range, use that value.
-            if (!(i - iteratorOffset < 0 || i - iteratorOffset >= d.series[d.state].length)) {
-              return y(d3.min([d.series[d.state][i - iteratorOffset].unemployment, d.series[d.state][i].unemployment]));
-            } else {
-              //return y(0);
-              return y(d.series[d.state][i].unemployment);
-            }
-          };
-          return valueArea.y0(y0)(d.series[d.state]);
-        });
-      this.select(".area.above")
-        .attr("d", function(d) {
-          var y0 = function(a,i) {
-            // If the new iterator is within range, use that value.
-            if (!(i - iteratorOffset < 0 || i - iteratorOffset >= d.series[d.state].length)) {
-              return y(d3.max([d.series[d.state][i - iteratorOffset].unemployment, d.series[d.state][i].unemployment]));
-            } else {
-              return y(d.series[d.state][i].unemployment);
-            }
-          };
-          return valueArea.y0(y0)(d.series[d.state]);
-        });
-      
-      this.select(".baseline")
-        .attr("d", function(d) {
-          return valueLine(d.series[d.state]);
-        });
-      
-      this.select(".x.axis")
-        .call(xAxis);
-      
-      this.select(".y.axis")
-        .call(yAxis);
-    }
-    
     function updateCharts() {
       // Get chart settings.
       
       // Get time interval and adjust scale.
       var fromYear = document.getElementById("fromYear").value;
-      // var fromMonth = "Jan";
       var toYear = document.getElementById("toYear").value;
-      // var toMonth = "Jan";
-
       var year1 = document.getElementById("year1").value;
       var year2 = document.getElementById("year2").value;
+
       x.domain([fromYear, toYear]);
       
       if (fromYear >= toYear) {
