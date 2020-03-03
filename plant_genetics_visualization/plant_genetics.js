@@ -1,26 +1,52 @@
 const DataFrame = dfjs.DataFrame;
 
 //Todo
+
+const wt_cols = ['wthp6_average', 'wtlp6_average', 'wthp5_average', 'wtlp5_average', 'wtal_average', 'wtfe_average'];
 async function filter() {
     const df = await DataFrame.fromCSV("data_SAMPLE_ori.csv").then(df => df);
     let button_list = d3.selectAll('.filter_button');
+
+    console.log("button_list", button_list);
+
+    button_list=button_list[0]
+    console.log("button_list[0]", button_list);
+
     let filteredDf = df;
     for (var i = 0, n = button_list.length; i < n; i++) {
-        if (button_list[i].css("background-color").toString() == color_arr[0]) {
+        let bt = d3.select(button_list[i]);
+        let col = wt_cols[i];
+        if (bt.style("background-color").toString() == color_arr[0]) {
             filteredDf = df;
         }
-        else if (button_list[i].style("background-color").toString() == color_arr[1]) {
+        else if (bt.style("background-color").toString() == color_arr[1]) {
             filteredDf = df
-                .filter(row => row.get("wthp6_average") >= row.get("stop1hp6_average"));
+                .filter(row => row.get("wthp6_average") >= row.get(col));
         }
         else{
             filteredDf = df
-                .filter(row => row.get("wthp6_average") <= row.get("stop1hp6_average"));
+                .filter(row => row.get("wthp6_average") <= row.get(col));
         }
     }
 
-    filteredDf.show(3);
+    console.log("filteredDf.toDict()", filteredDf.toDict());
+
+    console.log("filteredDf.toCollection()()", filteredDf.toCollection());
+
+    let allData = filteredDf.toDict();
+    let stateChartData = [];
+    for (let state in allData) {
+        let d = {};
+
+        d.state = state;
+        d.series = allData;
+        stateChartData.push(d);
+    }
+    console.log("abc stateChartData", stateChartData);
+    // d3.select("#unemploymentCharts").selectAll("svg").data(stateChartData);
+    // updateCharts();
     console.log(filteredDf.dim());
+    filteredDf.show(2);
 };
 
 
@@ -206,6 +232,7 @@ d3.csv("data_SAMPLE.csv", function (data) {
     // y.domain([0, d3.max(data, function(d) { return d.unemployment; })]);
 
     // Create the svgs for the charts.
+    console.log("d3.select(\"#unemploymentCharts\").selectAll(\"svg\")", d3.select("#unemploymentCharts").selectAll("svg"));
     svgCharts = d3.select("#unemploymentCharts").selectAll("svg")
         .data(stateChartData)
         .enter()
