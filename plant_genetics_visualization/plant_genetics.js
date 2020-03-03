@@ -4,8 +4,21 @@ const DataFrame = dfjs.DataFrame;
 async function filter() {
     const df = await DataFrame.fromCSV("data_SAMPLE_ori.csv").then(df => df);
     let button_list = d3.selectAll('.filter_button');
-    const filteredDf = df
-        .filter(row => row.get("wthp6_average") >= row.get("stop1hp6_average"));
+    let filteredDf = df;
+    for (var i = 0, n = button_list.length; i < n; i++) {
+        if (button_list[i].css("background-color").toString() == color_arr[0]) {
+            filteredDf = df;
+        }
+        else if (button_list[i].style("background-color").toString() == color_arr[1]) {
+            filteredDf = df
+                .filter(row => row.get("wthp6_average") >= row.get("stop1hp6_average"));
+        }
+        else{
+            filteredDf = df
+                .filter(row => row.get("wthp6_average") <= row.get("stop1hp6_average"));
+        }
+    }
+
     filteredDf.show(3);
     console.log(filteredDf.dim());
 };
