@@ -1,22 +1,26 @@
 const DataFrame = dfjs.DataFrame;
 
+//Todo
+async function filter() {
+    const df = await DataFrame.fromCSV("data_SAMPLE_ori.csv").then(df => df);
+    let button_list = d3.selectAll('.filter_button');
+    const filteredDf = df
+        .filter(row => row.get("wthp6_average") >= row.get("stop1hp6_average"));
+    filteredDf.show(3);
+    console.log(filteredDf.dim());
+};
+
+
 let color_arr = ["rgb(231, 231, 231)", "rgb(145, 207, 96)", "rgb(252, 141, 89)"]; // gray, blue, orange
-$('#bt1, #bt2, #bt3, #bt4, #bt5').click(function () {
+$('.filter_button').click(function () {
     let cur_color = $(this).css("background-color").toString();
     let cur_index = color_arr.indexOf(cur_color);
     let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
     $(this).css('background-color', color_arr[nex_index]);
+    filter();
 });
 
 
-// var changeColor = function(){
-//   d3.select("#bt1").style("background-color", "red");
-//
-//   console.log("d3.select(this)", d3.select(this));
-//   d3.select(this).style("background-color", "orange");
-//   console.log("color");
-//
-// }
 
 
 // Set up selection controls.
@@ -141,29 +145,8 @@ d3.csv("data_SAMPLE.csv", function (data) {
 
     console.log("dataAllStates", dataAllStates);
 
-    //Todo
-    const df = DataFrame.fromCSV("data_SAMPLE.csv").then(df => {
-        console.log(df);
-        df.show(4);
-        const filteredDf = df
-            .filter(row => row.get("wthp6_average") >= row.get("stop1hp6_average"));
-        filteredDf.show(3);
-    });
 
 
-    // Sort each state's unemployment time series by date.
-    // for (var state in dataAllStates) {
-    //   dataAllStates[state].sort(function(a,b) {
-    //     if (a.date < b.date) {
-    //       return -1;
-    //     } else if (a.date > b.date) {
-    //       return 1;
-    //     } else {
-    //       return 0;
-    //     }
-    //   });
-    // }
-    //
     // Create an array of states, each with a reference to all time series data.
     var stateChartData = [];
     for (var state in dataAllStates) {
