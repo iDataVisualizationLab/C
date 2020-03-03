@@ -1,0 +1,120 @@
+html {
+    height: 100%;
+}
+
+body, table {
+    font: 12px Arial;
+}
+
+h4 {
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+.inactive {
+    fill: #AAA;
+}
+
+.active {
+    fill: orange;
+}
+
+.area.below {
+    /*fill: rgb(145,207,96);*/
+}
+
+.area.above {
+    fill: rgb(252, 141, 89);
+}
+
+.baseLine {       /*alarm in HTML only*/
+    stroke: black;
+    stroke-width: 1.5;
+    fill: none;
+}
+
+
+.focus circle {
+    fill: white;
+    stroke: black;
+    stroke-width: 2px;
+}
+
+#usMap {
+    border-style: solid;
+    border-color: #CCC;
+}
+
+#usMap path:hover {
+    opacity: 0.7;
+}
+
+.chartHover {
+    fill: #FD0;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+#unemploymentCharts {
+    float: left;
+    width: 80%;
+    height: 95%;
+    margin: 0px 0px 0px 0.1%;
+    padding: 1px;
+    border-style: solid;
+    border-color: #AAA;
+    overflow-y: scroll;
+}
+
+#options {
+    float: right;
+    width: 19%;
+    height: 95%;
+    padding: 1px;
+}
+
+#stateOptions {
+    height: 250px;
+    width: 28%;
+    float: left;
+    border-style: solid;
+    border-color: #CCC;
+    overflow-y: scroll;
+    margin: 0px 5px 5px 0px;
+}
+
+#comparisonOptions {
+    float: left;
+    width: 50%;
+    margin: 0 auto;
+}
+
+#timeOptions {
+    float: left;
+    width: 50%;
+    margin-bottom: 7px;
+}
+
+#usMap {
+    width: 100%;
+    display: inline-block;
+}
+
+.button {
+    background-color: #e7e7e7;
+    border: none;
+    color: black;
+    padding: 6px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 10px;
+    margin: 2px 1px;
+    border-radius: 1px;
+}
