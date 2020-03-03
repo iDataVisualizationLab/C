@@ -1,52 +1,60 @@
 const DataFrame = dfjs.DataFrame;
 
-//Todo
 
 const wt_cols = ['wthp6_average', 'wtlp6_average', 'wthp5_average', 'wtlp5_average', 'wtal_average', 'wtfe_average'];
+const all_cols = ['wthp6_average', 'wtlp6_average', 'wthp5_average', 'wtlp5_average', 'wtal_average', 'wtfe_average', 'stop1hp6_average', 'stop1lp6_average', 'stop1hp5_average', 'stop1lp5_average', 'stop1al_average', 's1fe_average'];
+let num_obser = 896;
+const names = {
+    "atID": "month",
+    "index": "year",
+    "value": "unemployment",
+    "gene": "state"
+};
+
+// let stateChartData;
 async function filter() {
     const df = await DataFrame.fromCSV("data_SAMPLE_ori.csv").then(df => df);
-    let button_list = d3.selectAll('.filter_button');
-
-    console.log("button_list", button_list);
-
-    button_list=button_list[0]
-    console.log("button_list[0]", button_list);
+    let button_list = d3.selectAll('.filter_button')[0];
 
     let filteredDf = df;
     for (var i = 0, n = button_list.length; i < n; i++) {
         let bt = d3.select(button_list[i]);
-        let col = wt_cols[i];
+        let col = wt_cols[i + 1];
         if (bt.style("background-color").toString() == color_arr[0]) {
-            filteredDf = df;
-        }
-        else if (bt.style("background-color").toString() == color_arr[1]) {
-            filteredDf = df
-                .filter(row => row.get("wthp6_average") >= row.get(col));
-        }
-        else{
-            filteredDf = df
-                .filter(row => row.get("wthp6_average") <= row.get(col));
+            filteredDf = filteredDf;
+        } else if (bt.style("background-color").toString() == color_arr[1]) {
+            console.log("here");
+            filteredDf = filteredDf
+                .filter(row => row.get(wt_cols[0]) <= row.get(col));
+            console.log("filteredDf", filteredDf.dim());
+        } else {
+            filteredDf = filteredDf
+                .filter(row => row.get(wt_cols[0]) >= row.get(col));
         }
     }
 
-    console.log("filteredDf.toDict()", filteredDf.toDict());
 
-    console.log("filteredDf.toCollection()()", filteredDf.toCollection());
+    let my_all_data = {};
+    all_cols.forEach((gene_name) => {
+        let _df = filteredDf.select('atID', gene_name);
+        _df = _df.rename("atID", names["atID"]).rename(gene_name, names["value"]);
+        _df = _df.withColumn(names['index'], (row, i) => i + 1)
+            .withColumn(names['gene'], () => gene_name);
+        my_all_data[gene_name] = _df.toCollection();
 
-    let allData = filteredDf.toDict();
+    })
+
+
     let stateChartData = [];
-    for (let state in allData) {
+    for (let state in my_all_data) {
         let d = {};
-
         d.state = state;
-        d.series = allData;
+        d.series = my_all_data;
         stateChartData.push(d);
     }
-    console.log("abc stateChartData", stateChartData);
-    // d3.select("#unemploymentCharts").selectAll("svg").data(stateChartData);
-    // updateCharts();
-    console.log(filteredDf.dim());
-    filteredDf.show(2);
+    d3.select("#unemploymentCharts").selectAll("svg").data(stateChartData);
+    num_obser = filteredDf.dim()[0];
+    updateCharts(1, num_obser);
 };
 
 
@@ -58,8 +66,6 @@ $('.filter_button').click(function () {
     $(this).css('background-color', color_arr[nex_index]);
     filter();
 });
-
-
 
 
 // Set up selection controls.
@@ -89,11 +95,10 @@ function selectAll(_this) {
     }
 }
 
-let max_year = 896;
 
 var fromYearSelection = d3.select("#fromYear");
 var toYearSelection = d3.select("#toYear");
-for (var i = 1; i <= max_year; ++i) {
+for (var i = 1; i <= num_obser; ++i) {
     fromYearSelection.append("option")
         .attr("value", i)
         .text(i);
@@ -103,7 +108,7 @@ for (var i = 1; i <= max_year; ++i) {
 }
 var yearSelection1 = d3.select("#year1");
 var yearSelection2 = d3.select("#year2");
-for (var i = 1; i <= max_year; ++i) {
+for (var i = 1; i <= num_obser; ++i) {
     yearSelection1.append("option")
         .attr("value", i)
         .text(i);
@@ -112,7 +117,7 @@ for (var i = 1; i <= max_year; ++i) {
         .text(i);
 }
 
-document.getElementById("toYear").value = max_year;
+// document.getElementById("toYear").value = num_obser;
 
 //Width and height
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
@@ -143,6 +148,7 @@ var valueLine = d3.svg.line()
 
 var zeroLine = d3.svg.line()
     .x(function (d) {
+        // console.log('yyy',x(d.year));
         return x(d.year);
     })
     .y(y(0));
@@ -167,38 +173,29 @@ var bisect = d3.bisector(function (d) {
     return d.year;
 }).left;
 
+DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
+    let my_all_data = {};
+    all_cols.forEach((gene_name) => {
+        let df = data.select('atID', gene_name);
+        df = df.rename("atID", names["atID"]).rename(gene_name, names["value"]);
+        df = df.withColumn(names['index'], (row, i) => i + 1)
+            .withColumn(names['gene'], () => gene_name);
+        my_all_data[gene_name] = df.toCollection();
 
-// Process the unemployment data and make the charts.
-d3.csv("data_SAMPLE.csv", function (data) {
-    dataAllStates = {};
-
-    // Process the date and rate of each datum, and add it to the corresponding state's array.
-    data.forEach(function (d) {
-        if (!dataAllStates[d.state]) {
-            dataAllStates[d.state] = [];
-        }
-        d.unemployment = +d.unemployment;
-        dataAllStates[d.state].push(d);
     });
 
-
-    console.log("dataAllStates", dataAllStates);
-
+    console.log(data);
 
 
-    // Create an array of states, each with a reference to all time series data.
-    var stateChartData = [];
-    for (var state in dataAllStates) {
+    let stateChartData = [];
+    for (let state in my_all_data) {
         let d = {};
 
         d.state = state;
-        d.series = dataAllStates;
+        d.series = my_all_data;
         stateChartData.push(d);
     }
 
-
-    console.log("stateChartData is ", stateChartData);
-    // Populate the state selection and comparison lists.
     var stateOptions = d3.select("#stateOptions");
     var stateComparisons = d3.select("#stateComparisonOptions");
 
@@ -225,15 +222,16 @@ d3.csv("data_SAMPLE.csv", function (data) {
 
     });
 
+
     // re-Scale the range of the data
-    x.domain(d3.extent(data, function (d) {
-        return d.year;
-    }));
+    x.domain(d3.extent([1, num_obser]));
+
     // y.domain([0, d3.max(data, function(d) { return d.unemployment; })]);
+
 
     // Create the svgs for the charts.
     console.log("d3.select(\"#unemploymentCharts\").selectAll(\"svg\")", d3.select("#unemploymentCharts").selectAll("svg"));
-    svgCharts = d3.select("#unemploymentCharts").selectAll("svg")
+    let svgCharts = d3.select("#unemploymentCharts").selectAll("svg")
         .data(stateChartData)
         .enter()
         .append("svg")
@@ -276,7 +274,7 @@ d3.csv("data_SAMPLE.csv", function (data) {
     svgCharts.append("path")
         .attr("clip-path", "url(#sideClip)")
         .attr("class", "baseline")
-        .attr("d", function (d) {
+        .attr("d", (d) => {
             return zeroLine(d.series[d.state]);
         });
 
@@ -292,18 +290,21 @@ d3.csv("data_SAMPLE.csv", function (data) {
     svgCharts.append("path")
         .attr("clip-path", "url(#sideClip)")
         .attr("class", "area above")
-        .attr("d", function (d) {
-            return zeroArea(d.series[d.state]);
-        });
+        .attr("d",
+            d => {
+                // console.log(d);
+                zeroArea(d.series[d.state]);
+            }
+        );
 
-    // Area gets drawn in updateCharts()
+// Area gets drawn in updateCharts()
 
-    // Draw the axes.
+// Draw the axes.
     svgCharts.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + h + ")")
 
-    // text label for the x axis
+// text label for the x axis
     svgCharts.append("text")
         .attr("transform",
             "translate(" + (w) + " ," +
@@ -315,7 +316,7 @@ d3.csv("data_SAMPLE.csv", function (data) {
     svgCharts.append("g")
         .attr("class", "y axis");
 
-    // Add y-axis label.
+// Add y-axis label.
     svgCharts.append("text")
         .attr("text-anchor", "end")
         .attr("y", 6)
@@ -324,7 +325,7 @@ d3.csv("data_SAMPLE.csv", function (data) {
         .text("Value (norm)");
 
 
-    // Add focus circle and value.
+// Add focus circle and value.
     var focus = svgCharts.append("g")
         .attr("class", "focus")
         .style("display", "none");
@@ -350,7 +351,7 @@ d3.csv("data_SAMPLE.csv", function (data) {
             return d;
         });
 
-    // Register mouse handlers.
+// Register mouse handlers.
     svgCharts.on("mouseover", function (d) {
         // d3.select("#usMap").select("#" + removeWhitespace(d.state))
         //   .classed("chartHover", true);
@@ -366,7 +367,7 @@ d3.csv("data_SAMPLE.csv", function (data) {
         .on("mousemove", mousemove)
         .on("dblclick", function (d) {
             changeChartDisplay(d.state);
-        })
+        });
 
     function mousemove(d) {
         var x0 = x.invert(d3.mouse(this)[0]);
@@ -402,14 +403,15 @@ d3.csv("data_SAMPLE.csv", function (data) {
         }
         focus.attr("transform", "translate(" + pos.x + "," + pos.y + ")");
         focus.select("text").text((d_new.month + ": " + d_new.unemployment));
+
     }
 
     updateCharts();
 
-    // Add an on-click for the update chart options button.
+// Add an on-click for the update chart options button.
     d3.select("#updateCharts")
         .on("click", function (d) {
-            updateCharts()
+            updateCharts(1, num_obser)
         });
 });
 
@@ -428,13 +430,13 @@ function changeChartDisplay(d) {
     console.log("changeChartDisplay.......");
     if (!active) {
         stateCheckBox.property("checked", true);
-        stateChart.transition()
+        stateChart.transition().duration(400)
             .attr("height", svgHeight)
             .attr("opacity", 1);
 
     } else {
         stateCheckBox.property("checked", false);
-        stateChart.transition()
+        stateChart.transition().duration(400)
             .attr("height", 0)
             .attr("opacity", 0);
     }
@@ -502,14 +504,14 @@ function updateChartStateComparison(d, fromYear, toYear) {
         .call(yAxis);
 }
 
-function updateCharts() {
+function updateCharts(fromYear = 1, toYear = 896) {
     // Get chart settings.
 
     // Get time interval and adjust scale.
-    var fromYear = document.getElementById("fromYear").value;
-    var toYear = document.getElementById("toYear").value;
-    var year1 = document.getElementById("year1").value;
-    var year2 = document.getElementById("year2").value;
+    // var fromYear = document.getElementById("fromYear").value;
+    // var toYear = document.getElementById("toYear").value;
+    // var year1 = document.getElementById("year1").value;
+    // var year2 = document.getElementById("year2").value;
 
     x.domain([fromYear, toYear]);
 
@@ -529,18 +531,18 @@ function updateCharts() {
             // If the chart is active, transition.  Otherwise, don't.
             if (array[i].id == array[array.length - 1].id) {
                 d3.select(d)
-                    .transition().duration(1000)
+                    .transition().duration(400)
                     .call(updateChartNoComparison, fromYear, toYear)
                     .each("end", function (a) {
                         inactiveCharts[0].forEach(function (d) {
                             d = d3.select(d);
-                            d.call(updateChartNoComparison, fromYear, 300);
+                            d.call(updateChartNoComparison, fromYear, toYear);
                         });
                     });
 
             } else {
                 d3.select(d)
-                    .transition().duration(1000)
+                    .transition().duration(400)
                     .call(updateChartNoComparison, fromYear, toYear);
             }
         });
@@ -550,7 +552,7 @@ function updateCharts() {
             // If the chart is active, transition.  Otherwise, don't.
             if (array[i].id == array[array.length - 1].id) {
                 d3.select(d)
-                    .transition().duration(1000)
+                    .transition().duration(400)
                     .call(updateChartStateComparison, fromYear, toYear)
                     .each("end", function (a) {
                         inactiveCharts[0].forEach(function (d) {
@@ -561,7 +563,7 @@ function updateCharts() {
 
             } else {
                 d3.select(d)
-                    .transition().duration(1000)
+                    .transition().duration(400)
                     .call(updateChartStateComparison, fromYear, toYear);
             }
         });
@@ -571,19 +573,19 @@ function updateCharts() {
             // If the chart is active, transition.  Otherwise, don't.
             if (array[i].id == array[array.length - 1].id) {
                 d3.select(d)
-                    .transition().duration(1000)
-                    .call(updateChartYearComparison, year1, year2)
+                    .transition().duration(400)
+                    .call(updateChartYearComparison, fromYear, toYear)
                     .each("end", function (a) {
                         inactiveCharts[0].forEach(function (d) {
                             d = d3.select(d);
-                            d.call(updateChartYearComparison, year1, year2);
+                            d.call(updateChartYearComparison, fromYear, toYear);
                         });
                     });
 
             } else {
                 d3.select(d)
-                    .transition().duration(1000)
-                    .call(updateChartYearComparison, year1, year2);
+                    .transition().duration(400)
+                    .call(updateChartYearComparison, fromYear, toYear);
             }
         });
     }
