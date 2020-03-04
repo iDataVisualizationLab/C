@@ -1,2 +1,3 @@
 # Chau's projects
-https://idatavisualizationlab.github.io/C/
+
+Plant_genetics_visualization: https://idatavisualizationlab.github.io/C/plant_genetics_visualization
