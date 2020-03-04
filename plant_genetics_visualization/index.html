@@ -1,7 +1,7 @@
 <meta charset="utf-8">
 <head>
     <link rel="stylesheet" type="text/css" href="style.css">
-<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">-->
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">-->
     <title>Plant Genes Visualizations</title>
 </head>
 
@@ -13,14 +13,9 @@
 
 <!-- All the options for the visualization (states, years, etc.) -->
 <div id="options">
-    <h1>Plant Genes Visualization</h1>
-    <h4>Genes shown:</h4>
-    <div id="stateOptions">
-        <!-- State checkboxes -->
-        <input type="checkbox" id="all" name="stateSelection" onClick=selectAll(this)> Select All<br>
-    </div>
+    <h1>Control Panel</h1>
     <div id="comparisonOptions">
-        <h4>Compare to:</h4>
+        <h4>Compare To</h4>
         <input type="radio" name="comparison" id="noComparison" value="none" checked> No Comparison<br>
         <input type="radio" name="comparison" id="stateComparison" value="state" display="inline"> Base Condition
         <br>&emsp;&emsp;
@@ -28,27 +23,33 @@
         </select>
         <br>
         <input type="radio" name="comparison" id="yearComparison" value="years" style="display: none;">
-
         <br>
         <br>
-        <button id="updateCharts" style="display: none;">Update Chart Options</button>
     </div>
-    <div  class="btn-group">
+
+    <h4>Genes Shown</h4>
+    <div id="stateOptions">
+        <!-- State checkboxes -->
+
+        <input type="checkbox" id="all" name="stateSelection" onClick=selectAll(this)> Select All<br>
+    </div>
+
+    <div class="btn-group">
         <!--      <button id="bt1" class="button button1" onclick="changeColor()">2px</button>-->
         <!--        <button id="bt1" class="waves-effect waves-light btn filter_button">Button 1</button>-->
-        <button id="bt1" class="filter_button">wtlp6_average</button>
-        <button id="bt2" class="filter_button">wthp5_average</button>
-        <button id="bt3" class="filter_button">wtlp5_average</button>
-        <button id="bt4" class="filter_button">wtal_average</button>
-        <button id="bt5" class="filter_button">wtfe_average</button>
+        <button id="bt1" class="filter_button">wtlp6</button>
+        <button id="bt2" class="filter_button">wthp5</button>
+        <button id="bt3" class="filter_button">wtlp5</button>
+        <button id="bt4" class="filter_button">wtal</button>
+        <button id="bt5" class="filter_button">wtfe</button>
         <!--        <a class="waves-effect waves-light btn">button</a>-->
     </div>
+
 </div>
-
-
-<div id="ipdatacsvDiv">
+<div class="scrollable" id="ipdatacsvDiv">
     <table id="ipdatacsvTbl"></table>
 </div>
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>

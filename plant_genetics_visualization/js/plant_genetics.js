@@ -1,9 +1,11 @@
 const DataFrame = dfjs.DataFrame;
 
 let ipdatacsvTbl = document.getElementById('ipdatacsvTbl');
+let curRowTb = document.getElementById('curRowTable');
 
-const wt_cols = ['wthp6_average', 'wtlp6_average', 'wthp5_average', 'wtlp5_average', 'wtal_average', 'wtfe_average'];
-const all_cols = ['wthp6_average', 'wtlp6_average', 'wthp5_average', 'wtlp5_average', 'wtal_average', 'wtfe_average', 'stop1hp6_average', 'stop1lp6_average', 'stop1hp5_average', 'stop1lp5_average', 'stop1al_average', 's1fe_average'];
+const wt_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe'];
+const stop1_cols = ['stop1hp6', 'stop1lp6', 'stop1hp5', 'stop1lp5', 'stop1al', 'stop1fe'];
+const all_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe', 'stop1hp6', 'stop1lp6', 'stop1hp5', 'stop1lp5', 'stop1al', 'stop1fe'];
 let num_obser = 896;
 let _df;
 
@@ -178,7 +180,7 @@ var bisect = d3.bisector(function (d) {
     return d.year;
 }).left;
 
-DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
+DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
     _df = data;
     let my_all_data = {};
     all_cols.forEach((gene_name) => {
@@ -209,7 +211,7 @@ DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
         option.append("input")
             .attr("type", "checkbox")
             .property("checked", function (d) {
-                return (d == "wthp6_average")
+                return (d == "wthp6")
             })
             .attr("name", "stateSelection")
             .attr("id", removeWhitespace)
@@ -242,11 +244,11 @@ DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
             return removeWhitespace(d.state);
         })
         .classed("chartActive", function (d) {
-            return d.state == "wthp6_average";
+            return d.state == "wthp6";
         })
         .attr("width", svgWidth)
         .attr("height", function (d) {
-            if (d.state == "wthp6_average") {
+            if (d.state == "wthp6") {
                 return svgHeight;
             } else {
                 return 0;
@@ -308,7 +310,7 @@ DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
 // text label for the x axis
     svgCharts.append("text")
         .attr("transform",
-            "translate(" + (w) + " ," +
+            "translate(" + (w-20) + " ," +
             (h + margin.top) + ")")
         .style("text-anchor", "end")
         .text("Gene");
@@ -353,15 +355,13 @@ DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
         });
 
 // Register mouse handlers.
-    svgCharts.on("mouseover", function (d) {
-        // d3.select("#usMap").select("#" + removeWhitespace(d.state))
-        //   .classed("chartHover", true);
-        var focus = d3.select(this).select(".focus");
-        focus.style("display", null);
-    })
+    svgCharts
+        .on("mouseover", function (d) {
+            console.log("mouseOver");
+            var focus = d3.select(this).select(".focus");
+            focus.style("display", null);
+        })
         .on("mouseout", function (d) {
-            // d3.select("#usMap").select("#" + removeWhitespace(d.state))
-            //   .classed("chartHover", false);
             var focus = d3.select(this).select(".focus");
             focus.style("display", "none");
         })
@@ -371,6 +371,8 @@ DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
         });
 
     function mousemove(d) {
+        console.log("mousemove");
+
         var x0 = x.invert(d3.mouse(this)[0]);
         var i = bisect(d.series[d.state], x0, 1);
         var d0 = d.series[d.state][i - 1];
@@ -404,6 +406,15 @@ DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
         }
         focus.attr("transform", "translate(" + pos.x + "," + pos.y + ")");
         focus.select("text").text((d_new.month + ": " + d_new.unemployment));
+        //
+        // const cur_row = _df.filter(row => row.get("atID") == d_new.month);
+        //
+        // let cur_row_wt,  cur_row_stop1;
+        // cur_row_wt = cur_row.select(wt_cols);
+        // cur_row_stop1 = cur_row.select(stop1_cols);
+        // updateTable(curRowTb1, cur_row_wt.toCollection());
+        // updateTable(curRowTb2, cur_row_stop1.toCollection());
+
     }
 
     updateCharts();
@@ -429,6 +440,7 @@ function changeChartDisplay(d) {
 
     console.log("changeChartDisplay.......");
     if (!active) {
+        console.log("changeChartDisplay is inactive!");
         stateCheckBox.property("checked", true);
         stateChart.transition().duration(400)
             .attr("height", svgHeight)
@@ -441,8 +453,6 @@ function changeChartDisplay(d) {
             .attr("opacity", 0);
     }
     stateChart.classed("chartActive", !active);
-    // stateMap.classed("active", !active);
-    // stateMap.classed("inactive", active);
 }
 
 function updateChartNoComparison(d, fromYear, toYear) {
