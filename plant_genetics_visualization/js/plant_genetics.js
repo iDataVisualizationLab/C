@@ -7,6 +7,26 @@ const wt_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe'];
 const stop1_cols = ['stop1hp6', 'stop1lp6', 'stop1hp5', 'stop1lp5', 'stop1al', 'stop1fe'];
 const all_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe', 'stop1hp6', 'stop1lp6', 'stop1hp5', 'stop1lp5', 'stop1al', 'stop1fe'];
 let num_obser = 896;
+let wt_comparison_btn = d3.select("#wt_ctrl_btn_id").on("click", (d) => {
+    // Todo 1: tick all wt_cols, except the first one
+    let checkboxes = document.getElementsByName("stateSelection");
+
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        console.log(`checkboxes[i] is _${checkboxes[i].id}_`);
+        if (wt_cols.slice(1).includes(checkboxes[i].id)){
+            if (!checkboxes[i].checked){
+                changeChartDisplay(checkboxes[i].id);
+            }
+        }
+        else{
+            if (checkboxes[i].checked){
+                changeChartDisplay(checkboxes[i].id);
+            }
+        }
+
+
+    }
+} );
 let _df;
 let svgCharts;
 const names = {
@@ -19,7 +39,7 @@ const names = {
 // let stateChartData;
 async function filter() {
     const df = _df;
-    let button_list = d3.selectAll('.filter_button')[0];
+    let button_list = d3.selectAll('.wt_filter_btn')[0];
 
     let cur_base_conditon = document.getElementById("stateComparisonOptions").value;
     let filteredDf = df;
@@ -55,7 +75,6 @@ async function filter() {
         d.series = my_all_data;
         stateChartData.push(d);
     }
-    console.log("num : d3.select(\"#unemploymentCharts\").selectAll(\"svg\")", d3.select("#unemploymentCharts").selectAll("svg"));
     svgCharts.data(stateChartData);
     num_obser = filteredDf.dim()[0];
     updateCharts(1, num_obser);
@@ -64,7 +83,7 @@ async function filter() {
 
 
 let color_arr = ["rgb(231, 231, 231)", "rgb(145, 207, 96)", "rgb(252, 141, 89)"]; // gray, blue, orange
-$('.filter_button').click(function () {
+$('.wt_filter_btn').click(function () {
     let cur_color = $(this).css("background-color").toString();
     let cur_index = color_arr.indexOf(cur_color);
     let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
@@ -95,7 +114,8 @@ $(document.getElementsByName("comparison")).on("click", function () {
 });
 
 function selectAll(_this) {
-    checkboxes = document.getElementsByName(_this.name);
+    let checkboxes = document.getElementsByName(_this.name);
+
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         if (checkboxes[i].checked != _this.checked) {
             changeChartDisplay(checkboxes[i].id);
@@ -130,7 +150,6 @@ for (var i = 1; i <= num_obser; ++i) {
 //Width and height
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
 let w = $("#unemploymentCharts").width() * 0.99 - margin.left - margin.right;
-console.log("global w is", w);
 let h = 200 - margin.bottom - margin.top;
 var svgHeight = h + margin.top + margin.bottom;
 var svgWidth = w + margin.left + margin.right;
@@ -371,7 +390,6 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
             changeChartDisplay(d.state);
         });
 
-    //Todo 1
     function mousemove(d) {
 
         console.log("mousemove");
@@ -424,7 +442,6 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
             block: 'center'
         });
         ;
-
 
     }
 
