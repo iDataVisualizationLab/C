@@ -140,6 +140,7 @@ thead td{
     background-color: #cdcdcd;
     padding: 8px;
     font-size: 12px;
+    position: sticky; top: 0;
 }
 tbody td {
     border: 1px solid #dddddd;
@@ -156,6 +157,7 @@ tr:nth-child(even) {
 .scrollable
 {
     width: 32%;
-    height: 800px;
-    overflow: auto;
+    height: 850px;
+    /*overflow: auto;*/
+    overflow-y: auto;
 }

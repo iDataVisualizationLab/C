@@ -8,7 +8,7 @@ const stop1_cols = ['stop1hp6', 'stop1lp6', 'stop1hp5', 'stop1lp5', 'stop1al', '
 const all_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe', 'stop1hp6', 'stop1lp6', 'stop1hp5', 'stop1lp5', 'stop1al', 'stop1fe'];
 let num_obser = 896;
 let _df;
-
+let svgCharts;
 const names = {
     "atID": "month",
     "index": "year",
@@ -55,7 +55,8 @@ async function filter() {
         d.series = my_all_data;
         stateChartData.push(d);
     }
-    d3.select("#unemploymentCharts").selectAll("svg").data(stateChartData);
+    console.log("num : d3.select(\"#unemploymentCharts\").selectAll(\"svg\")", d3.select("#unemploymentCharts").selectAll("svg"));
+    svgCharts.data(stateChartData);
     num_obser = filteredDf.dim()[0];
     updateCharts(1, num_obser);
     return filteredDf;
@@ -68,10 +69,10 @@ $('.filter_button').click(function () {
     let cur_index = color_arr.indexOf(cur_color);
     let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
     $(this).css('background-color', color_arr[nex_index]);
-    let filteredDf = filter().then(df=> {
+    let filteredDf = filter().then(df => {
         updateTable(ipdatacsvTbl, df.toCollection());
         console.log(`df.shape = ${df.dim()}`);
-    } );
+    });
 });
 
 
@@ -128,8 +129,9 @@ for (var i = 1; i <= num_obser; ++i) {
 
 //Width and height
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
-var w = $("#unemploymentCharts").width() * 0.99 - margin.left - margin.right;
-var h = 200 - margin.bottom - margin.top;
+let w = $("#unemploymentCharts").width() * 0.99 - margin.left - margin.right;
+console.log("global w is", w);
+let h = 200 - margin.bottom - margin.top;
 var svgHeight = h + margin.top + margin.bottom;
 var svgWidth = w + margin.left + margin.right;
 
@@ -227,7 +229,6 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
 
     });
 
-
     // re-Scale the range of the data
     x.domain(d3.extent([1, num_obser]));
 
@@ -235,7 +236,7 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
 
 
     // Create the svgs for the charts.
-    let svgCharts = d3.select("#unemploymentCharts").selectAll("svg")
+    svgCharts = d3.select("#unemploymentCharts").selectAll("svg")
         .data(stateChartData)
         .enter()
         .append("svg")
@@ -310,7 +311,7 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
 // text label for the x axis
     svgCharts.append("text")
         .attr("transform",
-            "translate(" + (w-20) + " ," +
+            "translate(" + (w - 20) + " ," +
             (h + margin.top) + ")")
         .style("text-anchor", "end")
         .text("Gene");
@@ -370,7 +371,9 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
             changeChartDisplay(d.state);
         });
 
+    //Todo 1
     function mousemove(d) {
+
         console.log("mousemove");
 
         var x0 = x.invert(d3.mouse(this)[0]);
@@ -406,25 +409,37 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
         }
         focus.attr("transform", "translate(" + pos.x + "," + pos.y + ")");
         focus.select("text").text((d_new.month + ": " + d_new.unemployment));
-        //
-        // const cur_row = _df.filter(row => row.get("atID") == d_new.month);
-        //
-        // let cur_row_wt,  cur_row_stop1;
-        // cur_row_wt = cur_row.select(wt_cols);
-        // cur_row_stop1 = cur_row.select(stop1_cols);
-        // updateTable(curRowTb1, cur_row_wt.toCollection());
-        // updateTable(curRowTb2, cur_row_stop1.toCollection());
+
+
+        let rows = document.querySelectorAll("#ipdatacsvTbl tr");// ## $( "#ipdatacsvTbl tr" )[0].scrollIntoView();
+        let cur_row = Array.from(rows).find((d, i) => {
+            return d.firstChild.textContent == d_new.month;
+        });
+
+        Array.from(rows).forEach((d,i)=>      d.style.backgroundColor = i%2 ==   0 ? '#ececec': '#ffffff');
+        cur_row.style.backgroundColor = '#BCD4EC';
+
+        cur_row.scrollIntoView({
+            behavior: 'instant',
+            block: 'center'
+        });
+        ;
+
 
     }
 
     updateCharts();
+    updateTable(ipdatacsvTbl, _df.toCollection());
+
 });
+
 
 d3.select("#stateComparisonOptions").on("change", () =>
     updateCharts(1, num_obser));
 
 d3.select("#comparisonOptions").on("change", () =>
     updateCharts(1, num_obser));
+
 
 function removeWhitespace(str) {
     return str.replace(/\s+/g, '');
@@ -595,12 +610,6 @@ function updateCharts(fromYear = 1, toYear = num_obser) {
 }
 
 
-// d3.select("#bt1")
-//     .on("mouseover", () => {
-//
-//         console.log(_df.toCollection());
-//         updateTable(ipdatacsvTbl, _df.toCollection());
-//     })
 
 
 
