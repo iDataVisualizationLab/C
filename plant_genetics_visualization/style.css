@@ -64,7 +64,7 @@ h4 {
 #unemploymentCharts {
     float: left;
     width: 69%;
-    height: 95%;
+    height: 75%;
     margin: 0px 0px 0px 0.1%;
     padding: 1px;
     border-style: solid;
@@ -75,7 +75,7 @@ h4 {
 #options {
     float: right;
     width: 30%;
-    height: 95%;
+    height: 45%;
     padding: 1px;
 }
 
@@ -125,4 +125,26 @@ h4 {
 .btn-group{
     width: 100px;
     float: left;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+thead td{
+    font-weight: bold;
+    border: 1px solid #999999;
+    background-color: #cdcdcd;
+    padding: 8px;
+    font-size: 12px;
+}
+tbody td {
+    border: 1px solid #dddddd;
+    padding: 3px;
+    font-size: 11px;
+}
+
+tr:nth-child(even) {
+    background-color: #ececec;
 }

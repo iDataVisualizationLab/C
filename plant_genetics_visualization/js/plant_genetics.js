@@ -1,9 +1,12 @@
 const DataFrame = dfjs.DataFrame;
 
+let ipdatacsvTbl = document.getElementById('ipdatacsvTbl');
 
 const wt_cols = ['wthp6_average', 'wtlp6_average', 'wthp5_average', 'wtlp5_average', 'wtal_average', 'wtfe_average'];
 const all_cols = ['wthp6_average', 'wtlp6_average', 'wthp5_average', 'wtlp5_average', 'wtal_average', 'wtfe_average', 'stop1hp6_average', 'stop1lp6_average', 'stop1hp5_average', 'stop1lp5_average', 'stop1al_average', 's1fe_average'];
 let num_obser = 896;
+let _df;
+
 const names = {
     "atID": "month",
     "index": "year",
@@ -13,7 +16,7 @@ const names = {
 
 // let stateChartData;
 async function filter() {
-    const df = await DataFrame.fromCSV("data_SAMPLE_ori.csv").then(df => df);
+    const df = _df;
     let button_list = d3.selectAll('.filter_button')[0];
 
     let cur_base_conditon = document.getElementById("stateComparisonOptions").value;
@@ -24,10 +27,8 @@ async function filter() {
         if (bt.style("background-color").toString() == color_arr[0]) {
             filteredDf = filteredDf;
         } else if (bt.style("background-color").toString() == color_arr[1]) {
-            console.log("here");
             filteredDf = filteredDf
                 .filter(row => row.get(cur_base_conditon) <= row.get(col));
-            console.log("filteredDf", filteredDf.dim());
         } else {
             filteredDf = filteredDf
                 .filter(row => row.get(cur_base_conditon) >= row.get(col));
@@ -37,12 +38,11 @@ async function filter() {
 
     let my_all_data = {};
     all_cols.forEach((gene_name) => {
-        let _df = filteredDf.select('atID', gene_name);
-        _df = _df.rename("atID", names["atID"]).rename(gene_name, names["value"]);
-        _df = _df.withColumn(names['index'], (row, i) => i + 1)
+        let tmp_df = filteredDf.select('atID', gene_name);
+        tmp_df = tmp_df.rename("atID", names["atID"]).rename(gene_name, names["value"]);
+        tmp_df = tmp_df.withColumn(names['index'], (row, i) => i + 1)
             .withColumn(names['gene'], () => gene_name);
-        my_all_data[gene_name] = _df.toCollection();
-
+        my_all_data[gene_name] = tmp_df.toCollection();
     })
 
 
@@ -56,6 +56,7 @@ async function filter() {
     d3.select("#unemploymentCharts").selectAll("svg").data(stateChartData);
     num_obser = filteredDf.dim()[0];
     updateCharts(1, num_obser);
+    return filteredDf;
 };
 
 
@@ -65,7 +66,10 @@ $('.filter_button').click(function () {
     let cur_index = color_arr.indexOf(cur_color);
     let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
     $(this).css('background-color', color_arr[nex_index]);
-    filter();
+    let filteredDf = filter().then(df=> {
+        updateTable(ipdatacsvTbl, df.toCollection());
+        console.log(`df.shape = ${df.dim()}`);
+    } );
 });
 
 
@@ -123,7 +127,7 @@ for (var i = 1; i <= num_obser; ++i) {
 //Width and height
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
 var w = $("#unemploymentCharts").width() * 0.99 - margin.left - margin.right;
-var h = 250 - margin.bottom - margin.top;
+var h = 200 - margin.bottom - margin.top;
 var svgHeight = h + margin.top + margin.bottom;
 var svgWidth = w + margin.left + margin.right;
 
@@ -175,6 +179,7 @@ var bisect = d3.bisector(function (d) {
 }).left;
 
 DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
+    _df = data;
     let my_all_data = {};
     all_cols.forEach((gene_name) => {
         let df = data.select('atID', gene_name);
@@ -184,9 +189,6 @@ DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
         my_all_data[gene_name] = df.toCollection();
 
     });
-
-    console.log(data);
-
 
     let stateChartData = [];
     for (let state in my_all_data) {
@@ -298,7 +300,6 @@ DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
         );
 
 // Area gets drawn in updateCharts()
-
 // Draw the axes.
     svgCharts.append("g")
         .attr("class", "x axis")
@@ -403,27 +404,16 @@ DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
         }
         focus.attr("transform", "translate(" + pos.x + "," + pos.y + ")");
         focus.select("text").text((d_new.month + ": " + d_new.unemployment));
-
     }
 
     updateCharts();
-    //
-    // d3.select("#updateCharts")
-    //     .on("click", function (d) {
-    //         updateCharts(1, num_obser)
-    //     });
-
-
 });
-
-
 
 d3.select("#stateComparisonOptions").on("change", () =>
     updateCharts(1, num_obser));
 
 d3.select("#comparisonOptions").on("change", () =>
     updateCharts(1, num_obser));
-
 
 function removeWhitespace(str) {
     return str.replace(/\s+/g, '');
@@ -514,7 +504,7 @@ function updateChartStateComparison(d, fromYear, toYear) {
         .call(yAxis);
 }
 
-function updateCharts(fromYear = 1, toYear = 896) {
+function updateCharts(fromYear = 1, toYear = num_obser) {
 
     x.domain([fromYear, toYear]);
 
@@ -593,3 +583,37 @@ function updateCharts(fromYear = 1, toYear = 896) {
         });
     }
 }
+
+
+// d3.select("#bt1")
+//     .on("mouseover", () => {
+//
+//         console.log(_df.toCollection());
+//         updateTable(ipdatacsvTbl, _df.toCollection());
+//     })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
