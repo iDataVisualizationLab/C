@@ -16,6 +16,7 @@ async function filter() {
     const df = await DataFrame.fromCSV("data_SAMPLE_ori.csv").then(df => df);
     let button_list = d3.selectAll('.filter_button')[0];
 
+    let cur_base_conditon = document.getElementById("stateComparisonOptions").value;
     let filteredDf = df;
     for (var i = 0, n = button_list.length; i < n; i++) {
         let bt = d3.select(button_list[i]);
@@ -25,11 +26,11 @@ async function filter() {
         } else if (bt.style("background-color").toString() == color_arr[1]) {
             console.log("here");
             filteredDf = filteredDf
-                .filter(row => row.get(wt_cols[0]) <= row.get(col));
+                .filter(row => row.get(cur_base_conditon) <= row.get(col));
             console.log("filteredDf", filteredDf.dim());
         } else {
             filteredDf = filteredDf
-                .filter(row => row.get(wt_cols[0]) >= row.get(col));
+                .filter(row => row.get(cur_base_conditon) >= row.get(col));
         }
     }
 
@@ -230,7 +231,6 @@ DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
 
 
     // Create the svgs for the charts.
-    console.log("d3.select(\"#unemploymentCharts\").selectAll(\"svg\")", d3.select("#unemploymentCharts").selectAll("svg"));
     let svgCharts = d3.select("#unemploymentCharts").selectAll("svg")
         .data(stateChartData)
         .enter()
@@ -407,13 +407,23 @@ DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
     }
 
     updateCharts();
+    //
+    // d3.select("#updateCharts")
+    //     .on("click", function (d) {
+    //         updateCharts(1, num_obser)
+    //     });
 
-// Add an on-click for the update chart options button.
-    d3.select("#updateCharts")
-        .on("click", function (d) {
-            updateCharts(1, num_obser)
-        });
+
 });
+
+
+
+d3.select("#stateComparisonOptions").on("change", () =>
+    updateCharts(1, num_obser));
+
+d3.select("#comparisonOptions").on("change", () =>
+    updateCharts(1, num_obser));
+
 
 function removeWhitespace(str) {
     return str.replace(/\s+/g, '');
@@ -505,13 +515,6 @@ function updateChartStateComparison(d, fromYear, toYear) {
 }
 
 function updateCharts(fromYear = 1, toYear = 896) {
-    // Get chart settings.
-
-    // Get time interval and adjust scale.
-    // var fromYear = document.getElementById("fromYear").value;
-    // var toYear = document.getElementById("toYear").value;
-    // var year1 = document.getElementById("year1").value;
-    // var year2 = document.getElementById("year2").value;
 
     x.domain([fromYear, toYear]);
 

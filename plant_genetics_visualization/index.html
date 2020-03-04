@@ -20,62 +20,34 @@
         <!-- State checkboxes -->
         <input type="checkbox" id="all" name="stateSelection" onClick=selectAll(this)> Select All<br>
     </div>
-    <div id="timeOptions" style="display: none;">
-        <h4>Gene Index:</h4>
-        <table>
-            <tr>
-                <td>
-                    From: &ensp;
-                </td>
-                <td>
-
-                    <select id="fromYear" class="timePeriodSelector">
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>To: &emsp;&ensp;</td>
-                <td>
-
-                    <select id="toYear" class="timePeriodSelector">
-                    </select>
-                </td>
-            </tr>
-        </table>
-    </div>
     <div id="comparisonOptions">
         <h4>Compare to:</h4>
         <input type="radio" name="comparison" id="noComparison" value="none" checked> No Comparison<br>
-        <input type="radio" name="comparison" id="stateComparison" value="state" display="inline"> Gene:
+        <input type="radio" name="comparison" id="stateComparison" value="state" display="inline"> Base Condition
         <br>&emsp;&emsp;
         <select id="stateComparisonOptions" name="states" disabled>
         </select>
         <br>
         <input type="radio" name="comparison" id="yearComparison" value="years" style="display: none;">
-        <!--      Range of Indices:-->
-        <br>&emsp;&emsp;
-        <select id="year1" class="yearComparisonOptions" name="years" disabled style="display: none;">
-        </select>
-        <!--      &ensp;and&ensp;-->
-        <select id="year2" class="yearComparisonOptions" name="years" disabled style="display: none;">
-        </select>
-        <br>
-        <br>
-        <button id="updateCharts">Update Chart Options</button>
-    </div>
 
-    <div>
+        <br>
+        <br>
+        <button id="updateCharts" style="display: none;">Update Chart Options</button>
+    </div>
+    <div  class="btn-group">
         <!--      <button id="bt1" class="button button1" onclick="changeColor()">2px</button>-->
-<!--        <button id="bt1" class="waves-effect waves-light btn filter_button">Button 1</button>-->
+        <!--        <button id="bt1" class="waves-effect waves-light btn filter_button">Button 1</button>-->
         <button id="bt1" class="filter_button">wtlp6_average</button>
         <button id="bt2" class="filter_button">wthp5_average</button>
         <button id="bt3" class="filter_button">wtlp5_average</button>
         <button id="bt4" class="filter_button">wtal_average</button>
         <button id="bt5" class="filter_button">wtfe_average</button>
-<!--        <a class="waves-effect waves-light btn">button</a>-->
+        <!--        <a class="waves-effect waves-light btn">button</a>-->
 
 
     </div>
+
+
 
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

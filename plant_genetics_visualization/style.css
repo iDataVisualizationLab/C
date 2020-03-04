@@ -118,4 +118,11 @@ h4 {
     margin: 2px 1px;
     border-radius: 1px;
     width: 100px;
+    cursor: pointer;
+
+}
+
+.btn-group{
+    width: 100px;
+    float: left;
 }
