@@ -17,7 +17,7 @@ const names = {
     "gene": "state"
 };
 
-function selectAll() {
+function selectAllCheckboxes() {
     let checkboxes = document.getElementsByName("stateSelection");
     let _this = document.getElementById("all");
 
@@ -105,29 +105,42 @@ comparison_radio.on("click", function () {
     }
 });
 
-$("#all").on("click", selectAll);
+$("#all").on("click", selectAllCheckboxes);
 
 $("#wt_ctrl_btn_id").on("click", (d) => {
 
-    // Tick all wt_cols, except the first one
+    // let pick_all = $();
+    // if (document.getElementById("all").checked == true){
+    //     pick_all.prop("checked", false).trigger("click");
+    // }
+
+
+    // Tick all wt_cols, except the first one\
     let checkboxes = document.getElementsByName("stateSelection");
     for (var i = 0, n = checkboxes.length; i < n; i++) {
-        if (wt_cols.slice(1).includes(checkboxes[i].id)) {
-            if (!checkboxes[i].checked) {
-                changeChartDisplay(checkboxes[i].id);
-            }
-        } else {
-            if (checkboxes[i].checked) {
-                changeChartDisplay(checkboxes[i].id);
+        if (checkboxes[i].id == "all"){
+            document.getElementById("all").checked=false;
+            console.log("Skip");
+        }
+        else{
+            if (wt_cols.slice(1).includes(checkboxes[i].id)) {
+                if (!checkboxes[i].checked) {
+                    changeChartDisplay(checkboxes[i].id);
+                }
+            } else {
+                if (checkboxes[i].checked) {
+                    changeChartDisplay(checkboxes[i].id);
+                }
             }
         }
+
     }
 
 
     // todo 2: mark comparison
     sleep(700).then(() => {
         // $("#option_form").trigger("change");
-        console.log("after .9 second");
+        console.log("after .7 second");
         comparison_radio.prop("checked", true).trigger("click");
         $("#stateComparisonListdown").val("wthp6");
         updateCharts(1, num_obser);
@@ -460,6 +473,7 @@ function changeChartDisplay(d) {
     var id = d.replace(/\s+/g, '');
     var stateChart = d3.select("#unemploymentCharts")
         .select("#" + id);
+
 
     var stateCheckBox = d3.select("#stateOptions").select("#" + id);
     var active = stateChart.classed("chartActive");
