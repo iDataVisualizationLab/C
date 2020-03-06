@@ -91,7 +91,9 @@ $('.wt_filter_btn').click(function () {
     });
 });
 
-
+function sleep (time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+}
 // Set up selection controls.
 comparison_radio.on("click", function () {
     let _this = this;
@@ -104,11 +106,8 @@ comparison_radio.on("click", function () {
 });
 
 $("#all").on("click", selectAll);
+
 $("#wt_ctrl_btn_id").on("click", (d) => {
-
-
-    comparison_radio.prop("checked", true).trigger("click");
-    $("#option_form").trigger("change");
 
     // Tick all wt_cols, except the first one
     let checkboxes = document.getElementsByName("stateSelection");
@@ -125,12 +124,15 @@ $("#wt_ctrl_btn_id").on("click", (d) => {
     }
 
 
+    // todo 2: mark comparison
+    sleep(1000).then(() => {
+        // $("#option_form").trigger("change");
+        console.log("asdasdasdasdasad");
+        comparison_radio.prop("checked", true).trigger("click");
+        updateCharts(1, num_obser);
 
-    // //todo 2: mark comparison
-
+    });
 });
-
-
 
 
 //Width and height
@@ -239,7 +241,7 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
 
     // Create the svgs for the charts.
     let svgCharts = d3.select("#unemploymentCharts").selectAll("svg")
-        .data(stateChartData, d => d.state  )
+        .data(stateChartData, d => d.state)
         .enter()
         .append("svg")
         .style("display", "block")
@@ -384,7 +386,7 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
         var d0 = d.series[d.state][i - 1];
         var d1 = d.series[d.state][i];
 
-        if (typeof myVar == 'undefined'){
+        if (typeof myVar == 'undefined') {
             return;
         }
 
@@ -451,7 +453,6 @@ $("#option_form").on("change", () => {
 });
 
 
-
 function removeWhitespace(str) {
     return str.replace(/\s+/g, '');
 }
@@ -512,7 +513,7 @@ function updateChartNoComparison(d, fromYear, toYear) {
 function updateChartStateComparison(d, fromYear, toYear) {
     var comparedState = document.getElementById("stateComparisonListdown").value;
 
-    console.log("d here is ,------,,", d);
+    console.log("d here isiiiiiiiiiii,------,,", d);
 
     // Update areas.
     this.select(".area.below")
