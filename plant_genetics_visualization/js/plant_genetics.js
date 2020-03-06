@@ -173,9 +173,9 @@ $("#s1_ctrl_btn_id").on("click", (d) => {
     // mark comparison for s1
     sleep(700).then(() => {
         // $("#option_form").trigger("change");
+        // $("#stateComparisonListdown").attr("disabled", true);
         console.log("after .7 second");
-        comparison_radio.prop("checked", true).trigger("click");
-        $("#stateComparisonListdown").val("wthp6");
+        comparison_radio.prop("checked", true);
         updateCharts(1, num_obser, true);
 
     });
