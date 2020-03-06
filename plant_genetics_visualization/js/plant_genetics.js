@@ -5,8 +5,8 @@ let curRowTb = document.getElementById('curRowTable');
 let comparison_radio = $(document.getElementsByName("comparison"));
 
 const wt_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe'];
-const stop1_cols = ['stop1hp6', 'stop1lp6', 'stop1hp5', 'stop1lp5', 'stop1al', 'stop1fe'];
-const all_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe', 'stop1hp6', 'stop1lp6', 'stop1hp5', 'stop1lp5', 'stop1al', 'stop1fe'];
+const s1_cols = ['s1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];
+const all_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe', 's1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];
 let num_obser = 896;
 
 let _df;
@@ -125,7 +125,7 @@ $("#wt_ctrl_btn_id").on("click", (d) => {
 
 
     // todo 2: mark comparison
-    sleep(800).then(() => {
+    sleep(700).then(() => {
         // $("#option_form").trigger("change");
         console.log("after .9 second");
         comparison_radio.prop("checked", true).trigger("click");
