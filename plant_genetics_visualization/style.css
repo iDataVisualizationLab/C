@@ -72,8 +72,8 @@ h4 {
 }
 
 #stateOptions {
-    height: 65%;
-    width: 15%;
+    height: 220px;
+    width: 80px;
     float: left;
     border-style: solid;
     border-color: #CCC;
@@ -139,7 +139,7 @@ tr:nth-child(even) {
 .scrollable
 {
     width: 32%;
-    height: 480px;
+    height: 300px;
     /*overflow: auto;*/
     overflow-y: auto;
 }

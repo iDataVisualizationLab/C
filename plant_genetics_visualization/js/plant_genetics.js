@@ -125,9 +125,9 @@ $("#wt_ctrl_btn_id").on("click", (d) => {
 
 
     // todo 2: mark comparison
-    sleep(1000).then(() => {
+    sleep(900).then(() => {
         // $("#option_form").trigger("change");
-        console.log("asdasdasdasdasad");
+        console.log("after .9 second");
         comparison_radio.prop("checked", true).trigger("click");
         updateCharts(1, num_obser);
 
@@ -386,7 +386,7 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
         var d0 = d.series[d.state][i - 1];
         var d1 = d.series[d.state][i];
 
-        if (typeof myVar == 'undefined') {
+        if (typeof  d1.year  == 'undefined') {
             return;
         }
 
@@ -428,11 +428,11 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
         Array.from(rows).forEach((d, i) => d.style.backgroundColor = i % 2 == 0 ? '#ececec' : '#ffffff');
         cur_row.style.backgroundColor = '#BCD4EC';
 
-        // cur_row.scrollIntoView({
-        //     behavior: 'instant',
-        //     block: 'center'
-        // });
-        ;
+        cur_row.scrollIntoView({
+            behavior: 'instant',
+            block: 'center'
+        });
+
     }
 
     updateCharts();
@@ -447,9 +447,7 @@ d3.select("#stateComparisonListdown").on("change", () => {
 
 
 $("#option_form").on("change", () => {
-    console.log(" option_form ---+----+---+----+---");
     updateCharts(1, num_obser);
-
 });
 
 
@@ -513,8 +511,6 @@ function updateChartNoComparison(d, fromYear, toYear) {
 function updateChartStateComparison(d, fromYear, toYear) {
     var comparedState = document.getElementById("stateComparisonListdown").value;
 
-    console.log("d here isiiiiiiiiiii,------,,", d);
-
     // Update areas.
     this.select(".area.below")
         .attr("fill", "rgb(145,207,96)")
@@ -559,10 +555,8 @@ function updateCharts(fromYear = 1, toYear = num_obser) {
         });
     });
 
-    console.log("activeCharts", activeCharts.data());
-
-    console.log("document.getElementById(\"noComparison\").checked", document.getElementById("noComparison").checked);
-    console.log("document.getElementById(\"stateComparison\").checked", document.getElementById("stateComparison").checked);
+    // console.log("document.getElementById(\"noComparison\").checked", document.getElementById("noComparison").checked);
+    // console.log("document.getElementById(\"stateComparison\").checked", document.getElementById("stateComparison").checked);
 
     if (document.getElementById("noComparison").checked) {
         // No comparison selected.
