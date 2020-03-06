@@ -16,13 +16,15 @@
     <h1>Control Panel</h1>
     <div id="comparisonOptions">
         <h4>Compare To</h4>
-        <input type="radio" name="comparison" id="noComparison" value="none" checked> No Comparison<br>
-        <input type="radio" name="comparison" id="stateComparison" value="state" display="inline"> Base Condition
+        <form id="option_form">
+            <input type="radio" name="comparison" id="noComparison" value="none" checked> No Comparison<br>
+            <input type="radio" name="comparison" id="stateComparison" value="state" display="inline"> Base Condition
+        </form>
+
         <br>&emsp;&emsp;
-        <select id="stateComparisonOptions" name="states" disabled>
+        <select id="stateComparisonListdown" name="states" disabled>
         </select>
         <br>
-        <input type="radio" name="comparison" id="yearComparison" value="years" style="display: none;">
         <br>
         <br>
     </div>
@@ -53,7 +55,7 @@
 </div>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://gmousse.github.io/dataframe-js/dist/dataframe.min.js"></script>
 <script src="js/plant_genetics.js"></script>

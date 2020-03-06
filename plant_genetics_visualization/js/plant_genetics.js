@@ -19,41 +19,12 @@ const names = {
 };
 
 
-
-let wt_comparison_btn = d3.select("#wt_ctrl_btn_id").on("click", (d) => {
-    updateCharts(1, num_obser);
-
-    // Tick all wt_cols, except the first one
-    let checkboxes = document.getElementsByName("stateSelection");
-
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-        if (wt_cols.slice(1).includes(checkboxes[i].id)) {
-            if (!checkboxes[i].checked) {
-                changeChartDisplay(checkboxes[i].id);
-            }
-        } else {
-            if (checkboxes[i].checked) {
-                changeChartDisplay(checkboxes[i].id);
-            }
-        }
-    }
-    // //todo 2: mark comparison
-
-    // document.getElementsByName("comparison")[1].checked=true
-    // $("#stateComparisonOptions").attr("disabled", false);
-
-    //
-    // updateCharts(1, num_obser);
-    // console.log("heeeeeasdasdasdasd");
-    //
-});
-
 // let stateChartData;
 async function filter() {
     const df = _df;
     let button_list = d3.selectAll('.wt_filter_btn')[0];
 
-    let cur_base_conditon = document.getElementById("stateComparisonOptions").value;
+    let cur_base_conditon = document.getElementById("stateComparisonListdown").value;
     let filteredDf = df;
     for (var i = 0, n = button_list.length; i < n; i++) {
         let bt = d3.select(button_list[i]);
@@ -63,6 +34,8 @@ async function filter() {
         } else if (bt.style("background-color").toString() == color_arr[1]) {
             filteredDf = filteredDf
                 .filter(row => row.get(cur_base_conditon) <= row.get(col));
+            console.log("cur_base_conditon = ", cur_base_conditon);
+            console.log("col = ", col);
         } else {
             filteredDf = filteredDf
                 .filter(row => row.get(cur_base_conditon) >= row.get(col));
@@ -87,7 +60,31 @@ async function filter() {
         d.series = my_all_data;
         stateChartData.push(d);
     }
-    svgCharts.data(stateChartData);
+    let tempSvg = d3.select("#unemploymentCharts").selectAll("svg").data(stateChartData, d => d.state);
+    //
+    // tempSvg.exit().remove();
+    //
+    // tempSvg.enter()
+    //     .append("svg")
+    //     .style("display", "block")
+    //     .attr("id", function (d) {
+    //         return removeWhitespace(d.state);
+    //     })
+    //     .classed("chartActive", function (d) {
+    //         return d.state == "wthp6";
+    //     })
+    //     .attr("width", svgWidth)
+    //     .attr("height", function (d) {
+    //         if (d.state == "wthp6") {
+    //             return svgHeight;
+    //         } else {
+    //             return 0;
+    //         }
+    //     })
+    //     .append("g")
+    //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
     num_obser = filteredDf.dim()[0];
     updateCharts(1, num_obser);
     return filteredDf;
@@ -107,19 +104,49 @@ $('.wt_filter_btn').click(function () {
 });
 
 
-
 // Set up selection controls.
-comparison_ratio.on("click", function (){
+comparison_ratio.on("click", function () {
     let _this = this;
 
-    console.log("heeee, this=", this);
-    console.log("_this.value ", _this.value );
     if (_this.value == "state") {
-        $("#stateComparisonOptions").attr("disabled", false);
+        $("#stateComparisonListdown").attr("disabled", false);
+    } else {
+        $("#stateComparisonListdown").attr("disabled", true);
     }
-    else {
-        $("#stateComparisonOptions").attr("disabled", true);
+});
+
+d3.select("#wt_ctrl_btn_id").on("click", (d) => {
+    // Tick all wt_cols, except the first one
+    let checkboxes = document.getElementsByName("stateSelection");
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        if (wt_cols.slice(1).includes(checkboxes[i].id)) {
+            if (!checkboxes[i].checked) {
+                changeChartDisplay(checkboxes[i].id);
+
+            }
+        } else {
+            if (checkboxes[i].checked) {
+                changeChartDisplay(checkboxes[i].id);
+            }
+        }
     }
+
+    // //todo 2: mark comparison
+    // document.getElementsByName("stateComparisonListdown")[1]=true;
+
+
+    // console.log("document.getElementsByName(\"stateComparison\"),", document.getElementsByName("stateComparison"));
+    // d3.select("#comparisonOptions").
+    //
+    // updateCharts(1, num_obser);
+    // console.log("update chart in wt ctrl");
+
+    $("#stateComparisonListdown").attr("disabled", false);
+    $("#stateComparison").prop("checked", true).trigger("change");
+
+
+    // $('input[value="state"]')[0].checked = true;
+    // d3.select('#stateComparison').dispatch('change');
 });
 
 
@@ -226,14 +253,13 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
     let stateChartData = [];
     for (let state in my_all_data) {
         let d = {};
-
         d.state = state;
         d.series = my_all_data;
         stateChartData.push(d);
     }
 
     var stateOptions = d3.select("#stateOptions");
-    var stateComparisons = d3.select("#stateComparisonOptions");
+    var stateComparisons = d3.select("#stateComparisonListdown");
 
     stateChartData.forEach(function (d) {
         var option = stateOptions
@@ -260,9 +286,7 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
 
     // re-Scale the range of the data
     x.domain(d3.extent([1, num_obser]));
-
     // y.domain([0, d3.max(data, function(d) { return d.unemployment; })]);
-
 
     // Create the svgs for the charts.
     svgCharts = d3.select("#unemploymentCharts").selectAll("svg")
@@ -288,6 +312,7 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var defs = svgCharts.append("defs");
+    console.log("defs is ", defs);
 
     // Add background.
     svgCharts.append("rect")
@@ -385,7 +410,7 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
         });
 
 // Register mouse handlers.
-    svgCharts
+    d3.select("#unemploymentCharts").selectAll("svg")
         .on("mouseover", function (d) {
             console.log("mouseOver");
             var focus = d3.select(this).select(".focus");
@@ -403,6 +428,7 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
     function mousemove(d) {
 
         console.log("mousemove");
+        console.log(d);
 
         var x0 = x.invert(d3.mouse(this)[0]);
         var i = bisect(d.series[d.state], x0, 1);
@@ -460,18 +486,32 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
 
 });
 
-
-d3.select("#stateComparisonOptions").on("change", () => {
-console.log("hahahahahahahha");
+d3.select("#stateComparisonListdown").on("change", () => {
+    console.log("hahahahahahahha stateComparisonListdown+++++++++++++++++++++++++");
     updateCharts(1, num_obser);
 
 });
 
-d3.select("#comparisonOptions").on("change", () => {
-    console.log("hahahahahahahha");
+
+// d3.select("#option_form").on("change", () => {
+//     console.log(" option_form ---+----+---+----+---");
+//     updateCharts(1, num_obser);
+//
+// });
+// const selected_value = $("input[name='mouseAction']:checked").val();
+
+
+$("#noComparison").on("change", () => {
+    console.log("hahahahahahahha noComparison -----------------");
     updateCharts(1, num_obser);
 
 });
+$("#stateComparison").on("change", () => {
+    console.log("Trigger stateComparison  ========== ==========");
+    updateCharts(1, num_obser);
+
+});
+
 
 function removeWhitespace(str) {
     return str.replace(/\s+/g, '');
@@ -485,15 +525,16 @@ function changeChartDisplay(d) {
     var stateCheckBox = d3.select("#stateOptions").select("#" + id);
     var active = stateChart.classed("chartActive");
 
-    console.log("changeChartDisplay.......");
     if (!active) {
-        console.log("changeChartDisplay is inactive!");
+        console.log("changeChartDisplay: inactive -> active");
         stateCheckBox.property("checked", true);
         stateChart.transition().duration(400)
             .attr("height", svgHeight)
             .attr("opacity", 1);
 
     } else {
+        console.log("changeChartDisplay:  active -> inactive");
+
         stateCheckBox.property("checked", false);
         stateChart.transition().duration(400)
             .attr("height", 0)
@@ -529,9 +570,10 @@ function updateChartNoComparison(d, fromYear, toYear) {
 }
 
 function updateChartStateComparison(d, fromYear, toYear) {
-    var comparedState = document.getElementById("stateComparisonOptions").value;
+    var comparedState = document.getElementById("stateComparisonListdown").value;
 
-    console.log('comparedState', comparedState);
+    console.log("d here is ,------,,", d);
+
     // Update areas.
     this.select(".area.below")
         .attr("fill", "rgb(145,207,96)")
@@ -569,6 +611,7 @@ function updateCharts(fromYear = 1, toYear = num_obser) {
     // Update the charts.
     var activeCharts = d3.select("#unemploymentCharts").selectAll(".chartActive");
     var allCharts = d3.select("#unemploymentCharts").selectAll("svg");
+
     var inactiveCharts = allCharts.filter(function (obj) {
         return !activeCharts[0].some(function (obj2) {
             return removeWhitespace(obj.state) == obj2.id;
@@ -644,10 +687,6 @@ function updateCharts(fromYear = 1, toYear = num_obser) {
     //     });
     // }
 }
-
-
-
-
 
 
 
