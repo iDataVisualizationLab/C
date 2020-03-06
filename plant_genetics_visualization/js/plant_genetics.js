@@ -125,10 +125,11 @@ $("#wt_ctrl_btn_id").on("click", (d) => {
 
 
     // todo 2: mark comparison
-    sleep(900).then(() => {
+    sleep(800).then(() => {
         // $("#option_form").trigger("change");
         console.log("after .9 second");
         comparison_radio.prop("checked", true).trigger("click");
+        $("#stateComparisonListdown").val("wthp6");
         updateCharts(1, num_obser);
 
     });
