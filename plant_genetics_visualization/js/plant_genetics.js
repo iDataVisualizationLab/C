@@ -386,7 +386,7 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
         var d0 = d.series[d.state][i - 1];
         var d1 = d.series[d.state][i];
 
-        if (typeof  d1.year  == 'undefined') {
+        if ((typeof  d1  == 'undefined') || (typeof  d0  == 'undefined')){
             return;
         }
 
