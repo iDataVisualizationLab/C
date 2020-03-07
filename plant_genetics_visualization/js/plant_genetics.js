@@ -43,12 +43,12 @@ async function filter() {
             filteredDf = filteredDf;
         } else if (bt.style("background-color").toString() == color_arr[1]) {
             filteredDf = filteredDf
-                .filter(row => row.get(cur_base_conditon) <= row.get(col));
+                .filter(row => row.get(cur_base_conditon) <  row.get(col));
             console.log("cur_base_conditon = ", cur_base_conditon);
             console.log("col = ", col);
         } else {
             filteredDf = filteredDf
-                .filter(row => row.get(cur_base_conditon) >= row.get(col));
+                .filter(row => row.get(cur_base_conditon) > row.get(col));
         }
     }
 
@@ -86,7 +86,7 @@ $('.wt_filter_btn').click(function () {
     let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
     $(this).css('background-color', color_arr[nex_index]);
     let filteredDf = filter().then(df => {
-        updateTable(ipdatacsvTbl, df.toCollection());
+        updateTableWithColor(ipdatacsvTbl, df.toCollection());
         console.log(`df.shape = ${df.dim()}`);
     });
 });
@@ -130,6 +130,8 @@ $("#wt_ctrl_btn_id").on("click", (d) => {
 
     }
 
+    updateTableWithColor(ipdatacsvTbl, _df.toCollection());
+
     // mark comparison
     sleep(700).then(() => {
         // $("#option_form").trigger("change");
@@ -137,6 +139,7 @@ $("#wt_ctrl_btn_id").on("click", (d) => {
         comparison_radio.prop("checked", true).trigger("click");
         $("#stateComparisonListdown").val("wthp6");
         updateCharts(1, num_obser);
+
 
     });
 });
@@ -427,7 +430,8 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
         // console.log("mousemove");
         // console.log(d);
 
-        var x0 = x.invert(d3.mouse(this)[0]);
+        // todo: Fix i
+        var x0 = x.invert(d3.mouse(this)[0])  ;
         var i = bisect(d.series[d.state], x0, 1);
         var d0 = d.series[d.state][i - 1];
         var d1 = d.series[d.state][i];
@@ -435,6 +439,7 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
         if ((typeof d1 == 'undefined') || (typeof d0 == 'undefined')) {
             return;
         }
+
 
         var d_new = x0 - d0.year > d1.year - x0 ? d1 : d0;
         var lineElement = d3.select(this).select(".baseline").node();
@@ -471,8 +476,12 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
             return d.firstChild.textContent == d_new.month;
         });
 
-        Array.from(rows).forEach((d, i) => d.style.backgroundColor = i % 2 == 0 ? '#ececec' : '#ffffff');
+        Array.from(rows).forEach((d, i) => {
+            d.style.fontWeight = "normal";
+            d.style.backgroundColor = i % 2 == 0 ? '#ececec' : '#ffffff'
+        });
         cur_row.style.backgroundColor = '#BCD4EC';
+        cur_row.style.fontWeight = "bold";
 
         cur_row.scrollIntoView({
             behavior: 'instant',

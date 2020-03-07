@@ -62,6 +62,7 @@ h4 {
     border-style: solid;
     border-color: #AAA;
     overflow-y: scroll;
+    background: #EEEEEE;
 }
 
 #options {
@@ -138,7 +139,7 @@ tr:nth-child(even) {
 
 .scrollable
 {
-    width: 700px;
+    width: 30%;
     height: 300px;
     /*overflow: auto;*/
     overflow-y: auto;
