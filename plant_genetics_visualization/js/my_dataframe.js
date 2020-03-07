@@ -6,6 +6,7 @@ const cell_colors = {
 
 
 function updateTable(tbl, rows) {
+    document.getElementById("printNumGenes").innerHTML = "Number of genes:" + rows.length;
     tbl.innerHTML = '';
     if (rows && rows.length > 0) {
         let headers = Object.keys(rows[0]);
@@ -30,7 +31,8 @@ function updateTable(tbl, rows) {
     }
 }
 
-function updateTableWithColor(tbl, rows, pairwise = false) {
+function updateTableWithColor(tbl, rows, pairwise = false, is_wt=true) {
+    document.getElementById("printNumGenes").innerHTML = "Number of genes:" + rows.length;
     tbl.innerHTML = '';
     if (rows && rows.length > 0) {
         let headers = Object.keys(rows[0]);
@@ -52,11 +54,22 @@ function updateTableWithColor(tbl, rows, pairwise = false) {
 
                 /// Color:
                 if (!pairwise) {  // normal mode
-                    if (wt_cols.slice(1).includes(hd)) {
-                        if (text > rowDt[wt_cols[0]]) {
-                            cell.style.color = cell_colors["greater"];
-                        } else if (text < rowDt[wt_cols[0]]) {
-                            cell.style.color = cell_colors["less"];
+                    if (is_wt){ //color for wt comparison
+                        if (wt_cols.slice(1).includes(hd)) {
+                            if (text > rowDt[wt_cols[0]]) {
+                                cell.style.color = cell_colors["greater"];
+                            } else if (text < rowDt[wt_cols[0]]) {
+                                cell.style.color = cell_colors["less"];
+                            }
+                        }
+                    }
+                    else{ //color for s1 cols
+                        if (s1_cols.slice(1).includes(hd)) {
+                            if (text > rowDt[s1_cols[0]]) {
+                                cell.style.color = cell_colors["greater"];
+                            } else if (text < rowDt[s1_cols[0]]) {
+                                cell.style.color = cell_colors["less"];
+                            }
                         }
                     }
                 }

@@ -1,15 +1,7 @@
 const DataFrame = dfjs.DataFrame;
-
-let ipdatacsvTbl = document.getElementById('ipdatacsvTbl');
-let curRowTb = document.getElementById('curRowTable');
-let comparison_radio = $(document.getElementsByName("comparison"));
-let svgCharts;
 const wt_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe'];
 const s1_cols = ['s1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];
 const all_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe', 's1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];
-let num_obser = 896;
-
-let _df;
 const names = {
     "atID": "month",
     "index": "year",
@@ -17,226 +9,23 @@ const names = {
     "gene": "state"
 };
 
-function selectAllCheckboxes() {
-    let checkboxes = document.getElementsByName("stateSelection");
-    let _this = document.getElementById("all");
-
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-        if (checkboxes[i].checked != _this.checked) {
-            changeChartDisplay(checkboxes[i].id);
-        }
-    }
-}
-
-function filter_data(button_list, pairwise, df) {
-    let filteredDf = df;
-    let cur_base_condition;
-    if (!pairwise) {
-        cur_base_condition = document.getElementById("stateComparisonListdown").value;
-        for (let i = 0, n = button_list.length; i < n; i++) {
-            let bt = d3.select(button_list[i]);
-            let col = bt.text().split(" ")[0];
-
-            if (bt.style("background-color").toString() == color_arr[1]) {
-                filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) < row.get(col));
-                console.log("cur_base_condition = ", cur_base_condition);
-                console.log("col = ", col);
-            } else if (bt.style("background-color").toString() == color_arr[2]){
-                filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) > row.get(col));
-            }
-        }
-    } else {
-        for (let i = 0, n = button_list.length; i < n; i++) {
-
-            let bt = d3.select(button_list[i]);
-            let col = bt.text().split(" ")[0];
-            cur_base_condition = get_responding_wt_from_s1(col);
-
-            if (bt.style("background-color").toString() == color_arr[1]) {
-                filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) < row.get(col));
-                console.log("PAIRWISE: cur_base_condition = ", cur_base_condition);
-                console.log("col = ", col);
-            } else if (bt.style("background-color").toString() == color_arr[2]){
-                filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) > row.get(col));
-            }
-        }
-    }
-    return filteredDf;
-}
-
-// let stateChartData;
-async function filter(button_list, pairwise = false) {
-    let filteredDf = filter_data(button_list, pairwise, _df);
-    let my_all_data = {};
-
-    all_cols.forEach((gene_name) => {
-        let tmp_df = filteredDf.select('atID', gene_name);
-        tmp_df = tmp_df.rename("atID", names["atID"]).rename(gene_name, names["value"]);
-        tmp_df = tmp_df.withColumn(names['index'], (row, i) => i + 1)
-            .withColumn(names['gene'], () => gene_name);
-        my_all_data[gene_name] = tmp_df.toCollection();
-    })
-
-
-    let stateChartData = [];
-    for (let state in my_all_data) {
-        let d = {};
-        d.state = state;
-        d.series = my_all_data;
-        stateChartData.push(d);
-    }
-    let tempSvg = d3.select("#unemploymentCharts").selectAll("svg").data(stateChartData, d => d.state);
-
-
-    num_obser = filteredDf.dim()[0];
-    updateCharts(1, num_obser, pairwise);
-    return filteredDf;
-};
-
-
+let ipdatacsvTbl = document.getElementById('ipdatacsvTbl');
+let curRowTb = document.getElementById('curRowTable');
+let comparison_radio = $(document.getElementsByName("comparison"));
+let svgCharts;
+let num_obser;
 let color_arr = ["rgb(231, 231, 231)", "rgb(145, 207, 96)", "rgb(252, 141, 89)"]; // gray, blue, orange
-$('.wt_filter_btn').click(function () {
-    let cur_color = $(this).css("background-color").toString();
-    let cur_index = color_arr.indexOf(cur_color);
-    let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
-    $(this).css('background-color', color_arr[nex_index]);
-    let button_list = d3.selectAll('.wt_filter_btn')[0];
-    filter(button_list, false).then(df => {
-        updateTableWithColor(ipdatacsvTbl, df.toCollection());
-        console.log(`df.shape = ${df.dim()}`);
-    });
-});
+let _df;
 
-function sleep(time) {
-    return new Promise((resolve) => setTimeout(resolve, time));
-}
-
-// Set up selection controls.
-comparison_radio.on("click", function () {
-    let _this = this;
-
-    if (_this.value == "state") {
-        $("#stateComparisonListdown").attr("disabled", false);
-    } else {
-        $("#stateComparisonListdown").attr("disabled", true);
-    }
-});
-
-$("#all").on("click", selectAllCheckboxes);
-
-$("#wt_ctrl_btn_id").on("click", (d) => {
-
-    // Tick all wt_cols, except the first one\
-    let checkboxes = document.getElementsByName("stateSelection");
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-        if (checkboxes[i].id == "all") {
-            document.getElementById("all").checked = false;
-            console.log("Skip");
-        } else {
-            if (wt_cols.slice(1).includes(checkboxes[i].id)) {
-                if (!checkboxes[i].checked) {
-                    changeChartDisplay(checkboxes[i].id);
-                }
-            } else {
-                if (checkboxes[i].checked) {
-                    changeChartDisplay(checkboxes[i].id);
-                }
-            }
-        }
-
-    }
-
-    updateTableWithColor(ipdatacsvTbl, _df.toCollection());
-
-    // mark comparison
-    sleep(700).then(() => {
-        // $("#option_form").trigger("change");
-        console.log("after .7 second");
-        comparison_radio.prop("checked", true).trigger("click");
-        $("#stateComparisonListdown").val("wthp6");
-        updateCharts(1, num_obser);
-
-
-    });
-});
-
-function get_responding_s1_from_wt(wt_name) {
-    return wt_name.replace("wt", "s1");
-}
-
-function get_responding_wt_from_s1(wt_name) {
-    return wt_name.replace("s1", "wt");
-}
-
-$('.pairwise_filter_btn').click(function () {
-    let cur_color = $(this).css("background-color").toString();
-    let cur_index = color_arr.indexOf(cur_color);
-    let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
-    $(this).css('background-color', color_arr[nex_index]);
-    let button_list = d3.selectAll('.pairwise_filter_btn')[0];
-
-    filter(button_list, true).then(df => {
-        updateTableWithColor(ipdatacsvTbl, df.toCollection(), true);
-        console.log(`df.shape = ${df.dim()}`);
-    });
-});
-
-
-$("#pairwise_ctrl_btn_id").on("click", (d) => {
-    // Tick all wt_cols, except the first one
-    let checkboxes = document.getElementsByName("stateSelection");
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-        if (checkboxes[i].id == "all") {
-            document.getElementById("all").checked = false;
-            console.log("Skip");
-        } else {
-            if (s1_cols.includes(checkboxes[i].id)) {
-                if (!checkboxes[i].checked) {
-                    changeChartDisplay(checkboxes[i].id);
-                }
-            } else {
-                if (checkboxes[i].checked) {
-                    changeChartDisplay(checkboxes[i].id);
-                }
-            }
-        }
-    }
-
-    updateTableWithColor(ipdatacsvTbl, _df.toCollection(), true);
-
-
-    // mark comparison for s1
-    sleep(700).then(() => {
-        // $("#option_form").trigger("change");
-        // $("#stateComparisonListdown").attr("disabled", true);
-        console.log("after .7 second");
-        comparison_radio.prop("checked", true);
-        updateCharts(1, num_obser, true);
-
-    });
-});
-
-//Width and height
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
 let w = $("#unemploymentCharts").width() * 0.99 - margin.left - margin.right;
 let h = 200 - margin.bottom - margin.top;
 var svgHeight = h + margin.top + margin.bottom;
 var svgWidth = w + margin.left + margin.right;
-
-
-// Set up scales.
 var x = d3.scale.linear().range([0, w]);
-// var y = d3.scale.linear().range([h, 0]);
 var y = d3.scale.linear().domain([0, 1]).range([h, 0]);
-
-// Define the axes.
 var xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(7);
 var yAxis = d3.svg.axis().scale(y).orient("left").ticks(5);
-
 
 // Define the line.
 var valueLine = d3.svg.line()
@@ -274,8 +63,63 @@ var bisect = d3.bisector(function (d) {
     return d.year;
 }).left;
 
+
+$('.wt_filter_btn').click(function () {
+    let cur_color = $(this).css("background-color").toString();
+    let cur_index = color_arr.indexOf(cur_color);
+    let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
+    $(this).css('background-color', color_arr[nex_index]);
+    $("#stateComparisonListdown").val("wthp6");
+
+    let button_list = d3.selectAll('.wt_filter_btn')[0];
+    filter(button_list, false).then(df => {
+        updateTableWithColor(ipdatacsvTbl, df.toCollection());
+        console.log(`df.shape = ${df.dim()}`);
+    });
+});
+$('.s1_filter_btn').click(function () {
+    let cur_color = $(this).css("background-color").toString();
+    let cur_index = color_arr.indexOf(cur_color);
+    let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
+    $(this).css('background-color', color_arr[nex_index]);
+    $("#stateComparisonListdown").val("s1hp6");
+    let button_list = d3.selectAll('.s1_filter_btn')[0];
+    filter(button_list, false).then(df => {
+        updateTableWithColor(ipdatacsvTbl, _df.toCollection(), false, false);
+    });
+});
+$('.pairwise_filter_btn').click(function () {
+    let cur_color = $(this).css("background-color").toString();
+    let cur_index = color_arr.indexOf(cur_color);
+    let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
+    $(this).css('background-color', color_arr[nex_index]);
+    let button_list = d3.selectAll('.pairwise_filter_btn')[0];
+
+    filter(button_list, true).then(df => {
+        updateTableWithColor(ipdatacsvTbl, df.toCollection(), true);
+        console.log(`df.shape = ${df.dim()}`);
+    });
+});
+comparison_radio.on("click", function () {
+    let _this = this;
+
+    if (_this.value == "state") {
+        $("#stateComparisonListdown").attr("disabled", false);
+    } else {
+        $("#stateComparisonListdown").attr("disabled", true);
+    }
+});
+
+$("#all").on("click", selectAllCheckboxes);
+
+
+
+$("#option_form").on("change", () => {
+    updateCharts(1, num_obser);
+});
 DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
     _df = data;
+    num_obser = _df.dim()[0];
     let my_all_data = {};
     all_cols.forEach((gene_name) => {
         let df = data.select('atID', gene_name);
@@ -397,6 +241,7 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
     svgCharts.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + h + ")")
+
 
 // text label for the x axis
     svgCharts.append("text")
@@ -537,13 +382,140 @@ d3.select("#stateComparisonListdown").on("change", () => {
 });
 
 
-$("#option_form").on("change", () => {
-    updateCharts(1, num_obser);
-});
+function wt_ctrl_btn() {
+
+    // Tick all wt_cols, except the first one\
+    let checkboxes = document.getElementsByName("stateSelection");
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        if (checkboxes[i].id == "all") {
+            document.getElementById("all").checked = false;
+            console.log("Skip");
+        } else {
+            if (wt_cols.slice(1).includes(checkboxes[i].id)) {
+                if (!checkboxes[i].checked) {
+                    changeChartDisplay(checkboxes[i].id);
+                }
+            } else {
+                if (checkboxes[i].checked) {
+                    changeChartDisplay(checkboxes[i].id);
+                }
+            }
+        }
+
+    }
+    updateTableWithColor(ipdatacsvTbl, _df.toCollection());
+
+    // mark comparison
+    sleep(500).then(() => {
+        comparison_radio.prop("checked", true).trigger("click");
+        $("#stateComparisonListdown").attr("disabled", false);
+        $("#stateComparisonListdown").val("wthp6");
+        updateCharts(1, num_obser);
 
 
-function removeWhitespace(str) {
-    return str.replace(/\s+/g, '');
+    });
+}
+
+function s1_ctrl_btn() {
+    // Tick all s1_cols, except the first one\
+    let checkboxes = document.getElementsByName("stateSelection");
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        if (checkboxes[i].id == "all") {
+            document.getElementById("all").checked = false;
+        } else {
+            if (s1_cols.slice(1).includes(checkboxes[i].id)) {
+                if (!checkboxes[i].checked) {
+                    changeChartDisplay(checkboxes[i].id);
+                }
+            } else {
+                if (checkboxes[i].checked) {
+                    changeChartDisplay(checkboxes[i].id);
+                }
+            }
+        }
+
+    }
+
+    updateTableWithColor(ipdatacsvTbl, _df.toCollection(), false, false);
+
+    // mark comparison
+    sleep(500).then(() => {
+        // $("#option_form").trigger("change");
+        comparison_radio.prop("checked", true).trigger("click");
+        $("#stateComparisonListdown").attr("disabled", false);
+        $("#stateComparisonListdown").val("s1hp6");
+        updateCharts(1, num_obser);
+    });
+}
+
+function pairwise_ctrl_btn() {
+    // Tick all wt_cols, except the first one
+    let checkboxes = document.getElementsByName("stateSelection");
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        if (checkboxes[i].id == "all") {
+            document.getElementById("all").checked = false;
+            console.log("Skip");
+        } else {
+            if (s1_cols.includes(checkboxes[i].id)) {
+                if (!checkboxes[i].checked) {
+                    changeChartDisplay(checkboxes[i].id);
+                }
+            } else {
+                if (checkboxes[i].checked) {
+                    changeChartDisplay(checkboxes[i].id);
+                }
+            }
+        }
+    }
+
+    updateTableWithColor(ipdatacsvTbl, _df.toCollection(), true);
+
+    // mark comparison for s1
+    sleep(500).then(() => {
+        // $("#option_form").trigger("change");
+        // $("#stateComparisonListdown").attr("disabled", true);
+        console.log("after a half of second");
+        comparison_radio.prop("checked", true);
+        $("#stateComparisonListdown").attr("disabled", true);
+
+        updateCharts(1, num_obser, true);
+    });
+}
+
+function flexible_ctrl_btn() {
+
+    // untick all, except the first one\
+    let checkboxes = document.getElementsByName("stateSelection");
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        if (checkboxes[i].id == "all") {
+            document.getElementById("all").checked = false;
+            console.log("Skip");
+        } else if (checkboxes[i].id == "wthp6") {
+            if (!checkboxes[i].checked) {
+                changeChartDisplay(checkboxes[i].id);
+            }
+        } else {
+            if (checkboxes[i].checked) {
+                changeChartDisplay(checkboxes[i].id);
+            }
+        }
+    }
+
+    updateTable(ipdatacsvTbl, _df.toCollection());
+
+    // mark comparison
+    sleep(500).then(() => {
+        // enable checkbox options:
+        $("#stateComparisonListdown").attr("disabled", false);
+
+        // return normal mode, no comparing
+        document.getElementById('noComparison').checked = true;
+
+        $("#stateComparisonListdown").val("wthp6");
+        updateCharts(1, num_obser);
+    });
+
+
 }
 
 function changeChartDisplay(d) {
@@ -558,7 +530,7 @@ function changeChartDisplay(d) {
     if (!active) {
         // console.log("changeChartDisplay: inactive -> active");
         stateCheckBox.property("checked", true);
-        stateChart.transition().duration(400)
+        stateChart.transition().duration(250)
             .attr("height", svgHeight)
             .attr("opacity", 1);
 
@@ -566,7 +538,7 @@ function changeChartDisplay(d) {
         // console.log("changeChartDisplay:  active -> inactive");
 
         stateCheckBox.property("checked", false);
-        stateChart.transition().duration(400)
+        stateChart.transition().duration(250)
             .attr("height", 0)
             .attr("opacity", 0);
     }
@@ -589,8 +561,6 @@ function updateChartNoComparison(d, fromYear, toYear) {
         .attr("d", function (d) {
             return valueLine(d.series[d.state]);
         });
-
-    // console.log("d.series[d.state]", d.series[d.state])
 
     this.select(".x.axis")
         .call(xAxis);
@@ -665,7 +635,7 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
             // If the chart is active, transition.  Otherwise, don't.
             if (array[i].id == array[array.length - 1].id) {
                 d3.select(d)
-                    .transition().duration(400)
+                    .transition().duration(250)
                     .call(updateChartNoComparison, fromYear, toYear)
                     .each("end", function (a) {
                         inactiveCharts[0].forEach(function (d) {
@@ -676,7 +646,7 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
 
             } else {
                 d3.select(d)
-                    .transition().duration(400)
+                    .transition().duration(250)
                     .call(updateChartNoComparison, fromYear, toYear);
             }
         });
@@ -686,7 +656,7 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
             // If the chart is active, transition.  Otherwise, don't.
             if (array[i].id == array[array.length - 1].id) {
                 d3.select(d)
-                    .transition().duration(400)
+                    .transition().duration(250)
                     .call(updateChartStateComparison, fromYear, toYear, pairwise)
                     .each("end", function (a) {
                         inactiveCharts[0].forEach(function (d) {
@@ -697,7 +667,7 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
 
             } else {
                 d3.select(d)
-                    .transition().duration(400)
+                    .transition().duration(250)
                     .call(updateChartStateComparison, fromYear, toYear, pairwise);
             }
         });
@@ -705,7 +675,76 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
 
 }
 
+function updateData(filteredDf) {
+    let my_all_data = {};
 
+    all_cols.forEach((gene_name) => {
+        let tmp_df = filteredDf.select('atID', gene_name);
+        tmp_df = tmp_df.rename("atID", names["atID"]).rename(gene_name, names["value"]);
+        tmp_df = tmp_df.withColumn(names['index'], (row, i) => i + 1)
+            .withColumn(names['gene'], () => gene_name);
+        my_all_data[gene_name] = tmp_df.toCollection();
+    })
+
+
+    let stateChartData = [];
+    for (let state in my_all_data) {
+        let d = {};
+        d.state = state;
+        d.series = my_all_data;
+        stateChartData.push(d);
+    }
+    d3.select("#unemploymentCharts").selectAll("svg").data(stateChartData, d => d.state);
+}
+
+async function filter(button_list, pairwise = false) {
+    let filteredDf = filter_data(button_list, pairwise, _df);
+    updateData(filteredDf);
+
+    num_obser = filteredDf.dim()[0];
+    updateCharts(1, num_obser, pairwise);
+    return filteredDf;
+};
+
+function filter_data(button_list, pairwise, df) {
+    let filteredDf = df;
+    let cur_base_condition;
+    if (!pairwise) {
+        cur_base_condition = document.getElementById("stateComparisonListdown").value;
+        for (let i = 0, n = button_list.length; i < n; i++) {
+            let bt = d3.select(button_list[i]);
+            let col = bt.text().split(" ")[0];
+
+            if (bt.style("background-color").toString() == color_arr[1]) {
+                filteredDf = filteredDf
+                    .filter(row => row.get(cur_base_condition) < row.get(col));
+                console.log("cur_base_condition = ", cur_base_condition);
+                console.log("col = ", col);
+            } else if (bt.style("background-color").toString() == color_arr[2]) {
+                filteredDf = filteredDf
+                    .filter(row => row.get(cur_base_condition) > row.get(col));
+            }
+        }
+    } else {
+        for (let i = 0, n = button_list.length; i < n; i++) {
+
+            let bt = d3.select(button_list[i]);
+            let col = bt.text().split(" ")[0];
+            cur_base_condition = get_responding_wt_from_s1(col);
+
+            if (bt.style("background-color").toString() == color_arr[1]) {
+                filteredDf = filteredDf
+                    .filter(row => row.get(cur_base_condition) < row.get(col));
+                console.log("PAIRWISE: cur_base_condition = ", cur_base_condition);
+                console.log("col = ", col);
+            } else if (bt.style("background-color").toString() == color_arr[2]) {
+                filteredDf = filteredDf
+                    .filter(row => row.get(cur_base_condition) > row.get(col));
+            }
+        }
+    }
+    return filteredDf;
+}
 
 
 

@@ -1,5 +1,8 @@
-function openCity(evt, cityName) {
-    var i, tabcontent, tablinks;
+function openTab(evt, scenarioName) {
+    let i, tabcontent, tablinks, btns_list = [];;
+    updateData(_df);
+    num_obser = _df.dim()[0];
+
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
         tabcontent[i].style.display = "none";
@@ -8,6 +11,40 @@ function openCity(evt, cityName) {
     for (i = 0; i < tablinks.length; i++) {
         tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
-    document.getElementById(cityName).style.display = "block";
+    document.getElementById(scenarioName).style.display = "block";
+
+    if (scenarioName == "WT(s) Comparison") {
+        btns1 = d3.selectAll('.pairwise_filter_btn')[0];
+        btns2 = d3.selectAll('.s1_filter_btn')[0];
+
+        btns_list.push(btns1);
+        btns_list.push(btns2);
+        wt_ctrl_btn();
+
+    } else if (scenarioName == "S1(s) Comparison") {
+        btns1 = d3.selectAll('.pairwise_filter_btn')[0];
+        btns2 = d3.selectAll('.w1_filter_btn')[0];
+
+        btns_list.push(btns1);
+        btns_list.push(btns2);
+        s1_ctrl_btn();
+    } else if (scenarioName == 'Pairwise Comparison') {
+        btns1 = d3.selectAll('.wt_filter_btn')[0];
+        btns2 = d3.selectAll('.s1_filter_btn')[0];
+        btns_list.push(btns1);
+        btns_list.push(btns2);
+        pairwise_ctrl_btn();
+
+    } else if (scenarioName == 'Flexible Mode') {
+        btns1 = d3.selectAll('.wt_filter_btn')[0];
+        btns2 = d3.selectAll('.s1_filter_btn')[0];
+        btns3= d3.selectAll('.paiwise_filter_btn')[0];
+        btns_list.push(btns1);
+        btns_list.push(btns2);
+        btns_list.push(btns3);
+        flexible_ctrl_btn();
+    }
+
+    btns_list.forEach(reset_color);
     evt.currentTarget.className += " active";
 };
