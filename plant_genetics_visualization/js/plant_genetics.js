@@ -173,6 +173,10 @@ $("#s1_ctrl_btn_id").on("click", (d) => {
         }
     }
 
+    updateTableWithColor(ipdatacsvTbl, _df.toCollection(), true);
+
+
+
     // mark comparison for s1
     sleep(700).then(() => {
         // $("#option_form").trigger("change");

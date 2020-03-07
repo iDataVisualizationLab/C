@@ -53,25 +53,24 @@ function updateTableWithColor(tbl, rows, pairwise = false) {
                 /// Color:
                 if (!pairwise) {  // normal mode
                     if (wt_cols.slice(1).includes(hd)) {
-                        let index_of_cur_hd = color_arr.indexOf(hd);
-                        let adjacent_hd = wt_cols[index_of_cur_hd + 1];
-                        if (rowDt[adjacent_hd] > text) {
+                        if (text > rowDt[wt_cols[0]]) {
                             cell.style.color = cell_colors["greater"];
-                        } else if (rowDt[adjacent_hd] < text) {
+                        } else if (text < rowDt[wt_cols[0]]) {
                             cell.style.color = cell_colors["less"];
                         }
                     }
                 }
                 else {   // pairwise
-                //     let index_of_cur_hd = color_arr.indexOf(hd);
-                //     let adjacent_hd = wt_cols[index_of_cur_hd + 1];
-                //     if (rowDt[adjacent_hd] > text) {
-                //         cell.style.color = cell_colors["greater"];
-                //     } else if (rowDt[adjacent_hd] < text) {
-                //         cell.style.color = cell_colors["less"];
-                //     }
-                //
-                // }
+                    if (s1_cols.includes(hd)) {
+                        let responding_wt = get_responding_wt_from_s1(hd);
+                        if ( text > rowDt[responding_wt]) {
+                            cell.style.color = cell_colors["greater"];
+                        } else if ( text < rowDt[responding_wt]) {
+                            cell.style.color = cell_colors["less"];
+                        }
+                    }
+                }
+
                 // if (hd === COL_DEVICE_ACTION) {
                 //     cell.style.color = deviceActionColors[text];
                 // } else if (hd === COL_SOURCE_ADDRESS || hd === COL_DESTINATION_ADDRESS) {
@@ -79,6 +78,7 @@ function updateTableWithColor(tbl, rows, pairwise = false) {
                 // } else if (hd === COL_END_TIME) {
                 //     text = d3.timeFormat("%b %d %Y %H:%M:%S")(text);
                 // }
+
                 cell.innerHTML = text;
             });
         });
