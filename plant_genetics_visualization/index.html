@@ -14,55 +14,75 @@
 <!-- All the options for the visualization (states, years, etc.) -->
 <div id="options">
     <h1>Control Panel</h1>
-    <div id="comparisonOptions">
-        <h4>Compare To</h4>
-        <form id="option_form">
-            <input type="radio" name="comparison" id="noComparison" value="none" checked> No Comparison<br>
-            <input type="radio" name="comparison" id="stateComparison" value="state" display="inline"> Base Condition
-        </form>
-        <select id="stateComparisonListdown" name="states" disabled>
-        </select>
-        <br>
-        <br>
-        <br>
+    <div class="tab">
+        <button class="tablinks" onclick="openCity(event, 'WT(s) Comparison')">WT(s) Comparison</button>
+        <button class="tablinks" onclick="openCity(event, 'S1(s) Comparison')">S1(s) Comparison</button>
+        <button class="tablinks" onclick="openCity(event, 'Pairwise Comparison')">Pairwise Comparison</button>
+        <button class="tablinks" onclick="openCity(event, 'Flexible Mode')">Flexible Mode</button>
+
     </div>
 
-    <h4>Genes Shown</h4>
-    <div id="stateOptions">
-        <!--        <input type="checkbox" id="all" name="stateSelection" onClick=selectAll(this)> Select All<br>-->
-        <input type="checkbox" id="all" name="stateSelection"> Select All<br>
-    </div>
-
-    <div class="btn-group">
-        <!--      <button id="bt1" class="button button1" onclick="changeColor()">2px</button>-->
-        <!--        <button id="bt1" class="waves-effect waves-light btn wt_filter_btn">Button 1</button>-->
-        <button id="bt1" class="wt_filter_btn">wtlp6</button>
-        <button id="bt2" class="wt_filter_btn">wthp5</button>
-        <button id="bt3" class="wt_filter_btn">wtlp5</button>
-        <button id="bt4" class="wt_filter_btn">wtal</button>
-        <button id="bt5" class="wt_filter_btn">wtfe</button>
-        <!--        <a class="waves-effect waves-light btn">button</a>-->
-    </div>
-
-    <div class="btn-group">
-        <button id="bt-pairwise-1" class="pairwise_filter_btn">s1hp6 vs. wthp6</button>
-        <button id="bt-pairwise-2" class="pairwise_filter_btn">s1lp6 vs. wtlp6</button>
-        <button id="bt-pairwise-3" class="pairwise_filter_btn">s1hp5 vs. wthp5</button>
-        <button id="bt-pairwise-4" class="pairwise_filter_btn">s1lp5 vs. wtlp5</button>
-        <button id="bt-pairwise-5" class="pairwise_filter_btn">s1al vs. wtal</button>
-        <button id="bt-pairwise-6" class="pairwise_filter_btn">s1fe vs. wtfe</button>
-
-
-        <!--        <a class="waves-effect waves-light btn">button</a>-->
-    </div>
-
-    <div class="btn-ctrl-comparison">
+    <div id="WT(s) Comparison" class="tabcontent">
+        <h3>WT(s) Comparison</h3>
+        <p>Short describe</p>
         <button id="wt_ctrl_btn_id" class="wt_ctrl_btn">WT(s) Comparison</button>
-        <button id="pairwise_ctrl_btn_id" class="wt_ctrl_btn">Pairwise Comparison</button>
+        <div class="btn-group">
+            <!--      <button id="bt1" class="button button1" onclick="changeColor()">2px</button>-->
+            <!--        <button id="bt1" class="waves-effect waves-light btn wt_filter_btn">Button 1</button>-->
+            <button id="bt1" class="wt_filter_btn">wtlp6</button>
+            <button id="bt2" class="wt_filter_btn">wthp5</button>
+            <button id="bt3" class="wt_filter_btn">wtlp5</button>
+            <button id="bt4" class="wt_filter_btn">wtal</button>
+            <button id="bt5" class="wt_filter_btn">wtfe</button>
+            <!--        <a class="waves-effect waves-light btn">button</a>-->
+        </div>
+    </div>
+
+    <div id="S1(s) Comparison" class="tabcontent">
+        <h3>To be added</h3>
+        <p>To be added...</p>
     </div>
 
 
+    <div id="Pairwise Comparison" class="tabcontent">
+        <h3>Pairwise Comparison</h3>
+        <p>Short describe</p>
+        <button id="pairwise_ctrl_btn_id" class="pairwise_ctrl_btn">Pairwise Comparison</button>
+        <div class="btn-group">
+            <button id="bt-pairwise-1" class="pairwise_filter_btn">s1hp6 vs. wthp6</button>
+            <button id="bt-pairwise-2" class="pairwise_filter_btn">s1lp6 vs. wtlp6</button>
+            <button id="bt-pairwise-3" class="pairwise_filter_btn">s1hp5 vs. wthp5</button>
+            <button id="bt-pairwise-4" class="pairwise_filter_btn">s1lp5 vs. wtlp5</button>
+            <button id="bt-pairwise-5" class="pairwise_filter_btn">s1al vs. wtal</button>
+            <button id="bt-pairwise-6" class="pairwise_filter_btn">s1fe vs. wtfe</button>
+        </div>
+    </div>
+
+
+    <div id="Flexible Mode" class="tabcontent">
+        <h3>Flexible Mode</h3>
+        <p>Tto be added...</p>
+        <div id="comparisonOptions">
+            <h4>Compare To</h4>
+            <form id="option_form">
+                <input type="radio" name="comparison" id="noComparison" value="none" checked> No Comparison<br>
+                <input type="radio" name="comparison" id="stateComparison" value="state" display="inline"> Base
+                Condition
+            </form>
+            <select id="stateComparisonListdown" name="states" disabled>
+            </select>
+            <br>
+            <br>
+            <br>
+        </div>
+
+        <h4>Genes Shown</h4>
+        <div id="stateOptions">
+            <input type="checkbox" id="all" name="stateSelection"> Select All<br>
+        </div>
+    </div>
 </div>
+
 <div class="scrollable" id="ipdatacsvDiv">
     <table id="ipdatacsvTbl"></table>
 </div>
@@ -73,6 +93,7 @@
 <script src="https://gmousse.github.io/dataframe-js/dist/dataframe.min.js"></script>
 <script src="js/plant_genetics.js"></script>
 <script src="js/my_dataframe.js"></script>
+<script src="js/tab_options.js"></script>
 
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>-->
 </body>
