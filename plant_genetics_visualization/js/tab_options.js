@@ -35,14 +35,14 @@ function openTab(evt, scenarioName) {
         btns_list.push(btns2);
         pairwise_ctrl_btn();
 
-    } else if (scenarioName == 'Flexible Mode') {
+    } else if (scenarioName == 'Custom Mode') {
         btns1 = d3.selectAll('.wt_filter_btn')[0];
         btns2 = d3.selectAll('.s1_filter_btn')[0];
         btns3= d3.selectAll('.paiwise_filter_btn')[0];
         btns_list.push(btns1);
         btns_list.push(btns2);
         btns_list.push(btns3);
-        flexible_ctrl_btn();
+        custom_ctrl_btn();
     }
 
     btns_list.forEach(reset_color);

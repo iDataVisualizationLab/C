@@ -15,14 +15,15 @@
 <div id="options">
     <h1>Control Panel</h1>
     <div class="tab">
-        <button class="tablinks active" onclick="openTab(event, 'Flexible Mode')">Flexible Mode</button>
-        <button class="tablinks" onclick="openTab(event, 'WT(s) Comparison')">WT(s) Comparison</button>
+        <button class="tablinks active" onclick="openTab(event, 'WT(s) Comparison')">WT(s) Comparison</button>
         <button class="tablinks" onclick="openTab(event, 'S1(s) Comparison')">S1(s) Comparison</button>
         <button class="tablinks" onclick="openTab(event, 'Pairwise Comparison')">Pairwise Comparison</button>
+        <button class="tablinks" onclick="openTab(event, 'Custom Mode')">Custom Mode</button>
+
     </div>
 
-    <div id="Flexible Mode" class="tabcontent" style="display:block">
-        <p>Tto be added...</p>
+    <div id="Custom Mode" class="tabcontent">
+        <p>To be added...</p>
         <div id="comparisonOptions">
             <h4>Compare To</h4>
             <form id="option_form">
@@ -43,8 +44,8 @@
         </div>
     </div>
 
-    <div id="WT(s) Comparison" class="tabcontent">
-        <p>Short describe</p>
+    <div id="WT(s) Comparison" class="tabcontent"  style="display:block">
+        <p>Compare each conditioned <b>wt</b> with <b>wthp6</b></p>
         <div class="btn-group">
             <!--      <button id="bt1" class="button button1" onclick="changeColor()">2px</button>-->
             <!--        <button id="bt1" class="waves-effect waves-light btn wt_filter_btn">Button 1</button>-->
@@ -58,7 +59,7 @@
     </div>
 
     <div id="S1(s) Comparison" class="tabcontent">
-        <p>Short describe</p>
+        <p>Compare each conditioned <b>s1</b> with <b>s1hp6</b></p>
         <div class="btn-group">
             <button id="s1_bt1" class="s1_filter_btn">s1lp6</button>
             <button id="s1_bt2" class="s1_filter_btn">s1hp5</button>
@@ -70,7 +71,7 @@
 
 
     <div id="Pairwise Comparison" class="tabcontent">
-        <p>Short describe</p>
+        <p>Compare each conditioned <b>s1</b> with its responding <b>wt</b> (e.g., <i>s1hp6 vs. wthp6</i>)</p>
         <div class="btn-group">
             <button id="bt-pairwise-1" class="pairwise_filter_btn">s1hp6 vs. wthp6</button>
             <button id="bt-pairwise-2" class="pairwise_filter_btn">s1lp6 vs. wtlp6</button>

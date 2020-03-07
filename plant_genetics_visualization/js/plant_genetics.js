@@ -82,10 +82,12 @@ $('.s1_filter_btn').click(function () {
     let cur_index = color_arr.indexOf(cur_color);
     let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
     $(this).css('background-color', color_arr[nex_index]);
+
     $("#stateComparisonListdown").val("s1hp6");
+
     let button_list = d3.selectAll('.s1_filter_btn')[0];
     filter(button_list, false).then(df => {
-        updateTableWithColor(ipdatacsvTbl, _df.toCollection(), false, false);
+        updateTableWithColor(ipdatacsvTbl, df.toCollection(), false, false);
     });
 });
 $('.pairwise_filter_btn').click(function () {
@@ -371,8 +373,9 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
 
     }
 
-    updateCharts();
-    updateTable(ipdatacsvTbl, _df.toCollection());
+    wt_ctrl_btn();
+    // updateCharts();
+    // updateTable(ipdatacsvTbl, _df.toCollection());
 
 });
 
@@ -482,7 +485,7 @@ function pairwise_ctrl_btn() {
     });
 }
 
-function flexible_ctrl_btn() {
+function custom_ctrl_btn() {
 
     // untick all, except the first one\
     let checkboxes = document.getElementsByName("stateSelection");
