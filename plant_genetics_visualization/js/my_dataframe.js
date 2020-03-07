@@ -61,7 +61,8 @@ function updateTableWithColor(tbl, rows, pairwise = false) {
                             cell.style.color = cell_colors["less"];
                         }
                     }
-                // } else {   // pairwise
+                }
+                else {   // pairwise
                 //     let index_of_cur_hd = color_arr.indexOf(hd);
                 //     let adjacent_hd = wt_cols[index_of_cur_hd + 1];
                 //     if (rowDt[adjacent_hd] > text) {
