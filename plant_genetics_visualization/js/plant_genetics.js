@@ -28,32 +28,51 @@ function selectAllCheckboxes() {
     }
 }
 
-
-// let stateChartData;
-async function filter() {
-    const df = _df;
-    let button_list = d3.selectAll('.wt_filter_btn')[0];
-
-    let cur_base_conditon = document.getElementById("stateComparisonListdown").value;
+function filter_data(button_list, pairwise, df) {
     let filteredDf = df;
-    for (var i = 0, n = button_list.length; i < n; i++) {
-        let bt = d3.select(button_list[i]);
-        let col = wt_cols[i + 1];
-        if (bt.style("background-color").toString() == color_arr[0]) {
-            filteredDf = filteredDf;
-        } else if (bt.style("background-color").toString() == color_arr[1]) {
-            filteredDf = filteredDf
-                .filter(row => row.get(cur_base_conditon) <  row.get(col));
-            console.log("cur_base_conditon = ", cur_base_conditon);
-            console.log("col = ", col);
-        } else {
-            filteredDf = filteredDf
-                .filter(row => row.get(cur_base_conditon) > row.get(col));
+    let cur_base_condition;
+    if (!pairwise) {
+        cur_base_condition = document.getElementById("stateComparisonListdown").value;
+        for (let i = 0, n = button_list.length; i < n; i++) {
+            let bt = d3.select(button_list[i]);
+            let col = bt.text().split(" ")[0];
+
+            if (bt.style("background-color").toString() == color_arr[1]) {
+                filteredDf = filteredDf
+                    .filter(row => row.get(cur_base_condition) < row.get(col));
+                console.log("cur_base_condition = ", cur_base_condition);
+                console.log("col = ", col);
+            } else if (bt.style("background-color").toString() == color_arr[2]){
+                filteredDf = filteredDf
+                    .filter(row => row.get(cur_base_condition) > row.get(col));
+            }
+        }
+    } else {
+        for (let i = 0, n = button_list.length; i < n; i++) {
+
+            let bt = d3.select(button_list[i]);
+            let col = bt.text().split(" ")[0];
+            cur_base_condition = get_responding_wt_from_s1(col);
+
+            if (bt.style("background-color").toString() == color_arr[1]) {
+                filteredDf = filteredDf
+                    .filter(row => row.get(cur_base_condition) < row.get(col));
+                console.log("PAIRWISE: cur_base_condition = ", cur_base_condition);
+                console.log("col = ", col);
+            } else if (bt.style("background-color").toString() == color_arr[2]){
+                filteredDf = filteredDf
+                    .filter(row => row.get(cur_base_condition) > row.get(col));
+            }
         }
     }
+    return filteredDf;
+}
 
-
+// let stateChartData;
+async function filter(button_list, pairwise = false) {
+    let filteredDf = filter_data(button_list, pairwise, _df);
     let my_all_data = {};
+
     all_cols.forEach((gene_name) => {
         let tmp_df = filteredDf.select('atID', gene_name);
         tmp_df = tmp_df.rename("atID", names["atID"]).rename(gene_name, names["value"]);
@@ -74,7 +93,7 @@ async function filter() {
 
 
     num_obser = filteredDf.dim()[0];
-    updateCharts(1, num_obser);
+    updateCharts(1, num_obser, pairwise);
     return filteredDf;
 };
 
@@ -85,7 +104,8 @@ $('.wt_filter_btn').click(function () {
     let cur_index = color_arr.indexOf(cur_color);
     let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
     $(this).css('background-color', color_arr[nex_index]);
-    let filteredDf = filter().then(df => {
+    let button_list = d3.selectAll('.wt_filter_btn')[0];
+    filter(button_list, false).then(df => {
         updateTableWithColor(ipdatacsvTbl, df.toCollection());
         console.log(`df.shape = ${df.dim()}`);
     });
@@ -144,16 +164,29 @@ $("#wt_ctrl_btn_id").on("click", (d) => {
     });
 });
 
-function get_responding_s1_from_wt(wt_name){
+function get_responding_s1_from_wt(wt_name) {
     return wt_name.replace("wt", "s1");
 }
 
-function get_responding_wt_from_s1(wt_name){
+function get_responding_wt_from_s1(wt_name) {
     return wt_name.replace("s1", "wt");
 }
 
+$('.pairwise_filter_btn').click(function () {
+    let cur_color = $(this).css("background-color").toString();
+    let cur_index = color_arr.indexOf(cur_color);
+    let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
+    $(this).css('background-color', color_arr[nex_index]);
+    let button_list = d3.selectAll('.pairwise_filter_btn')[0];
 
-$("#s1_ctrl_btn_id").on("click", (d) => {
+    filter(button_list, true).then(df => {
+        updateTableWithColor(ipdatacsvTbl, df.toCollection(), true);
+        console.log(`df.shape = ${df.dim()}`);
+    });
+});
+
+
+$("#pairwise_ctrl_btn_id").on("click", (d) => {
     // Tick all wt_cols, except the first one
     let checkboxes = document.getElementsByName("stateSelection");
     for (var i = 0, n = checkboxes.length; i < n; i++) {
@@ -174,7 +207,6 @@ $("#s1_ctrl_btn_id").on("click", (d) => {
     }
 
     updateTableWithColor(ipdatacsvTbl, _df.toCollection(), true);
-
 
 
     // mark comparison for s1
@@ -435,7 +467,7 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
         // console.log(d);
 
         // todo: Fix i
-        var x0 = x.invert(d3.mouse(this)[0])  ;
+        var x0 = x.invert(d3.mouse(this)[0]);
         var i = bisect(d.series[d.state], x0, 1);
         var d0 = d.series[d.state][i - 1];
         var d1 = d.series[d.state][i];
@@ -570,12 +602,11 @@ function updateChartNoComparison(d, fromYear, toYear) {
 function updateChartStateComparison(d, fromYear, toYear, pairwise) {
     let comparedState;
     //Todo: need a better way to get the data
-    if (pairwise){
+    if (pairwise) {
         comparedState = get_responding_wt_from_s1(d["0"]["0"].__data__.state)//document.getElementById("stateComparisonListdown").value;
         console.log(`PAIRWISE: compare ${d["0"]["0"].__data__.state} to ${comparedState}`);
-    }
-    else{
-        comparedState  = document.getElementById("stateComparisonListdown").value;
+    } else {
+        comparedState = document.getElementById("stateComparisonListdown").value;
         console.log(`NORMAL MODE: compare ${d["0"]["0"].__data__.state} to ${comparedState}`);
     }
 
@@ -601,7 +632,6 @@ function updateChartStateComparison(d, fromYear, toYear, pairwise) {
         .attr("d", function (d) {
             return valueLine(d.series[d.state]);
         });
-
 
 
     this.select(".x.axis")

@@ -106,6 +106,22 @@ h4 {
 
 }
 
+.pairwise_filter_btn{
+    background-color: #e7e7e7;
+    border: none;
+    color: black  !important;
+    padding: 8px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 10px;
+    margin: 2px 1px;
+    border-radius: 1px;
+    width:120px;
+    cursor: pointer;
+}
+
+
 .btn-group{
     width: 100px;
     float: left;
