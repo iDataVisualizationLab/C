@@ -71,8 +71,8 @@ body {
 #options {
     float: left;
     width: 32%;
-    height: 440px;
-    padding: 10px;
+    height: 390px;
+    padding: 5px;
 }
 
 /* Style the tab */
@@ -118,7 +118,7 @@ body {
     padding: 6px 12px;
     border: 1px solid #ccc;
     border-top: none;
-    height: 320px;
+    height: 280px;
     width: 65%;
     background: white;
 }
@@ -144,7 +144,9 @@ body {
 
 .printNumberOfGenes{
     margin-left: 10px;
-    margin-top: 20px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+
     float: left;
 
 }
@@ -203,7 +205,7 @@ body {
 }
 
 table {
-    margin: 20px 10px 10px 10px;
+    margin: 5px 10px 10px 10px;
     font-family: arial, sans-serif;
     border-collapse: collapse;
     width: 100%;
