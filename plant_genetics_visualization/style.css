@@ -57,12 +57,10 @@ body {
     shape-rendering: crispEdges;
 }
 
-.increase_slider {
-    color: rgb(145, 207, 96);
-}
 
-.decrease_slider {
-    color: rgb(252, 141, 89);
+
+.master_slider::-webkit-slider-thumb {
+    background: mediumvioletred !important;
 }
 
 .slider {
@@ -109,7 +107,7 @@ body {
 #options {
     float: left;
     width: 32%;
-    height: 340px;
+    height: 440px;
     padding: 5px;
 }
 
@@ -161,7 +159,7 @@ h1 {
     padding: 3px 5px;
     border: 1px solid #ccc;
     border-top: none;
-    height: 260px;
+    height: 360px;
     width: 82%;
     background: white;
 }

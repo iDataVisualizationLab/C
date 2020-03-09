@@ -17,13 +17,6 @@ let num_obser;
 let color_arr = ["rgb(231, 231, 231)", "rgb(145, 207, 96)", "rgb(252, 141, 89)"]; // gray, blue, orange
 let _df;
 
-let min_increase_slider = document.getElementById("min_increase_slider");
-let min_increase_value = document.getElementById("min_increase_value");
-min_increase_value.innerHTML = min_increase_slider.value;
-let min_decrease_slider = document.getElementById("min_decrease_slider");
-let min_decrease_value = document.getElementById("min_decrease_value");
-min_decrease_value.innerHTML = min_decrease_slider.value;
-
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
 let w = $("#unemploymentCharts").width() * 0.99 - margin.left - margin.right;
 let h = 200 - margin.bottom - margin.top;
@@ -71,16 +64,6 @@ var bisect = d3.bisector(function (d) {
 }).left;
 
 
-min_increase_slider.oninput = function () {
-    min_increase_value.innerHTML = this.value / 100;
-    wt_filter();
-}
-min_decrease_slider.oninput = function () {
-    min_decrease_value.innerHTML = this.value / 100;
-    wt_filter();
-}
-
-
 function change_color_when_click_btn(_this) {
 
     console.log("in change color,  d3.select(this),", d3.select(_this));
@@ -93,17 +76,17 @@ function change_color_when_click_btn(_this) {
         d3.select(_this).style("background-image", "linear-gradient(to right, rgb(145, 207, 96), rgb(252, 141, 89)");
     } else {
         d3.select(_this).style("background-image", "none");
-        console.log("heeeeheeeeheeeeheeeeheeeeheeeeheeeeheeeeheeeeheeeeheeeeheeeeheeeeheeeeheeee");
-
     }
 
 }
 
 function wt_filter() {
+
+    console.log("running wt_filter....");
     $("#stateComparisonListdown").val("wthp6");
 
     let button_list = d3.selectAll('.wt_filter_btn')[0];
-    filter(button_list, false).then(df => {
+    filter(button_list, false, ".wt_slider").then(df => {
         updateTableWithColor(ipdatacsvTbl, df.toCollection());
         console.log(`df.shape = ${df.dim()}`);
     });
@@ -730,8 +713,8 @@ function updateData(filteredDf) {
     d3.select("#unemploymentCharts").selectAll("svg").data(stateChartData, d => d.state);
 }
 
-async function filter(button_list, pairwise = false) {
-    let filteredDf = filter_data(button_list, pairwise, _df);
+async function filter(button_list, pairwise = false, slider_class) {
+    let filteredDf = filter_data(button_list, pairwise, _df, slider_class);
     updateData(filteredDf);
 
     num_obser = filteredDf.dim()[0];
@@ -739,7 +722,9 @@ async function filter(button_list, pairwise = false) {
     return filteredDf;
 };
 
-function filter_data(button_list, pairwise, df) {
+function filter_data(button_list, pairwise, df, slider_class) {
+    let slider_ctrl_list = d3.selectAll(slider_class)[0];
+
     let filteredDf = df;
     let cur_base_condition;
     if (!pairwise) {
@@ -747,25 +732,20 @@ function filter_data(button_list, pairwise, df) {
         for (let i = 0, n = button_list.length; i < n; i++) {
             let bt = d3.select(button_list[i]);
             let col = bt.text().split(" ")[0];
-
-            if (bt.style("background-color").toString() == color_arr[1]) {
-
-                console.log("increase");
-                console.log("cur_base_condition = ", cur_base_condition);
-                console.log("col = ", col);
-                console.log(" parseInt(min_increase_slider.value)/100 ", parseInt(min_increase_slider.value) / 100);
+            let slider = slider_ctrl_list.find((slider => slider.id.split("_")[0] == col));
 
 
+            if (bt.style("background-color").toString() == color_arr[0]) {
+                console.log("parseInt(slider.value) / 100", parseInt(slider.value) / 100);
                 filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) < (row.get(col) - parseInt(min_increase_slider.value) / 100));
+                    .filter(row => Math.abs(row.get(cur_base_condition) - row.get(col) ) >= parseInt(slider.value) / 100);
+            } else if (bt.style("background-color").toString() == color_arr[1]) {
+                filteredDf = filteredDf
+                    .filter(row => row.get(cur_base_condition) < (row.get(col) - parseInt(slider.value) / 100));
 
             } else if (bt.style("background-color").toString() == color_arr[2]) {
-                console.log("decrease ++");
-                console.log("cur_base_condition = ", cur_base_condition);
-                console.log("col = ", col);
-                console.log(" parseInt(min_decrease_slider.value)/100 ", parseInt(min_decrease_slider.value) / 100);
                 filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) - parseInt(min_decrease_slider.value) / 100 > row.get(col));
+                    .filter(row => row.get(cur_base_condition) - parseInt(slider.value) / 100 > row.get(col));
             }
         }
     } else {
@@ -775,14 +755,16 @@ function filter_data(button_list, pairwise, df) {
             let col = bt.text().split(" ")[0];
             cur_base_condition = get_responding_wt_from_s1(col);
 
-            if (bt.style("background-color").toString() == color_arr[1]) {
+            if (bt.style("background-color").toString() == color_arr[0]) {
                 filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) < (row.get(col) - parseInt(min_increase_slider.value) / 100));
-                console.log("PAIRWISE: cur_base_condition = ", cur_base_condition);
-                console.log("col = ", col);
+                    .filter(row => Math.abs(row.get(cur_base_condition) - row.get(col) ) >= parseInt(slider.value) / 100);
+            } else if (bt.style("background-color").toString() == color_arr[1]) {
+                filteredDf = filteredDf
+                    .filter(row => row.get(cur_base_condition) < (row.get(col) - parseInt(slider.value) / 100));
+
             } else if (bt.style("background-color").toString() == color_arr[2]) {
                 filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) > (row.get(col) + parseInt(min_decrease_slider.value) / 100));
+                    .filter(row => row.get(cur_base_condition) - parseInt(slider.value) / 100 > row.get(col));
             }
         }
     }

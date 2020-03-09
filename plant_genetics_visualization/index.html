@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <div id="WT(s) Comparison" class="tabcontent"  style="display:block">
+    <div id="WT(s) Comparison" class="tabcontent" style="display:block">
         <p>Compare each conditioned <b>wt</b> with <b>wthp6</b></p>
         <div class="btn-group">
             <!--      <button id="bt1" class="button button1" onclick="changeColor()">2px</button>-->
@@ -57,14 +57,41 @@
             <!--        <a class="waves-effect waves-light btn">button</a>-->
         </div>
 
-        <div class="slidecontainer">
-            <input type="range" min="-100" max="100" value="0" class="slider" id="min_increase_slider">
-            <p class= "increase_slider">Min Increase: <span id="min_increase_value" ></span></p>
+        <div id="wt_sliders">
+            <div class="slidecontainer">
+                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtlp6_slider">
+                <p>wtlp6 slider: <span id="wtlp6_slider_value"></span></p>
+            </div>
+
+            <div class="slidecontainer">
+                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wthp5_slider">
+                <p>wthp5 slider: <span id="wthp5_slider_value"></span></p>
+            </div>
+
+            <div class="slidecontainer">
+                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtlp5_slider">
+                <p>wtlp5 slider: <span id="wtlp5_slider_value"></span></p>
+            </div>
+
+            <div class="slidecontainer">
+                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtal_slider">
+                <p>wtal slider: <span id="wtal_slider_value"></span></p>
+            </div>
+
+            <div class="slidecontainer">
+                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtfe_slider">
+                <p>wtfe slider: <span id="wtfe_slider_value"></span></p>
+            </div>
         </div>
-        <div class="slidecontainer">
-            <input type="range" min="0" max="100" value="0" class="slider", id="min_decrease_slider">
-            <p class= "decrease_slider">Min Decrease: <span id="min_decrease_value" ></span></p>
+
+        <div id="wt_master_slider_div">
+            <div class="slidecontainer">
+                <input type="range" min="0" max="100" value="0" class="slider wt_master_slider master_slider" id="wt_master_slider">
+                <p>Main slider: <span id="wt_master_slider_value"></span></p>
+            </div>
+
         </div>
+
 
     </div>
 
@@ -99,8 +126,6 @@
 <div class="scrollable" id="ipdatacsvDiv">
     <table id="ipdatacsvTbl"></table>
 </div>
-
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://gmousse.github.io/dataframe-js/dist/dataframe.min.js"></script>
@@ -108,6 +133,8 @@
 <script src="js/plant_genetics.js"></script>
 <script src="js/my_dataframe.js"></script>
 <script src="js/tab_options.js"></script>
+<script src="js/slider_controller.js"></script>
+
 
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>-->
 </body>
