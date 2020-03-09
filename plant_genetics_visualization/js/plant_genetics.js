@@ -17,6 +17,13 @@ let num_obser;
 let color_arr = ["rgb(231, 231, 231)", "rgb(145, 207, 96)", "rgb(252, 141, 89)"]; // gray, blue, orange
 let _df;
 
+let min_increase_slider = document.getElementById("min_increase_slider");
+let min_increase_value = document.getElementById("min_increase_value");
+min_increase_value.innerHTML = min_increase_slider.value;
+let min_decrease_slider = document.getElementById("min_decrease_slider");
+let min_decrease_value = document.getElementById("min_decrease_value");
+min_decrease_value.innerHTML = min_decrease_slider.value;
+
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
 let w = $("#unemploymentCharts").width() * 0.99 - margin.left - margin.right;
 let h = 200 - margin.bottom - margin.top;
@@ -64,11 +71,26 @@ var bisect = d3.bisector(function (d) {
 }).left;
 
 
-$('.wt_filter_btn').click(function () {
-    let cur_color = $(this).css("background-color").toString();
+min_increase_slider.oninput = function () {
+    min_increase_value.innerHTML = this.value / 100;
+    wt_filter();
+}
+min_decrease_slider.oninput = function () {
+    min_decrease_value.innerHTML = this.value / 100;
+    wt_filter();
+}
+
+
+function change_color_when_click_btn(_this) {
+
+    console.log("in change color,  d3.select(this),",  d3.select(_this));
+    let cur_color = d3.select(_this).style("background-color").toString();
     let cur_index = color_arr.indexOf(cur_color);
     let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
-    $(this).css('background-color', color_arr[nex_index]);
+    $(_this).css('background-color', color_arr[nex_index]);
+}
+
+function wt_filter() {
     $("#stateComparisonListdown").val("wthp6");
 
     let button_list = d3.selectAll('.wt_filter_btn')[0];
@@ -76,12 +98,9 @@ $('.wt_filter_btn').click(function () {
         updateTableWithColor(ipdatacsvTbl, df.toCollection());
         console.log(`df.shape = ${df.dim()}`);
     });
-});
-$('.s1_filter_btn').click(function () {
-    let cur_color = $(this).css("background-color").toString();
-    let cur_index = color_arr.indexOf(cur_color);
-    let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
-    $(this).css('background-color', color_arr[nex_index]);
+}
+
+function s1_filter() {
 
     $("#stateComparisonListdown").val("s1hp6");
 
@@ -89,19 +108,45 @@ $('.s1_filter_btn').click(function () {
     filter(button_list, false).then(df => {
         updateTableWithColor(ipdatacsvTbl, df.toCollection(), false, false);
     });
-});
-$('.pairwise_filter_btn').click(function () {
-    let cur_color = $(this).css("background-color").toString();
-    let cur_index = color_arr.indexOf(cur_color);
-    let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
-    $(this).css('background-color', color_arr[nex_index]);
-    let button_list = d3.selectAll('.pairwise_filter_btn')[0];
 
+}
+
+
+function pairwise_filter() {
+    let button_list = d3.selectAll('.pairwise_filter_btn')[0];
     filter(button_list, true).then(df => {
         updateTableWithColor(ipdatacsvTbl, df.toCollection(), true);
         console.log(`df.shape = ${df.dim()}`);
     });
-});
+
+}
+
+
+function wt_filter_btn_click_func(d) {
+    let _this = this;
+
+    change_color_when_click_btn(_this);
+    wt_filter();
+}
+
+function s1_filter_btn_click_func() {
+    let _this = this;
+
+    change_color_when_click_btn(_this);
+    s1_filter();
+}
+
+function pairwise_filter_btn_click_func() {
+    let _this = this;
+
+    change_color_when_click_btn(_this);
+    pairwise_filter();
+
+}
+
+$('.wt_filter_btn').click(wt_filter_btn_click_func);
+$('.s1_filter_btn').click(s1_filter_btn_click_func);
+$('.pairwise_filter_btn').click(pairwise_filter_btn_click_func);
 comparison_radio.on("click", function () {
     let _this = this;
 
@@ -113,7 +158,6 @@ comparison_radio.on("click", function () {
 });
 
 $("#all").on("click", selectAllCheckboxes);
-
 
 
 $("#option_form").on("change", () => {
@@ -409,14 +453,18 @@ function wt_ctrl_btn() {
     updateTableWithColor(ipdatacsvTbl, _df.toCollection());
 
     // mark comparison
-    sleep(500).then(() => {
-        comparison_radio.prop("checked", true).trigger("click");
-        $("#stateComparisonListdown").attr("disabled", false);
-        $("#stateComparisonListdown").val("wthp6");
-        updateCharts(1, num_obser);
+    // sleep(100).then(() => {
+    //     comparison_radio.prop("checked", true).trigger("click");
+    //     $("#stateComparisonListdown").attr("disabled", false);
+    //     $("#stateComparisonListdown").val("wthp6");
+    //     updateCharts(1, num_obser);
+    // });
 
-
-    });
+    // num_obser = _df.dim()[0];
+    comparison_radio.prop("checked", true).trigger("click");
+    $("#stateComparisonListdown").attr("disabled", false);
+    $("#stateComparisonListdown").val("wthp6");
+    updateCharts(1, num_obser);
 }
 
 function s1_ctrl_btn() {
@@ -442,13 +490,18 @@ function s1_ctrl_btn() {
     updateTableWithColor(ipdatacsvTbl, _df.toCollection(), false, false);
 
     // mark comparison
-    sleep(500).then(() => {
-        // $("#option_form").trigger("change");
-        comparison_radio.prop("checked", true).trigger("click");
-        $("#stateComparisonListdown").attr("disabled", false);
-        $("#stateComparisonListdown").val("s1hp6");
-        updateCharts(1, num_obser);
-    });
+    // sleep(100).then(() => {
+    //     comparison_radio.prop("checked", true).trigger("click");
+    //     $("#stateComparisonListdown").attr("disabled", false);
+    //     $("#stateComparisonListdown").val("s1hp6");
+    //     updateCharts(1, num_obser);
+    // });
+
+
+    comparison_radio.prop("checked", true).trigger("click");
+    $("#stateComparisonListdown").attr("disabled", false);
+    $("#stateComparisonListdown").val("s1hp6");
+    updateCharts(1, num_obser);
 }
 
 function pairwise_ctrl_btn() {
@@ -474,15 +527,17 @@ function pairwise_ctrl_btn() {
     updateTableWithColor(ipdatacsvTbl, _df.toCollection(), true);
 
     // mark comparison for s1
-    sleep(500).then(() => {
-        // $("#option_form").trigger("change");
-        // $("#stateComparisonListdown").attr("disabled", true);
-        console.log("after a half of second");
-        comparison_radio.prop("checked", true);
-        $("#stateComparisonListdown").attr("disabled", true);
+    // sleep(100).then(() => {
+    //     console.log("after a half of second");
+    //     comparison_radio.prop("checked", true);
+    //     $("#stateComparisonListdown").attr("disabled", true);
+    //     updateCharts(1, num_obser, true);
+    // });
 
-        updateCharts(1, num_obser, true);
-    });
+    console.log("after a half of second");
+    comparison_radio.prop("checked", true);
+    $("#stateComparisonListdown").attr("disabled", true);
+    updateCharts(1, num_obser, true);
 }
 
 function custom_ctrl_btn() {
@@ -507,16 +562,21 @@ function custom_ctrl_btn() {
     updateTable(ipdatacsvTbl, _df.toCollection());
 
     // mark comparison
-    sleep(500).then(() => {
-        // enable checkbox options:
-        $("#stateComparisonListdown").attr("disabled", false);
+    // sleep(100).then(() => {
+    //     // enable checkbox options:
+    //     $("#stateComparisonListdown").attr("disabled", false);
+    //     // return normal mode, no comparing
+    //     document.getElementById('noComparison').checked = true;
+    //     $("#stateComparisonListdown").val("wthp6");
+    //     updateCharts(1, num_obser);
+    // });
 
-        // return normal mode, no comparing
-        document.getElementById('noComparison').checked = true;
 
-        $("#stateComparisonListdown").val("wthp6");
-        updateCharts(1, num_obser);
-    });
+    $("#stateComparisonListdown").attr("disabled", false);
+    // return normal mode, no comparing
+    document.getElementById('noComparison').checked = true;
+    $("#stateComparisonListdown").val("wthp6");
+    updateCharts(1, num_obser);
 
 
 }
@@ -533,7 +593,7 @@ function changeChartDisplay(d) {
     if (!active) {
         // console.log("changeChartDisplay: inactive -> active");
         stateCheckBox.property("checked", true);
-        stateChart.transition().duration(250)
+        stateChart
             .attr("height", svgHeight)
             .attr("opacity", 1);
 
@@ -541,7 +601,7 @@ function changeChartDisplay(d) {
         // console.log("changeChartDisplay:  active -> inactive");
 
         stateCheckBox.property("checked", false);
-        stateChart.transition().duration(250)
+        stateChart
             .attr("height", 0)
             .attr("opacity", 0);
     }
@@ -577,12 +637,14 @@ function updateChartStateComparison(d, fromYear, toYear, pairwise) {
     //Todo: need a better way to get the data
     if (pairwise) {
         comparedState = get_responding_wt_from_s1(d["0"]["0"].__data__.state)//document.getElementById("stateComparisonListdown").value;
-        console.log(`PAIRWISE: compare ${d["0"]["0"].__data__.state} to ${comparedState}`);
+        // console.log(`PAIRWISE: compare ${d["0"]["0"].__data__.state} to ${comparedState}`);
     } else {
         comparedState = document.getElementById("stateComparisonListdown").value;
-        console.log(`NORMAL MODE: compare ${d["0"]["0"].__data__.state} to ${comparedState}`);
+        // console.log(`NORMAL MODE: compare ${d["0"]["0"].__data__.state} to ${comparedState}`);
     }
 
+    // console.log("updateChartStateComparison, this",  this);
+    // console.log("updateChartStateComparison, d",  d);
     // Update areas.
     this.select(".area.below")
         .attr("fill", "rgb(145,207,96)")
@@ -622,7 +684,7 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
     var activeCharts = d3.select("#unemploymentCharts").selectAll(".chartActive");
     var allCharts = d3.select("#unemploymentCharts").selectAll("svg");
 
-    console.log("activeCharts", activeCharts);
+    // console.log("activeCharts", activeCharts);
     var inactiveCharts = allCharts.filter(function (obj) {
         return !activeCharts[0].some(function (obj2) {
             return removeWhitespace(obj.state) == obj2.id;
@@ -638,18 +700,16 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
             // If the chart is active, transition.  Otherwise, don't.
             if (array[i].id == array[array.length - 1].id) {
                 d3.select(d)
-                    .transition().duration(250)
                     .call(updateChartNoComparison, fromYear, toYear)
-                    .each("end", function (a) {
+                    .on("end", function (a) {
                         inactiveCharts[0].forEach(function (d) {
-                            d = d3.select(d);
-                            d.call(updateChartNoComparison, fromYear, toYear);
+                            d3.select(d).call(updateChartNoComparison, fromYear, toYear);
                         });
                     });
 
             } else {
                 d3.select(d)
-                    .transition().duration(250)
+                    
                     .call(updateChartNoComparison, fromYear, toYear);
             }
         });
@@ -659,9 +719,8 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
             // If the chart is active, transition.  Otherwise, don't.
             if (array[i].id == array[array.length - 1].id) {
                 d3.select(d)
-                    .transition().duration(250)
                     .call(updateChartStateComparison, fromYear, toYear, pairwise)
-                    .each("end", function (a) {
+                    .on("end", function (a) {
                         inactiveCharts[0].forEach(function (d) {
                             d = d3.select(d);
                             d.call(updateChartStateComparison, fromYear, toYear, pairwise);
@@ -670,7 +729,7 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
 
             } else {
                 d3.select(d)
-                    .transition().duration(250)
+                    
                     .call(updateChartStateComparison, fromYear, toYear, pairwise);
             }
         });
@@ -719,13 +778,23 @@ function filter_data(button_list, pairwise, df) {
             let col = bt.text().split(" ")[0];
 
             if (bt.style("background-color").toString() == color_arr[1]) {
-                filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) < row.get(col));
+
+                console.log("increase");
                 console.log("cur_base_condition = ", cur_base_condition);
                 console.log("col = ", col);
-            } else if (bt.style("background-color").toString() == color_arr[2]) {
+                console.log(" parseInt(min_increase_slider.value)/100 ",  parseInt(min_increase_slider.value)/100 );
+
+
                 filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) > row.get(col));
+                    .filter(row => row.get(cur_base_condition) < (row.get(col) - parseInt(min_increase_slider.value)/100));
+
+            } else if (bt.style("background-color").toString() == color_arr[2]) {
+                console.log("decrease ++");
+                console.log("cur_base_condition = ", cur_base_condition);
+                console.log("col = ", col);
+                console.log(" parseInt(min_decrease_slider.value)/100 ",  parseInt(min_decrease_slider.value)/100 );
+                filteredDf = filteredDf
+                    .filter(row => row.get(cur_base_condition) -parseInt(min_decrease_slider.value)/100 > row.get(col)  );
             }
         }
     } else {
@@ -737,23 +806,17 @@ function filter_data(button_list, pairwise, df) {
 
             if (bt.style("background-color").toString() == color_arr[1]) {
                 filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) < row.get(col));
+                    .filter(row => row.get(cur_base_condition) < (row.get(col) - parseInt(min_increase_slider.value)/100));
                 console.log("PAIRWISE: cur_base_condition = ", cur_base_condition);
                 console.log("col = ", col);
             } else if (bt.style("background-color").toString() == color_arr[2]) {
                 filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) > row.get(col));
+                    .filter(row => row.get(cur_base_condition) > (row.get(col) + parseInt(min_decrease_slider.value)/100 ) );
             }
         }
     }
     return filteredDf;
 }
-
-
-
-
-
-
 
 
 
