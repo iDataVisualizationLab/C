@@ -14,34 +14,15 @@ function openTab(evt, scenarioName) {
     document.getElementById(scenarioName).style.display = "block";
 
     if (scenarioName == "WT(s) Comparison") {
-        // btns1 = d3.selectAll('.pairwise_filter_btn')[0];
-        // btns2 = d3.selectAll('.s1_filter_btn')[0];
-        //
-        // btns_list.push(btns1);
-        // btns_list.push(btns2);
         wt_ctrl_btn();
 
     } else if (scenarioName == "S1(s) Comparison") {
-        // btns1 = d3.selectAll('.pairwise_filter_btn')[0];
-        // btns2 = d3.selectAll('.w1_filter_btn')[0];
-        //
-        // btns_list.push(btns1);
-        // btns_list.push(btns2);
+
         s1_ctrl_btn();
     } else if (scenarioName == 'Pairwise Comparison') {
-        // btns1 = d3.selectAll('.wt_filter_btn')[0];
-        // btns2 = d3.selectAll('.s1_filter_btn')[0];
-        // btns_list.push(btns1);
-        // btns_list.push(btns2);
         pairwise_ctrl_btn();
 
     } else if (scenarioName == 'Custom Mode') {
-        // btns1 = d3.selectAll('.wt_filter_btn')[0];
-        // btns2 = d3.selectAll('.s1_filter_btn')[0];
-        // btns3= d3.selectAll('.paiwise_filter_btn')[0];
-        // btns_list.push(btns1);
-        // btns_list.push(btns2);
-        // btns_list.push(btns3);
         custom_ctrl_btn();
     }
 

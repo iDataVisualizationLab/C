@@ -83,7 +83,7 @@ min_decrease_slider.oninput = function () {
 
 function change_color_when_click_btn(_this) {
 
-    console.log("in change color,  d3.select(this),",  d3.select(_this));
+    console.log("in change color,  d3.select(this),", d3.select(_this));
     let cur_color = d3.select(_this).style("background-color").toString();
     let cur_index = color_arr.indexOf(cur_color);
     let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
@@ -161,8 +161,12 @@ $("#all").on("click", selectAllCheckboxes);
 
 
 $("#option_form").on("change", () => {
+    console.log("trigger option_form");
+
     updateCharts(1, num_obser);
 });
+
+
 DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
     _df = data;
     num_obser = _df.dim()[0];
@@ -418,9 +422,6 @@ DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
     }
 
     wt_ctrl_btn();
-    // updateCharts();
-    // updateTable(ipdatacsvTbl, _df.toCollection());
-
 });
 
 d3.select("#stateComparisonListdown").on("change", () => {
@@ -453,14 +454,6 @@ function wt_ctrl_btn() {
     updateTableWithColor(ipdatacsvTbl, _df.toCollection());
 
     // mark comparison
-    // sleep(100).then(() => {
-    //     comparison_radio.prop("checked", true).trigger("click");
-    //     $("#stateComparisonListdown").attr("disabled", false);
-    //     $("#stateComparisonListdown").val("wthp6");
-    //     updateCharts(1, num_obser);
-    // });
-
-    // num_obser = _df.dim()[0];
     comparison_radio.prop("checked", true).trigger("click");
     $("#stateComparisonListdown").attr("disabled", false);
     $("#stateComparisonListdown").val("wthp6");
@@ -490,14 +483,6 @@ function s1_ctrl_btn() {
     updateTableWithColor(ipdatacsvTbl, _df.toCollection(), false, false);
 
     // mark comparison
-    // sleep(100).then(() => {
-    //     comparison_radio.prop("checked", true).trigger("click");
-    //     $("#stateComparisonListdown").attr("disabled", false);
-    //     $("#stateComparisonListdown").val("s1hp6");
-    //     updateCharts(1, num_obser);
-    // });
-
-
     comparison_radio.prop("checked", true).trigger("click");
     $("#stateComparisonListdown").attr("disabled", false);
     $("#stateComparisonListdown").val("s1hp6");
@@ -527,20 +512,13 @@ function pairwise_ctrl_btn() {
     updateTableWithColor(ipdatacsvTbl, _df.toCollection(), true);
 
     // mark comparison for s1
-    // sleep(100).then(() => {
-    //     console.log("after a half of second");
-    //     comparison_radio.prop("checked", true);
-    //     $("#stateComparisonListdown").attr("disabled", true);
-    //     updateCharts(1, num_obser, true);
-    // });
-
-    console.log("after a half of second");
     comparison_radio.prop("checked", true);
     $("#stateComparisonListdown").attr("disabled", true);
     updateCharts(1, num_obser, true);
 }
 
 function custom_ctrl_btn() {
+
 
     // untick all, except the first one\
     let checkboxes = document.getElementsByName("stateSelection");
@@ -559,26 +537,13 @@ function custom_ctrl_btn() {
         }
     }
 
+    updateData(_df);
     updateTable(ipdatacsvTbl, _df.toCollection());
 
-    // mark comparison
-    // sleep(100).then(() => {
-    //     // enable checkbox options:
-    //     $("#stateComparisonListdown").attr("disabled", false);
-    //     // return normal mode, no comparing
-    //     document.getElementById('noComparison').checked = true;
-    //     $("#stateComparisonListdown").val("wthp6");
-    //     updateCharts(1, num_obser);
-    // });
-
-
     $("#stateComparisonListdown").attr("disabled", false);
-    // return normal mode, no comparing
-    document.getElementById('noComparison').checked = true;
     $("#stateComparisonListdown").val("wthp6");
-    updateCharts(1, num_obser);
-
-
+    $('#noComparison').prop('checked', true)
+    comparison_radio.trigger("change");
 }
 
 function changeChartDisplay(d) {
@@ -642,9 +607,6 @@ function updateChartStateComparison(d, fromYear, toYear, pairwise) {
         comparedState = document.getElementById("stateComparisonListdown").value;
         // console.log(`NORMAL MODE: compare ${d["0"]["0"].__data__.state} to ${comparedState}`);
     }
-
-    // console.log("updateChartStateComparison, this",  this);
-    // console.log("updateChartStateComparison, d",  d);
     // Update areas.
     this.select(".area.below")
         .attr("fill", "rgb(145,207,96)")
@@ -691,8 +653,8 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
         });
     });
 
-    // console.log("document.getElementById(\"noComparison\").checked", document.getElementById("noComparison").checked);
-    // console.log("document.getElementById(\"stateComparison\").checked", document.getElementById("stateComparison").checked);
+    console.log("document.getElementById(\"noComparison\").checked", document.getElementById("noComparison").checked);
+    console.log("document.getElementById(\"stateComparison\").checked", document.getElementById("stateComparison").checked);
 
     if (document.getElementById("noComparison").checked) {
         // No comparison selected.
@@ -701,7 +663,8 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
             if (array[i].id == array[array.length - 1].id) {
                 d3.select(d)
                     .call(updateChartNoComparison, fromYear, toYear)
-                    .on("end", function (a) {
+                    .transition().duration(1)
+                    .each("end", function (a) {
                         inactiveCharts[0].forEach(function (d) {
                             d3.select(d).call(updateChartNoComparison, fromYear, toYear);
                         });
@@ -709,7 +672,6 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
 
             } else {
                 d3.select(d)
-                    
                     .call(updateChartNoComparison, fromYear, toYear);
             }
         });
@@ -720,7 +682,8 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
             if (array[i].id == array[array.length - 1].id) {
                 d3.select(d)
                     .call(updateChartStateComparison, fromYear, toYear, pairwise)
-                    .on("end", function (a) {
+                    .transition().duration(1)
+                    .each("end", function (a) {
                         inactiveCharts[0].forEach(function (d) {
                             d = d3.select(d);
                             d.call(updateChartStateComparison, fromYear, toYear, pairwise);
@@ -729,7 +692,6 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
 
             } else {
                 d3.select(d)
-                    
                     .call(updateChartStateComparison, fromYear, toYear, pairwise);
             }
         });
@@ -782,19 +744,19 @@ function filter_data(button_list, pairwise, df) {
                 console.log("increase");
                 console.log("cur_base_condition = ", cur_base_condition);
                 console.log("col = ", col);
-                console.log(" parseInt(min_increase_slider.value)/100 ",  parseInt(min_increase_slider.value)/100 );
+                console.log(" parseInt(min_increase_slider.value)/100 ", parseInt(min_increase_slider.value) / 100);
 
 
                 filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) < (row.get(col) - parseInt(min_increase_slider.value)/100));
+                    .filter(row => row.get(cur_base_condition) < (row.get(col) - parseInt(min_increase_slider.value) / 100));
 
             } else if (bt.style("background-color").toString() == color_arr[2]) {
                 console.log("decrease ++");
                 console.log("cur_base_condition = ", cur_base_condition);
                 console.log("col = ", col);
-                console.log(" parseInt(min_decrease_slider.value)/100 ",  parseInt(min_decrease_slider.value)/100 );
+                console.log(" parseInt(min_decrease_slider.value)/100 ", parseInt(min_decrease_slider.value) / 100);
                 filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) -parseInt(min_decrease_slider.value)/100 > row.get(col)  );
+                    .filter(row => row.get(cur_base_condition) - parseInt(min_decrease_slider.value) / 100 > row.get(col));
             }
         }
     } else {
@@ -806,12 +768,12 @@ function filter_data(button_list, pairwise, df) {
 
             if (bt.style("background-color").toString() == color_arr[1]) {
                 filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) < (row.get(col) - parseInt(min_increase_slider.value)/100));
+                    .filter(row => row.get(cur_base_condition) < (row.get(col) - parseInt(min_increase_slider.value) / 100));
                 console.log("PAIRWISE: cur_base_condition = ", cur_base_condition);
                 console.log("col = ", col);
             } else if (bt.style("background-color").toString() == color_arr[2]) {
                 filteredDf = filteredDf
-                    .filter(row => row.get(cur_base_condition) > (row.get(col) + parseInt(min_decrease_slider.value)/100 ) );
+                    .filter(row => row.get(cur_base_condition) > (row.get(col) + parseInt(min_decrease_slider.value) / 100));
             }
         }
     }
