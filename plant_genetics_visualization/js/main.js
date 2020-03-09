@@ -14,7 +14,7 @@ let curRowTb = document.getElementById('curRowTable');
 let comparison_radio = $(document.getElementsByName("comparison"));
 let svgCharts;
 let num_obser;
-let color_arr = ["rgb(231, 231, 231)", "rgb(145, 207, 96)", "rgb(252, 141, 89)"]; // gray, blue, orange
+let color_arr = [MY_COLORS.gray, MY_COLORS.green, MY_COLORS.orange];
 let _df;
 
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
@@ -601,7 +601,7 @@ function updateChartStateComparison(d, fromYear, toYear, pairwise) {
     }
     // Update areas.
     this.select(".area.below")
-        .attr("fill", "rgb(145,207,96)")
+        .attr("fill", MY_COLORS.green)
         .attr("d", function (d) {
             var y0 = function (a, i) {
                 return y(d3.min([d.series[comparedState][i].unemployment, d.series[d.state][i].unemployment]));

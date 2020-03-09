@@ -1,3 +1,9 @@
+const MY_COLORS  = {
+    "green": "rgb(145, 207, 96)",
+    "orange": "rgb(252, 141, 89)",
+    "gray": "rgb(231, 231, 231)"
+}
+
 function sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }

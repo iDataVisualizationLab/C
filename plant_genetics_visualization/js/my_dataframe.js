@@ -1,7 +1,7 @@
 const cell_colors = {
-    "greater": "rgb(145, 207, 96)",
-    "less": "rgb(145, 207, 96)",
-    "no_color": "rgb(231, 231, 231)",
+    "greater": MY_COLORS.green,
+    "less": MY_COLORS.orange,
+    "no_color": MY_COLORS.gray
 }
 
 
