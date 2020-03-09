@@ -88,6 +88,15 @@ function change_color_when_click_btn(_this) {
     let cur_index = color_arr.indexOf(cur_color);
     let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
     $(_this).css('background-color', color_arr[nex_index]);
+
+    if (nex_index == 0) {
+        d3.select(_this).style("background-image", "linear-gradient(to right, rgb(145, 207, 96), rgb(252, 141, 89)");
+    } else {
+        d3.select(_this).style("background-image", "none");
+        console.log("heeeeheeeeheeeeheeeeheeeeheeeeheeeeheeeeheeeeheeeeheeeeheeeeheeeeheeeeheeee");
+
+    }
+
 }
 
 function wt_filter() {

@@ -17,7 +17,7 @@
     <div class="tab">
         <button class="tablinks active" onclick="openTab(event, 'WT(s) Comparison')">WT(s) Comparison</button>
         <button class="tablinks" onclick="openTab(event, 'S1(s) Comparison')">S1(s) Comparison</button>
-        <button class="tablinks" onclick="openTab(event, 'Pairwise Comparison')">Pairwise Comparison</button>
+        <button class="tablinks" onclick="openTab(event, 'Pairwise Comparison')">S1(s) vs. WT(s)</button>
         <button class="tablinks" onclick="openTab(event, 'Custom Mode')">Custom Mode</button>
 
     </div>
@@ -49,16 +49,16 @@
         <div class="btn-group">
             <!--      <button id="bt1" class="button button1" onclick="changeColor()">2px</button>-->
             <!--        <button id="bt1" class="waves-effect waves-light btn wt_filter_btn">Button 1</button>-->
-            <button id="bt1" class="wt_filter_btn">wtlp6</button>
-            <button id="bt2" class="wt_filter_btn">wthp5</button>
-            <button id="bt3" class="wt_filter_btn">wtlp5</button>
-            <button id="bt4" class="wt_filter_btn">wtal</button>
-            <button id="bt5" class="wt_filter_btn">wtfe</button>
+            <button id="bt1" class="wt_filter_btn filter_btn">wtlp6</button>
+            <button id="bt2" class="wt_filter_btn filter_btn">wthp5</button>
+            <button id="bt3" class="wt_filter_btn filter_btn">wtlp5</button>
+            <button id="bt4" class="wt_filter_btn filter_btn">wtal</button>
+            <button id="bt5" class="wt_filter_btn filter_btn">wtfe</button>
             <!--        <a class="waves-effect waves-light btn">button</a>-->
         </div>
 
         <div class="slidecontainer">
-            <input type="range" min="0" max="100" value="0" class="slider" id="min_increase_slider">
+            <input type="range" min="-100" max="100" value="0" class="slider" id="min_increase_slider">
             <p class= "increase_slider">Min Increase: <span id="min_increase_value" ></span></p>
         </div>
         <div class="slidecontainer">
@@ -71,11 +71,11 @@
     <div id="S1(s) Comparison" class="tabcontent">
         <p>Compare each conditioned <b>s1</b> with <b>s1hp6</b></p>
         <div class="btn-group">
-            <button id="s1_bt1" class="s1_filter_btn">s1lp6</button>
-            <buttonf id="s1_bt2" class="s1_filter_btn">s1hp5</buttonf>
-            <button id="s1_bt3" class="s1_filter_btn">s1lp5</button>
-            <button id="s1_bt4" class="s1_filter_btn">s1al</button>
-            <button id="s1_bt5" class="s1_filter_btn">s1fe</button>
+            <button id="s1_bt1" class="s1_filter_btn filter_btn">s1lp6</button>
+            <buttonf id="s1_bt2" class="s1_filter_btn filter_btn">s1hp5</buttonf>
+            <button id="s1_bt3" class="s1_filter_btn filter_btn">s1lp5</button>
+            <button id="s1_bt4" class="s1_filter_btn filter_btn">s1al</button>
+            <button id="s1_bt5" class="s1_filter_btn filter_btn">s1fe</button>
         </div>
     </div>
 
@@ -83,12 +83,12 @@
     <div id="Pairwise Comparison" class="tabcontent">
         <p>Compare each conditioned <b>s1</b> with its responding <b>wt</b> (e.g., <i>s1hp6 vs. wthp6</i>)</p>
         <div class="btn-group">
-            <button id="bt-pairwise-1" class="pairwise_filter_btn">s1hp6 vs. wthp6</button>
-            <button id="bt-pairwise-2" class="pairwise_filter_btn">s1lp6 vs. wtlp6</button>
-            <button id="bt-pairwise-3" class="pairwise_filter_btn">s1hp5 vs. wthp5</button>
-            <button id="bt-pairwise-4" class="pairwise_filter_btn">s1lp5 vs. wtlp5</button>
-            <button id="bt-pairwise-5" class="pairwise_filter_btn">s1al vs. wtal</button>
-            <button id="bt-pairwise-6" class="pairwise_filter_btn">s1fe vs. wtfe</button>
+            <button id="bt-pairwise-1" class="pairwise_filter_btn filter_btn">s1hp6 vs. wthp6</button>
+            <button id="bt-pairwise-2" class="pairwise_filter_btn filter_btn">s1lp6 vs. wtlp6</button>
+            <button id="bt-pairwise-3" class="pairwise_filter_btn filter_btn">s1hp5 vs. wthp5</button>
+            <button id="bt-pairwise-4" class="pairwise_filter_btn filter_btn">s1lp5 vs. wtlp5</button>
+            <button id="bt-pairwise-5" class="pairwise_filter_btn filter_btn">s1al vs. wtal</button>
+            <button id="bt-pairwise-6" class="pairwise_filter_btn filter_btn">s1fe vs. wtfe</button>
         </div>
     </div>
 </div>

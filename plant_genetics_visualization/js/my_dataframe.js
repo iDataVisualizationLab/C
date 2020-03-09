@@ -1,6 +1,6 @@
 const cell_colors = {
     "greater": "rgb(145, 207, 96)",
-    "less": "rgb(252, 141, 89)",
+    "less": "rgb(145, 207, 96)",
     "no_color": "rgb(231, 231, 231)",
 }
 
