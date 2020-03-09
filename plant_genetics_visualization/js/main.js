@@ -151,13 +151,11 @@ comparison_radio.on("click", function () {
 
 $("#all").on("click", selectAllCheckboxes);
 
-
 $("#option_form").on("change", () => {
     console.log("trigger option_form");
 
     updateCharts(1, num_obser);
 });
-
 
 DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
     _df = data;
@@ -420,7 +418,6 @@ d3.select("#stateComparisonListdown").on("change", () => {
     updateCharts(1, num_obser);
 
 });
-
 
 function wt_ctrl_btn() {
 

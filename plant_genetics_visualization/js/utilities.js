@@ -4,9 +4,9 @@ const MY_COLORS  = {
     "gray": "rgb(231, 231, 231)"
 }
 
-function sleep(time) {
-    return new Promise((resolve) => setTimeout(resolve, time));
-}
+// function sleep(time) {
+//     return new Promise((resolve) => setTimeout(resolve, time));
+// }
 
 function removeWhitespace(str) {
     return str.replace(/\s+/g, '');

@@ -4,7 +4,6 @@ const cell_colors = {
     "no_color": MY_COLORS.gray
 }
 
-
 function updateTable(tbl, rows) {
     document.getElementById("printNumGenes").innerHTML = "Number of genes:" + rows.length;
     tbl.innerHTML = '';

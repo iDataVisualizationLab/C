@@ -107,7 +107,7 @@ body {
 #options {
     float: left;
     width: 32%;
-    height: 440px;
+    height: 470px;
     padding: 5px;
 }
 
@@ -159,7 +159,7 @@ h1 {
     padding: 3px 5px;
     border: 1px solid #ccc;
     border-top: none;
-    height: 360px;
+    height: 390px;
     width: 82%;
     background: white;
 }
@@ -186,66 +186,32 @@ h1 {
     margin-left: 10px;
     margin-top: 0px;
     margin-bottom: 0px;
+    margin-right: 300px;
+
     float: left;
 
 }
 
-.wt_filter_btn {
+.filter_btn {
+    background-color: #e7e7e7;
     border: none;
     color: black !important;
-    padding: 8px 20px;
+    padding: 2px 20px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 10px;
+    font-size: 11px;
     margin: 2px 1px;
     border-radius: 1px;
-    width: 60px;
+    width: 140px;
+    height: 30px;
     cursor: pointer;
-    background-color: #e7e7e7; /* For browsers that do not support gradients */
     background-image: linear-gradient(to right, rgb(145, 207, 96), rgb(252, 141, 89)); /* Standard syntax (must be last) */
-
-
 }
 
 .filter_btn:hover{
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     margin: 1px 1px 1px 1px;
-}
-
-
-
-.s1_filter_btn {
-    border: none;
-    color: black !important;
-    padding: 8px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 10px;
-    margin: 2px 1px;
-    border-radius: 1px;
-    width: 60px;
-    cursor: pointer;
-    background-color: #e7e7e7; /* For browsers that do not support gradients */
-    background-image: linear-gradient(to right, rgb(145, 207, 96), rgb(252, 141, 89)); /* Standard syntax (must be last) */
-}
-
-.pairwise_filter_btn {
-    background-color: #e7e7e7;
-    border: none;
-    color: black !important;
-    padding: 8px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 10px;
-    margin: 2px 1px;
-    border-radius: 1px;
-    width: 120px;
-    cursor: pointer;
-    background-image: linear-gradient(to right, rgb(145, 207, 96), rgb(252, 141, 89)); /* Standard syntax (must be last) */
-
 }
 
 
@@ -288,7 +254,7 @@ tr:nth-child(even) {
 }
 
 .scrollable {
-    width: 30%;
+    width: 25%;
     height: 265px;
     /*overflow: auto;*/
     overflow-y: auto;
