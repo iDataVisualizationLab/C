@@ -25,7 +25,13 @@ function updateTable(tbl, rows) {
                 let cell = row.insertCell();
                 let text = rowDt[hd];
 
-                cell.innerHTML = text;
+                if (hd != "atID"){
+                    cell.innerHTML = parseFloat(text).toFixed(2);
+
+                }
+                else{
+                    cell.innerHTML = text;
+                }
             });
         });
     }
@@ -83,16 +89,14 @@ function updateTableWithColor(tbl, rows, pairwise = false, is_wt=true) {
                         }
                     }
                 }
+                if (hd != "atID"){
+                    cell.innerHTML = parseFloat(text).toFixed(2);
 
-                // if (hd === COL_DEVICE_ACTION) {
-                //     cell.style.color = deviceActionColors[text];
-                // } else if (hd === COL_SOURCE_ADDRESS || hd === COL_DESTINATION_ADDRESS) {
-                //     cell.style.color = nodeColor({id: text});
-                // } else if (hd === COL_END_TIME) {
-                //     text = d3.timeFormat("%b %d %Y %H:%M:%S")(text);
-                // }
+                }
+                else{
+                    cell.innerHTML = text;
+                }
 
-                cell.innerHTML = text;
             });
         });
     }

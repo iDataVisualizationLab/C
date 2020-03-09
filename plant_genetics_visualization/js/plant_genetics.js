@@ -167,7 +167,7 @@ $("#option_form").on("change", () => {
 });
 
 
-DataFrame.fromCSV("data_SAMPLE_round.csv").then(data => {
+DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
     _df = data;
     num_obser = _df.dim()[0];
     let my_all_data = {};
