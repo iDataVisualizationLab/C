@@ -24,18 +24,59 @@ function calc_stat_for_1_normal_mode(df, cols, base_col, compare_conditions) {
 }
 
 function calc_all_stats_normal_mode(df, cols, base_col){
-    let compare_conditions_list = permutator(cols.length);
+    let compare_conditions_list =   permutator(cols.length);
     let results=[];
     for (let i = 0, n = compare_conditions_list.length; i < n; i++) {
         let compare_conditions = compare_conditions_list[i]
         results.push(calc_stat_for_1_normal_mode(df, cols, base_col, compare_conditions) );
 
     }
-    console.log(results);
-    return results;
+    let stats_results = zip([compare_conditions_list, results]).map((x) => x.flat());
+    console.log(stats_results);
+
+    return stats_results;
 
 }
 
+function show_stats_table(tbl, rows) {
+    tbl.innerHTML = '';
+    if (rows && rows.length > 0) {
+        let headers = Object.keys(rows[0]);
+
+        let header = tbl.createTHead();
+        let body = tbl.createTBody();
+        let hRow = header.insertRow();
+        headers.forEach(hd => {
+            let hCell = hRow.insertCell();
+            hCell.innerText = hd;
+        });
+
+        rows.forEach(rowDt => {
+            let row = body.insertRow();
+            headers.forEach(hd => {
+                let cell = row.insertCell();
+                let text = rowDt[hd];
+                    cell.innerHTML = parseFloat(text).toFixed(2);
+                    cell.innerHTML = text;
+            });
+        });
+    }
+}
+
+function f() {
+    let stats_results = calc_all_stats_normal_mode(_df, wt_cols.slice(1), wt_cols[0]);
+    const df = new DataFrame(stats_results, [...wt_cols.slice(1), "#genes"]);
+    df.show();
+
+    show_stats_table(statsTable,  df.toCollection());
+
+    $(document).ready( function () {
+        $(statsTable).DataTable();
+    } );
+
+}
+
+// function show_stats_table(tbl, df.toCollection()) {
 // test
 // calc_stat_for_1_normal_mode(_df, wt_cols.slice(1), wt_cols[0], [1,1,1,1,1])
 

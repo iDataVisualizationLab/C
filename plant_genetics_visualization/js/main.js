@@ -9,8 +9,8 @@ const names = {
     "gene": "state"
 };
 
-let ipdatacsvTbl = document.getElementById('ipdatacsvTbl');
-let curRowTb = document.getElementById('curRowTable');
+let dataTable = document.getElementById('ipdatacsvTbl');
+let statsTable = document.getElementById('statsTable');
 let comparison_radio = $(document.getElementsByName("comparison"));
 let svgCharts;
 let num_obser;
@@ -87,7 +87,7 @@ function wt_filter() {
 
     let button_list = d3.selectAll('.wt_filter_btn')[0];
     filter(button_list, false, ".wt_slider").then(df => {
-        updateTableWithColor(ipdatacsvTbl, df.toCollection());
+        updateTableWithColor(dataTable, df.toCollection());
         console.log(`df.shape = ${df.dim()}`);
     });
 }
@@ -98,7 +98,7 @@ function s1_filter() {
 
     let button_list = d3.selectAll('.s1_filter_btn')[0];
     filter(button_list, false).then(df => {
-        updateTableWithColor(ipdatacsvTbl, df.toCollection(), false, false);
+        updateTableWithColor(dataTable, df.toCollection(), false, false);
     });
 
 }
@@ -107,7 +107,7 @@ function s1_filter() {
 function pairwise_filter() {
     let button_list = d3.selectAll('.pairwise_filter_btn')[0];
     filter(button_list, true).then(df => {
-        updateTableWithColor(ipdatacsvTbl, df.toCollection(), true);
+        updateTableWithColor(dataTable, df.toCollection(), true);
         console.log(`df.shape = ${df.dim()}`);
     });
 
@@ -440,7 +440,7 @@ function wt_ctrl_btn() {
         }
 
     }
-    updateTableWithColor(ipdatacsvTbl, _df.toCollection());
+    updateTableWithColor(dataTable, _df.toCollection());
 
     // mark comparison
     comparison_radio.prop("checked", true).trigger("click");
@@ -469,7 +469,7 @@ function s1_ctrl_btn() {
 
     }
 
-    updateTableWithColor(ipdatacsvTbl, _df.toCollection(), false, false);
+    updateTableWithColor(dataTable, _df.toCollection(), false, false);
 
     // mark comparison
     comparison_radio.prop("checked", true).trigger("click");
@@ -498,7 +498,7 @@ function pairwise_ctrl_btn() {
         }
     }
 
-    updateTableWithColor(ipdatacsvTbl, _df.toCollection(), true);
+    updateTableWithColor(dataTable, _df.toCollection(), true);
 
     // mark comparison for s1
     comparison_radio.prop("checked", true);
@@ -527,7 +527,7 @@ function custom_ctrl_btn() {
     }
 
     updateData(_df);
-    updateTable(ipdatacsvTbl, _df.toCollection());
+    updateTable(dataTable, _df.toCollection());
 
     $("#stateComparisonListdown").attr("disabled", false);
     $("#stateComparisonListdown").val("wthp6");

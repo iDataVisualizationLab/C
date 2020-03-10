@@ -30,7 +30,7 @@ wt_master_slider.oninput = function () {
     })
 
     wt_filter();
-    calc_all_stats_normal_mode(_df, wt_cols.slice(1), wt_cols[0]);
+    f();
 }
 
 
