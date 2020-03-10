@@ -253,13 +253,20 @@ tr:nth-child(even) {
     background-color: #ececec;
 }
 
-.scrollable {
+
+.dataTable{
     width: 25%;
     height: 265px;
-    /*overflow: auto;*/
     overflow-y: auto;
-    /*float: bottom;*/
+
 }
 
 
+.statsTableClass {
+    width: 300px;
+    height: 200px;
+    overflow-y: auto;
 
+    /*overflow: auto;*/
+    /*float: bottom;*/
+}

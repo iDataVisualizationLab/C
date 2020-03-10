@@ -14,21 +14,21 @@ function calc_stat_for_1_normal_mode(df, cols, base_col, compare_conditions) {
 
         if (condition == true) {  //greater
             df = df
-                .filter(row => row.get(base_col) < (row.get(col) - parseInt(wt_master_slider.value)/100 ));
+                .filter(row => row.get(base_col) < (row.get(col) - parseInt(wt_master_slider.value) / 100));
         } else {  // condition == false, less
             df = df
-                .filter(row => row.get(base_col) - parseInt(wt_master_slider.value)/100 > row.get(col));
+                .filter(row => row.get(base_col) - parseInt(wt_master_slider.value) / 100 > row.get(col));
         }
     }
     return df.dim()[0];
 }
 
-function calc_all_stats_normal_mode(df, cols, base_col){
-    let compare_conditions_list =   permutator(cols.length);
-    let results=[];
+function calc_all_stats_normal_mode(df, cols, base_col) {
+    let compare_conditions_list = permutator(cols.length);
+    let results = [];
     for (let i = 0, n = compare_conditions_list.length; i < n; i++) {
         let compare_conditions = compare_conditions_list[i]
-        results.push(calc_stat_for_1_normal_mode(df, cols, base_col, compare_conditions) );
+        results.push(calc_stat_for_1_normal_mode(df, cols, base_col, compare_conditions));
 
     }
     let stats_results = zip([compare_conditions_list, results]).map((x) => x.flat());
@@ -56,8 +56,8 @@ function show_stats_table(tbl, rows) {
             headers.forEach(hd => {
                 let cell = row.insertCell();
                 let text = rowDt[hd];
-                    cell.innerHTML = parseFloat(text).toFixed(2);
-                    cell.innerHTML = text;
+                cell.innerHTML = parseFloat(text).toFixed(2);
+                cell.innerHTML = text;
             });
         });
     }
@@ -68,12 +68,42 @@ function f() {
     const df = new DataFrame(stats_results, [...wt_cols.slice(1), "#genes"]);
     df.show();
 
-    show_stats_table(statsTable,  df.toCollection());
+    show_stats_table(statsTable, df.toCollection());
 
-    $(document).ready( function () {
-        $(statsTable).DataTable();
-    } );
+    $(document).ready(function () {
+            $(statsTable).DataTable({
 
+                'rowCallback': function (row, data, index) {
+                    data.forEach((d, index_) => {
+                        let cell = $(row).find(`td:eq(${index_})`);
+
+                        if (d.toString() == "true") {
+
+                            cell.css('background', MY_COLORS.green);
+                            cell.text("");
+
+                        } else if (d.toString() == "false"){
+                            cell.css('background', MY_COLORS.orange);
+                            cell.text("");
+
+                        }
+                    });
+
+                },
+
+                order: [[df.dim()[1]-1, 'des']],
+
+
+                destroy: true,
+                // scrollY:        '200px',
+                // scrollCollapse: true,
+                paging: false,
+                searching: false,
+                bInfo: false,
+
+            });
+        }
+    )
 }
 
 // function show_stats_table(tbl, df.toCollection()) {
