@@ -25,9 +25,12 @@ wt_master_slider.oninput = function () {
         wt_slider_value.innerHTML = master_val/ 100;
         $("#"+wt + "_slider").val(master_val);
 
+
+
     })
 
     wt_filter();
+    calc_all_stats_normal_mode(_df, wt_cols.slice(1), wt_cols[0]);
 }
 
 
