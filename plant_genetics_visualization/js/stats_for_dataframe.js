@@ -71,8 +71,9 @@ function f() {
     show_stats_table(statsTable, df.toCollection());
 
     $(document).ready(function () {
-            $(statsTable).DataTable({
+            let my_table = $(statsTable).DataTable({
 
+                // Todo: shoe the sorting arrows
                 'rowCallback': function (row, data, index) {
                     data.forEach((d, index_) => {
                         let cell = $(row).find(`td:eq(${index_})`);
@@ -82,7 +83,7 @@ function f() {
                             cell.css('background', MY_COLORS.green);
                             cell.text("");
 
-                        } else if (d.toString() == "false"){
+                        } else if (d.toString() == "false") {
                             cell.css('background', MY_COLORS.orange);
                             cell.text("");
 
@@ -91,7 +92,7 @@ function f() {
 
                 },
 
-                order: [[df.dim()[1]-1, 'des']],
+                order: [[df.dim()[1] - 1, 'des']],
 
 
                 destroy: true,
@@ -102,6 +103,14 @@ function f() {
                 bInfo: false,
 
             });
+
+
+            $("#statsTable tbody").on('click', 'tr', function () {
+                let a_data = my_table.row(this).data();
+                alert('You clicked on ' + a_data[a_data.length-1] + '\'s row');
+            });
+
+
         }
     )
 }
