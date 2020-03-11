@@ -90,13 +90,13 @@ function click_row_callback(row_data){
     wt_master_slider_value.innerHTML = master_val/ 100;
     change_all_slider_values_to_the_master(master_val, wt_cols.slice(1));
 
-    // Todo 2: Change color of buttons, do NOT trigger the event button click
+    // Change color of buttons, do NOT trigger the event button click
     let button_list = document.getElementsByClassName("wt_filter_btn");
     button_list.forEach( (btn, i) => change_color_when_click_btn(btn, color_list[i]));
 
 
-
-    // Todo 3: call update wt_btn function => draw one time
+    //  call update wt_btn function => filter all the btn at once
+    wt_filter();
 
 }
 

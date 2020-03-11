@@ -427,8 +427,8 @@ d3.select("#stateComparisonListdown").on("change", () => {
 });
 
 function wt_ctrl_btn() {
+    document.getElementById("printStats").innerHTML = `Summary for threshold = 0`;
     calc_and_show_stats_table();
-
 
     // Tick all wt_cols, except the first one\
     let checkboxes = document.getElementsByName("stateSelection");

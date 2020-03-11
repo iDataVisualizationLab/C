@@ -33,6 +33,7 @@ wt_master_slider.oninput = function () {
 
     change_all_slider_values_to_the_master(master_val, wt_cols.slice(1));
     wt_filter();
+    document.getElementById("printStats").innerHTML = `Summary for threshold = ${master_val/ 100}`;
     calc_and_show_stats_table();
 }
 
