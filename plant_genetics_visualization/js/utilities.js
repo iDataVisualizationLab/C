@@ -1,7 +1,9 @@
 const MY_COLORS  = {
     "green": "rgb(145, 207, 96)",
     "orange": "rgb(252, 141, 89)",
-    "default": "rgb(231, 231, 231)"
+    "gray": "rgb(231, 231, 231)",
+    "default": "rgb(125, 180, 231)",
+
 
 }
 
@@ -39,7 +41,28 @@ function selectAllCheckboxes() {
 
 function permutator(n){
     var result = [];
-    for(y_=0; y_<Math.pow(2,n); y_++){
+    for(let y_=0; y_<Math.pow(2,n); y_++){
+        var combo = [];
+        for(let x_=0; x_<n; x_++){
+            //shift bit and and it with 1
+            if((y_ >> x_) & 1)
+                combo.push(true);
+            else
+                combo.push(false);
+        }
+        result.push(combo);
+    }
+    return result;
+}
+
+function permutator_base_3(n){
+    var result = [];
+    for(let i =0; i<n; i++){
+
+    }
+        for(let j =0; i<3; i++){
+            for(let k =0; i<n; i++){
+        }
         var combo = [];
         for(x_=0; x_<n; x_++){
             //shift bit and and it with 1

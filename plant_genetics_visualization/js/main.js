@@ -14,7 +14,7 @@ let statsTable = document.getElementById('statsTable');
 let comparison_radio = $(document.getElementsByName("comparison"));
 let svgCharts;
 let num_obser;
-let color_arr = [MY_COLORS.default, MY_COLORS.green, MY_COLORS.orange];
+let color_arr = [MY_COLORS.default, MY_COLORS.green, MY_COLORS.orange, MY_COLORS.gray];
 let _df;
 
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
@@ -66,17 +66,17 @@ var bisect = d3.bisector(function (d) {
 
 function change_color_when_click_btn(_this, color) {
 
-    let nex_index
+    let nex_index;
     let cur_color = d3.select(_this).style("background-color").toString();
     let cur_index = color_arr.indexOf(cur_color);
-    if (typeof color  == 'undefined'){
+    if (typeof color == 'undefined') {
         nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
-        color  = color_arr[nex_index];
-    }
-    else{
+        color = color_arr[nex_index];
+    } else {
         $(_this).css('background-color', color);
     }
 
+    console.log("color = ", color);
     $(_this).css('background-color', color);
 
     if (color == MY_COLORS.default) {
@@ -743,9 +743,8 @@ function filter_data(button_list, pairwise, df, slider_class) {
 
 
             if (bt.style("background-color").toString() == color_arr[0]) {
-                console.log("parseInt(slider.value) / 100", parseInt(slider.value) / 100);
                 filteredDf = filteredDf
-                    .filter(row => Math.abs(row.get(cur_base_condition) - row.get(col) ) >= parseInt(slider.value) / 100);
+                    .filter(row => Math.abs(row.get(cur_base_condition) - row.get(col)) >= parseInt(slider.value) / 100);
             } else if (bt.style("background-color").toString() == color_arr[1]) {
                 filteredDf = filteredDf
                     .filter(row => row.get(cur_base_condition) < (row.get(col) - parseInt(slider.value) / 100));
@@ -753,6 +752,9 @@ function filter_data(button_list, pairwise, df, slider_class) {
             } else if (bt.style("background-color").toString() == color_arr[2]) {
                 filteredDf = filteredDf
                     .filter(row => row.get(cur_base_condition) - parseInt(slider.value) / 100 > row.get(col));
+            } else if (bt.style("background-color").toString() == color_arr[3]) {
+                filteredDf = filteredDf
+                    .filter(row => Math.abs(row.get(cur_base_condition) - row.get(col)) <= parseInt(slider.value) / 100);
             }
         }
     } else {
@@ -764,7 +766,7 @@ function filter_data(button_list, pairwise, df, slider_class) {
 
             if (bt.style("background-color").toString() == color_arr[0]) {
                 filteredDf = filteredDf
-                    .filter(row => Math.abs(row.get(cur_base_condition) - row.get(col) ) >= parseInt(slider.value) / 100);
+                    .filter(row => Math.abs(row.get(cur_base_condition) - row.get(col)) >= parseInt(slider.value) / 100);
             } else if (bt.style("background-color").toString() == color_arr[1]) {
                 filteredDf = filteredDf
                     .filter(row => row.get(cur_base_condition) < (row.get(col) - parseInt(slider.value) / 100));
@@ -772,6 +774,9 @@ function filter_data(button_list, pairwise, df, slider_class) {
             } else if (bt.style("background-color").toString() == color_arr[2]) {
                 filteredDf = filteredDf
                     .filter(row => row.get(cur_base_condition) - parseInt(slider.value) / 100 > row.get(col));
+            } else if (bt.style("background-color").toString() == color_arr[3]) {
+                filteredDf = filteredDf
+                    .filter(row => Math.abs(row.get(cur_base_condition) - row.get(col)) <= parseInt(slider.value) / 100);
             }
         }
     }
