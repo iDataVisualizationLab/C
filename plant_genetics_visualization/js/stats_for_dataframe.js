@@ -38,7 +38,7 @@ function calc_all_stats_normal_mode(df, cols, base_col) {
 
 }
 
-function show_stats_table(tbl, rows) {
+function create_stats_table(tbl, rows) {
 
     tbl.innerHTML = '';
     if (rows && rows.length > 0) {
@@ -74,12 +74,16 @@ function show_stats_table(tbl, rows) {
 }
 
 
-function click_row_function(){
+function click_row_callback(){
 
     // test:
     console.log("click_row_function");
-    
-    // Todo 1: change all the sliders' values to the  master slider
+
+    // Todo 1: change all the sliders' values to the  master slider: Done
+
+    let master_val = parseInt(wt_master_slider.value); //hardcode first to test;
+    wt_master_slider_value.innerHTML = master_val/ 100;
+    change_all_slider_values_to_the_master(master_val, wt_cols.slice(1));
 
 
     // Todo 2: Change color of buttons, do NOT trigger the event button click
@@ -88,12 +92,12 @@ function click_row_function(){
 
 }
 
-function f() {
+function calc_and_show_stats_table() {
     let stats_results = calc_all_stats_normal_mode(_df, wt_cols.slice(1), wt_cols[0]);
     const df = new DataFrame(stats_results, [...wt_cols.slice(1), "#genes"]);
     df.show();
 
-    show_stats_table(statsTable, df.toCollection());
+    create_stats_table(statsTable, df.toCollection());
 
     $(document).ready(function () {
             let my_table = $(statsTable).DataTable({
@@ -134,7 +138,7 @@ function f() {
 
             $("#statsTable tbody").on('click', 'tr', function () {
                 let a_data = my_table.row(this).data();
-                click_row_function();
+                click_row_callback();
             });
 
 

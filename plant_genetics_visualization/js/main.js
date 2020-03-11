@@ -420,6 +420,8 @@ d3.select("#stateComparisonListdown").on("change", () => {
 });
 
 function wt_ctrl_btn() {
+    calc_and_show_stats_table();
+
 
     // Tick all wt_cols, except the first one\
     let checkboxes = document.getElementsByName("stateSelection");
@@ -447,6 +449,7 @@ function wt_ctrl_btn() {
     $("#stateComparisonListdown").attr("disabled", false);
     $("#stateComparisonListdown").val("wthp6");
     updateCharts(1, num_obser);
+
 }
 
 function s1_ctrl_btn() {
