@@ -14,7 +14,7 @@ let statsTable = document.getElementById('statsTable');
 let comparison_radio = $(document.getElementsByName("comparison"));
 let svgCharts;
 let num_obser;
-let color_arr = [MY_COLORS.gray, MY_COLORS.green, MY_COLORS.orange];
+let color_arr = [MY_COLORS.default, MY_COLORS.green, MY_COLORS.orange];
 let _df;
 
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
@@ -64,15 +64,22 @@ var bisect = d3.bisector(function (d) {
 }).left;
 
 
-function change_color_when_click_btn(_this) {
+function change_color_when_click_btn(_this, color) {
 
-    console.log("in change color,  d3.select(this),", d3.select(_this));
+    let nex_index
     let cur_color = d3.select(_this).style("background-color").toString();
     let cur_index = color_arr.indexOf(cur_color);
-    let nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
-    $(_this).css('background-color', color_arr[nex_index]);
+    if (typeof color  == 'undefined'){
+        nex_index = cur_index < color_arr.length - 1 ? cur_index + 1 : 0;
+        color  = color_arr[nex_index];
+    }
+    else{
+        $(_this).css('background-color', color);
+    }
 
-    if (nex_index == 0) {
+    $(_this).css('background-color', color);
+
+    if (color == MY_COLORS.default) {
         d3.select(_this).style("background-image", "linear-gradient(to right, rgb(145, 207, 96), rgb(252, 141, 89)");
     } else {
         d3.select(_this).style("background-image", "none");

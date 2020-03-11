@@ -1,3 +1,9 @@
+
+const ENCODE_COLOR = {
+    "true": MY_COLORS.green,
+    "false": MY_COLORS.orange
+}
+
 function calc_stat_for_1_normal_mode(df, cols, base_col, compare_conditions) {
     for (let i = 0, n = cols.length; i < n; i++) {
         let condition = compare_conditions[i];
@@ -60,11 +66,12 @@ function create_stats_table(tbl, rows) {
 
                 if (text.toString() == "true") {
                     cell.style.background = MY_COLORS.green;
-                    cell.innerHTML = "";
-
+                    cell.innerHTML = text;
+                    cell.style.color = cell.style.background;
                 } else if (text.toString() == "false") {
                     cell.style.background = MY_COLORS.orange;
-                    cell.innerHTML = "";
+                    cell.innerHTML = text;
+                    cell.style.color = cell.style.background;
                 } else { //last column => show #genes
                     cell.innerHTML = text;
                 }
@@ -74,19 +81,20 @@ function create_stats_table(tbl, rows) {
 }
 
 
-function click_row_callback(){
+function click_row_callback(row_data){
 
-    // test:
-    console.log("click_row_function");
+    let color_list = row_data.map(x => ENCODE_COLOR[x]);
 
-    // Todo 1: change all the sliders' values to the  master slider: Done
-
+    // change all the sliders' values to the  master slider: Done
     let master_val = parseInt(wt_master_slider.value); //hardcode first to test;
     wt_master_slider_value.innerHTML = master_val/ 100;
     change_all_slider_values_to_the_master(master_val, wt_cols.slice(1));
 
-
     // Todo 2: Change color of buttons, do NOT trigger the event button click
+    let button_list = document.getElementsByClassName("wt_filter_btn");
+    button_list.forEach( (btn, i) => change_color_when_click_btn(btn, color_list[i]));
+
+
 
     // Todo 3: call update wt_btn function => draw one time
 
@@ -137,8 +145,8 @@ function calc_and_show_stats_table() {
 
 
             $("#statsTable tbody").on('click', 'tr', function () {
-                let a_data = my_table.row(this).data();
-                click_row_callback();
+                let row_data = my_table.row(this).data();
+                click_row_callback(row_data.slice(0,row_data.length-1));
             });
 
 
