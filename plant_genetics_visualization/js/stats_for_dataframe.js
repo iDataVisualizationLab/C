@@ -39,6 +39,7 @@ function calc_all_stats_normal_mode(df, cols, base_col) {
 }
 
 function show_stats_table(tbl, rows) {
+
     tbl.innerHTML = '';
     if (rows && rows.length > 0) {
         let headers = Object.keys(rows[0]);
@@ -56,11 +57,35 @@ function show_stats_table(tbl, rows) {
             headers.forEach(hd => {
                 let cell = row.insertCell();
                 let text = rowDt[hd];
-                cell.innerHTML = parseFloat(text).toFixed(2);
-                cell.innerHTML = text;
+
+                if (text.toString() == "true") {
+                    cell.style.background = MY_COLORS.green;
+                    cell.innerHTML = "";
+
+                } else if (text.toString() == "false") {
+                    cell.style.background = MY_COLORS.orange;
+                    cell.innerHTML = "";
+                } else { //last column => show #genes
+                    cell.innerHTML = text;
+                }
             });
         });
     }
+}
+
+
+function click_row_function(){
+
+    // test:
+    console.log("click_row_function");
+    
+    // Todo 1: change all the sliders' values to the  master slider
+
+
+    // Todo 2: Change color of buttons, do NOT trigger the event button click
+
+    // Todo 3: call update wt_btn function => draw one time
+
 }
 
 function f() {
@@ -73,24 +98,26 @@ function f() {
     $(document).ready(function () {
             let my_table = $(statsTable).DataTable({
 
-                // Todo: shoe the sorting arrows
-                'rowCallback': function (row, data, index) {
-                    data.forEach((d, index_) => {
-                        let cell = $(row).find(`td:eq(${index_})`);
+                // Todo: show the sorting arrows
 
-                        if (d.toString() == "true") {
 
-                            cell.css('background', MY_COLORS.green);
-                            cell.text("");
-
-                        } else if (d.toString() == "false") {
-                            cell.css('background', MY_COLORS.orange);
-                            cell.text("");
-
-                        }
-                    });
-
-                },
+                // 'rowCallback': function (row, data, index) {
+                //     data.forEach((d, index_) => {
+                //         let cell = $(row).find(`td:eq(${index_})`);
+                //
+                //         if (d.toString() == "true") {
+                //
+                //             cell.css('background', MY_COLORS.green);
+                //             cell.text("");
+                //
+                //         } else if (d.toString() == "false") {
+                //             cell.css('background', MY_COLORS.orange);
+                //             cell.text("");
+                //
+                //         }
+                //     });
+                //
+                // },
 
                 order: [[df.dim()[1] - 1, 'des']],
 
@@ -107,7 +134,7 @@ function f() {
 
             $("#statsTable tbody").on('click', 'tr', function () {
                 let a_data = my_table.row(this).data();
-                alert('You clicked on ' + a_data[a_data.length-1] + '\'s row');
+                click_row_function();
             });
 
 

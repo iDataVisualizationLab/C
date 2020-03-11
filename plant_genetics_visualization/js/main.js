@@ -289,7 +289,7 @@ DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
             "translate(" + (w - 20) + " ," +
             (h + margin.top) + ")")
         .style("text-anchor", "end")
-        .text("Gene");
+        .text("Gene Index");
 
 
     svgCharts.append("g")
@@ -301,7 +301,7 @@ DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
         .attr("y", 6)
         .attr("dy", ".75em")
         .attr("transform", "rotate(-90)")
-        .text("Value (norm)");
+        .text("Expressed (norm)");
 
 
 // Add focus circle and value.
