@@ -107,7 +107,7 @@ body {
 #options {
     float: left;
     width: 32%;
-    height: 40%;
+    height: 42%;
     min-height: 500px;
     max-height: 700px;
     padding: 5px;
@@ -161,7 +161,7 @@ h1 {
     padding: 3px 5px;
     border: 1px solid #ccc;
     border-top: none;
-    height: 410px;
+    height: 420px;
     width: 82%;
     background: white;
 }

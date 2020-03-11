@@ -55,23 +55,15 @@ function permutator(n){
     return result;
 }
 
-function permutator_base_3(n){
-    var result = [];
-    for(let i =0; i<n; i++){
 
+
+function permutator_base_3(res, results, n){
+    if (res.length == n){
+        results.push(res);
     }
-        for(let j =0; i<3; i++){
-            for(let k =0; i<n; i++){
-        }
-        var combo = [];
-        for(x_=0; x_<n; x_++){
-            //shift bit and and it with 1
-            if((y_ >> x_) & 1)
-                combo.push(true);
-            else
-                combo.push(false);
-        }
-        result.push(combo);
+    else{
+        permutator_base_3([...res, 1], results, n);
+        permutator_base_3([...res, 2], results, n);
+        permutator_base_3([...res, 3], results, n);
     }
-    return result;
 }
