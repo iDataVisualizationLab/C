@@ -107,7 +107,9 @@ body {
 #options {
     float: left;
     width: 32%;
-    height: 490px;
+    height: 40%;
+    min-height: 500px;
+    max-height: 700px;
     padding: 5px;
 }
 
@@ -256,17 +258,17 @@ tr:nth-child(even) {
 
 .dataTable{
     width: 25%;
-    height: 200px;
+    height: 15%;
+    min-height: 100px;
+    max-height: 300px;
     overflow-y: auto;
 
 }
 
 
-
-
 .statsTableClass {
     width: 300px;
-    height: 150px;
+    height: 100px;
     overflow-y: auto;
 
 }
