@@ -1,7 +1,8 @@
 
 const ENCODE_COLOR = {
-    "true": MY_COLORS.green,
-    "false": MY_COLORS.orange
+    1: MY_COLORS.green,
+    2: MY_COLORS.orange,
+    3: MY_COLORS.gray,
 }
 
 function calc_stat_for_1_normal_mode(df, cols, base_col, compare_conditions) {
@@ -18,19 +19,24 @@ function calc_stat_for_1_normal_mode(df, cols, base_col, compare_conditions) {
         //         .filter(row => row.get(base_col) - parseInt(slider.value) / 100 > row.get(col));
         // }
 
-        if (condition == true) {  //greater
+        if (condition == 1) {  //greater
             df = df
                 .filter(row => row.get(base_col) < (row.get(col) - parseInt(wt_master_slider.value) / 100));
-        } else {  // condition == false, less
+        } else if (condition == 2) {  //less
             df = df
-                .filter(row => row.get(base_col) - parseInt(wt_master_slider.value) / 100 > row.get(col));
+                .filter(row => row.get(base_col) < (row.get(col) - parseInt(wt_master_slider.value) / 100));
+        }
+        else {  // does NOT change
+            df = df
+                .filter(row => Math.abs(row.get(base_col) - row.get(col)) <= parseInt(wt_master_slider.value) / 100);
         }
     }
     return df.dim()[0];
 }
 
 function calc_all_stats_normal_mode(df, cols, base_col) {
-    let compare_conditions_list = permutator(cols.length);
+    let compare_conditions_list = [];
+    permutator_base_3([], compare_conditions_list, cols.length);
     let results = [];
     for (let i = 0, n = compare_conditions_list.length; i < n; i++) {
         let compare_conditions = compare_conditions_list[i]
@@ -64,15 +70,20 @@ function create_stats_table(tbl, rows) {
                 let cell = row.insertCell();
                 let text = rowDt[hd];
 
-                if (text.toString() == "true") {
+                if (text == 1) {
                     cell.style.background = MY_COLORS.green;
                     cell.innerHTML = text;
                     cell.style.color = cell.style.background;
-                } else if (text.toString() == "false") {
+                } else if (text == 2) {
                     cell.style.background = MY_COLORS.orange;
                     cell.innerHTML = text;
                     cell.style.color = cell.style.background;
-                } else { //last column => show #genes
+                } else if (text == 3) {
+                    cell.style.background = MY_COLORS.gray;
+                    cell.innerHTML = text;
+                    cell.style.color = cell.style.background;
+                }
+                else { //last column => show #genes
                     cell.innerHTML = text;
                 }
             });
