@@ -164,7 +164,7 @@ $("#option_form").on("change", () => {
     updateCharts(1, num_obser);
 });
 
-DataFrame.fromCSV("data_SAMPLE_ori.csv").then(data => {
+DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
     _df = data;
     num_obser = _df.dim()[0];
     let my_all_data = {};

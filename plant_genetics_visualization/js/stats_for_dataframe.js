@@ -10,23 +10,15 @@ function calc_stat_for_1_normal_mode(df, cols, base_col, compare_conditions) {
         let condition = compare_conditions[i];
         let col = cols[i];
 
-        // if (condition == 1){  //greater
-        //     filteredDf = filteredDf
-        //         .filter(row => row.get(base_col) < (row.get(col) - parseInt(slider.value) / 100));
-        // }
-        // else{  // condition == -1, less
-        //     filteredDf = filteredDf
-        //         .filter(row => row.get(base_col) - parseInt(slider.value) / 100 > row.get(col));
-        // }
 
         if (condition == 1) {  //greater
             df = df
                 .filter(row => row.get(base_col) < (row.get(col) - parseInt(wt_master_slider.value) / 100));
         } else if (condition == 2) {  //less
             df = df
-                .filter(row => row.get(base_col) - parseInt(wt_master_slider.value) > (row.get(col)  / 100));
+                .filter(row => row.get(base_col) - parseInt(wt_master_slider.value)/ 100 > (row.get(col)  ));
         }
-        else {  // does NOT change
+        else if (condition == 3){  // does NOT change
             df = df
                 .filter(row => Math.abs(row.get(base_col) - row.get(col)) <= parseInt(wt_master_slider.value) / 100);
         }
@@ -70,18 +62,20 @@ function create_stats_table(tbl, rows) {
                 let cell = row.insertCell();
                 let text = rowDt[hd];
 
-                if (text == 1) {
-                    cell.style.background = MY_COLORS.green;
-                    cell.innerHTML = text;
-                    cell.style.color = cell.style.background;
-                } else if (text == 2) {
-                    cell.style.background = MY_COLORS.orange;
-                    cell.innerHTML = text;
-                    cell.style.color = cell.style.background;
-                } else if (text == 3) {
-                    cell.style.background = MY_COLORS.gray;
-                    cell.innerHTML = text;
-                    cell.style.color = cell.style.background;
+                if (hd != "#genes"){
+                    if (text == 1) { //up
+                        cell.style.background = MY_COLORS.green;
+                        cell.innerHTML = text;
+                        cell.style.color = cell.style.background;
+                    } else if (text == 2) { // down
+                        cell.style.background = MY_COLORS.orange;
+                        cell.innerHTML = text;
+                        cell.style.color = cell.style.background;
+                    } else if (text == 3) { // does NOT change
+                        cell.style.background = MY_COLORS.gray;
+                        cell.innerHTML = text;
+                        cell.style.color = cell.style.background;
+                    }
                 }
                 else { //last column => show #genes
                     cell.innerHTML = text;
