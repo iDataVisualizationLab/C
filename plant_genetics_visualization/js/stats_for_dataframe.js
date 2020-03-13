@@ -24,7 +24,7 @@ function calc_stat_for_1_normal_mode(df, cols, base_col, compare_conditions) {
                 .filter(row => row.get(base_col) < (row.get(col) - parseInt(wt_master_slider.value) / 100));
         } else if (condition == 2) {  //less
             df = df
-                .filter(row => row.get(base_col) < (row.get(col) - parseInt(wt_master_slider.value) / 100));
+                .filter(row => row.get(base_col) - parseInt(wt_master_slider.value) > (row.get(col)  / 100));
         }
         else {  // does NOT change
             df = df
