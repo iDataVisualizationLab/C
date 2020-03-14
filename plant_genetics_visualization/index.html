@@ -52,45 +52,46 @@
         <div class="btn-group">
             <!--      <button id="bt1" class="button button1" onclick="changeColor()">2px</button>-->
             <!--        <button id="bt1" class="waves-effect waves-light btn wt_filter_btn">Button 1</button>-->
-            <button id="bt1" class="wt_filter_btn filter_btn">wtlp6 vs. wthp6</button>
-            <button id="bt2" class="wt_filter_btn filter_btn">wthp5 vs. wthp6</button>
-            <button id="bt3" class="wt_filter_btn filter_btn">wtlp5 vs. wthp6</button>
-            <button id="bt4" class="wt_filter_btn filter_btn">wtal vs. wthp6</button>
-            <button id="bt5" class="wt_filter_btn filter_btn">wtfe vs. wthp6</button>
+            <div class="btn_and_slide_container">
+                <button id="bt1" class="wt_filter_btn filter_btn">wtlp6 vs. wthp6</button>
+                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtlp6_slider">
+                <p><span id="wtlp6_slider_value"></span></p>
+            </div>
+
+
+            <div class="btn_and_slide_container">
+                <button id="bt2" class="wt_filter_btn filter_btn">wthp5 vs. wthp6</button>
+
+                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wthp5_slider">
+                <p><span id="wthp5_slider_value"></span></p>
+            </div>
+
+            <div class="btn_and_slide_container">
+                <button id="bt3" class="wt_filter_btn filter_btn">wtlp5 vs. wthp6</button>
+                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtlp5_slider">
+                <p><span id="wtlp5_slider_value"></span></p>
+            </div>
+
+            <div class="btn_and_slide_container">
+                <button id="bt4" class="wt_filter_btn filter_btn">wtal vs. wthp6</button>
+                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtal_slider">
+                <p><span id="wtal_slider_value"></span></p>
+            </div>
+
+
+            <div class="btn_and_slide_container">
+                <button id="bt5" class="wt_filter_btn filter_btn">wtfe vs. wthp6</button>
+                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtfe_slider">
+                <p><span id="wtfe_slider_value"></span></p>
+            </div>
             <!--        <a class="waves-effect waves-light btn">button</a>-->
         </div>
 
-        <div id="wt_sliders">
-            <div class="slidecontainer">
-                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtlp6_slider">
-                <p>wtlp6 slider: <span id="wtlp6_slider_value"></span></p>
-            </div>
-
-            <div class="slidecontainer">
-                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wthp5_slider">
-                <p>wthp5 slider: <span id="wthp5_slider_value"></span></p>
-            </div>
-
-            <div class="slidecontainer">
-                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtlp5_slider">
-                <p>wtlp5 slider: <span id="wtlp5_slider_value"></span></p>
-            </div>
-
-            <div class="slidecontainer">
-                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtal_slider">
-                <p>wtal slider: <span id="wtal_slider_value"></span></p>
-            </div>
-
-            <div class="slidecontainer">
-                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtfe_slider">
-                <p>wtfe slider: <span id="wtfe_slider_value"></span></p>
-            </div>
-        </div>
-
         <div id="wt_master_slider_div">
-            <div class="slidecontainer">
+            <div class="btn_and_slide_container">
                 <input type="range" min="0" max="100" value="0" class="slider wt_master_slider master_slider"
                        id="wt_master_slider">
+                <br>
                 <p>Main slider: <span id="wt_master_slider_value"></span></p>
             </div>
 
@@ -125,26 +126,21 @@
 </div>
 
 
-
-
-
-
-<div>
+<div class="dataTable_and_print">
     <h3 class="printNumber" id="printNumGenes"></h3>
-</div>
-<div class="dataTable" id="ipdatacsvDiv">
-    <table id="ipdatacsvTbl"></table>
+    <div class="dataTable" id="ipdatacsvDiv">
+        <table id="ipdatacsvTbl"></table>
+    </div>
 </div>
 
 <br>
 
-<div>
+<div class="statsTable_and_print">
     <h3 class="printNumber" id="printStats"></h3>
+    <div class="statsTableClass" id="statsTableDiv">
+        <table id="statsTable"></table>
+    </div>
 </div>
-<div class="statsTableClass" id="statsTableDiv">
-    <table id="statsTable"></table>
-</div>
-
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>

@@ -36,7 +36,7 @@ function calc_all_stats_normal_mode(df, cols, base_col) {
 
     }
     let stats_results = zip([compare_conditions_list, results]).map((x) => x.flat());
-    console.log(stats_results);
+    // console.log(stats_results);
 
     return stats_results;
 
@@ -108,7 +108,6 @@ function click_row_callback(row_data){
 function calc_and_show_stats_table() {
     let stats_results = calc_all_stats_normal_mode(_df, wt_cols.slice(1), wt_cols[0]);
     const df = new DataFrame(stats_results, [...wt_cols.slice(1), "#genes"]);
-    df.show();
 
     create_stats_table(statsTable, df.toCollection());
 

@@ -115,7 +115,7 @@ function pairwise_filter() {
     let button_list = d3.selectAll('.pairwise_filter_btn')[0];
     filter(button_list, true).then(df => {
         updateTableWithColor(dataTable, df.toCollection(), true);
-        console.log(`df.shape = ${df.dim()}`);
+        // console.log(`df.shape = ${df.dim()}`);
     });
 
 }
@@ -159,12 +159,12 @@ comparison_radio.on("click", function () {
 $("#all").on("click", selectAllCheckboxes);
 
 $("#option_form").on("change", () => {
-    console.log("trigger option_form");
+    // console.log("trigger option_form");
 
     updateCharts(1, num_obser);
 });
 
-DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
+DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
     _df = data;
     num_obser = _df.dim()[0];
     let my_all_data = {};
@@ -239,7 +239,7 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var defs = svgCharts.append("defs");
-    console.log("defs is ", defs);
+    // console.log("defs is ", defs);
 
     // Add background.
     svgCharts.append("rect")
@@ -435,7 +435,7 @@ function wt_ctrl_btn() {
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         if (checkboxes[i].id == "all") {
             document.getElementById("all").checked = false;
-            console.log("Skip");
+            // console.log("Skip");
         } else {
             if (wt_cols.slice(1).includes(checkboxes[i].id)) {
                 if (!checkboxes[i].checked) {
@@ -494,7 +494,7 @@ function pairwise_ctrl_btn() {
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         if (checkboxes[i].id == "all") {
             document.getElementById("all").checked = false;
-            console.log("Skip");
+            // console.log("Skip");
         } else {
             if (s1_cols.includes(checkboxes[i].id)) {
                 if (!checkboxes[i].checked) {
@@ -524,7 +524,7 @@ function custom_ctrl_btn() {
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         if (checkboxes[i].id == "all") {
             document.getElementById("all").checked = false;
-            console.log("Skip");
+            // console.log("Skip");
         } else if (checkboxes[i].id == "wthp6") {
             if (!checkboxes[i].checked) {
                 changeChartDisplay(checkboxes[i].id);
@@ -652,8 +652,8 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
         });
     });
 
-    console.log("document.getElementById(\"noComparison\").checked", document.getElementById("noComparison").checked);
-    console.log("document.getElementById(\"stateComparison\").checked", document.getElementById("stateComparison").checked);
+    // console.log("document.getElementById(\"noComparison\").checked", document.getElementById("noComparison").checked);
+    // console.log("document.getElementById(\"stateComparison\").checked", document.getElementById("stateComparison").checked);
 
     if (document.getElementById("noComparison").checked) {
         // No comparison selected.
