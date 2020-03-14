@@ -5,7 +5,7 @@ const ENCODE_COLOR = {
     3: MY_COLORS.gray,
 }
 
-function calc_stat_for_1_normal_mode(df, cols, base_col, compare_conditions) {
+function calc_stat_for_1_normal_mode(df, cols, base_col, compare_conditions, master_slider) {
     for (let i = 0, n = cols.length; i < n; i++) {
         let condition = compare_conditions[i];
         let col = cols[i];
@@ -13,26 +13,26 @@ function calc_stat_for_1_normal_mode(df, cols, base_col, compare_conditions) {
 
         if (condition == 1) {  //greater
             df = df
-                .filter(row => row.get(base_col) < (row.get(col) - parseInt(wt_master_slider.value) / 100));
+                .filter(row => row.get(base_col) < (row.get(col) - parseInt(master_slider.value) / 100));
         } else if (condition == 2) {  //less
             df = df
-                .filter(row => row.get(base_col) - parseInt(wt_master_slider.value)/ 100 > (row.get(col)  ));
+                .filter(row => row.get(base_col) - parseInt(master_slider.value)/ 100 > (row.get(col)  ));
         }
         else if (condition == 3){  // does NOT change
             df = df
-                .filter(row => Math.abs(row.get(base_col) - row.get(col)) <= parseInt(wt_master_slider.value) / 100);
+                .filter(row => Math.abs(row.get(base_col) - row.get(col)) <= parseInt( master_slider.value) / 100);
         }
     }
     return df.dim()[0];
 }
 
-function calc_all_stats_normal_mode(df, cols, base_col) {
+function calc_all_stats_normal_mode(df, cols, base_col, master_slider) {
     let compare_conditions_list = [];
     permutator_base_3([], compare_conditions_list, cols.length);
     let results = [];
     for (let i = 0, n = compare_conditions_list.length; i < n; i++) {
         let compare_conditions = compare_conditions_list[i]
-        results.push(calc_stat_for_1_normal_mode(df, cols, base_col, compare_conditions));
+        results.push(calc_stat_for_1_normal_mode(df, cols, base_col, compare_conditions, master_slider));
 
     }
     let stats_results = zip([compare_conditions_list, results]).map((x) => x.flat());
@@ -86,28 +86,53 @@ function create_stats_table(tbl, rows) {
 }
 
 
-function click_row_callback(row_data){
+function click_row_callback(row_data) {
+
+    let filter_func, button_list;
+    //check cur active tab:
+    if (cur_active_tab == tab_names["wt"]) {
+        let master_val = parseInt(wt_master_slider.value);
+        wt_master_slider_value.innerHTML = master_val / 100;
+        change_all_slider_values_to_the_master(master_val, wt_cols.slice(1));
+        button_list = document.getElementsByClassName("wt_filter_btn");
+
+        filter_func = wt_filter;
+    } else if (cur_active_tab == tab_names["s1"]) {
+        let master_val = parseInt(s1_master_slider.value);
+        s1_master_slider_value.innerHTML = master_val / 100;
+        change_all_slider_values_to_the_master(master_val, s1_cols.slice(1));
+        button_list = document.getElementsByClassName("s1_filter_btn");
+
+        filter_func = s1_filter;
+    }
 
     let color_list = row_data.map(x => ENCODE_COLOR[x]);
 
-    // change all the sliders' values to the  master slider: Done
-    let master_val = parseInt(wt_master_slider.value); //hardcode first to test;
-    wt_master_slider_value.innerHTML = master_val/ 100;
-    change_all_slider_values_to_the_master(master_val, wt_cols.slice(1));
-
     // Change color of buttons, do NOT trigger the event button click
-    let button_list = document.getElementsByClassName("wt_filter_btn");
-    button_list.forEach( (btn, i) => change_color_when_click_btn(btn, color_list[i]));
+    button_list.forEach((btn, i) => change_color_when_click_btn(btn, color_list[i]));
 
 
-    //  call update wt_btn function => filter all the btn at once
-    wt_filter();
-
+    //  call update all btns function => filter all the btn at once
+    filter_func();
 }
 
 function calc_and_show_stats_table() {
-    let stats_results = calc_all_stats_normal_mode(_df, wt_cols.slice(1), wt_cols[0]);
-    const df = new DataFrame(stats_results, [...wt_cols.slice(1), "#genes"]);
+
+    let _cols, master_slider;
+    console.log("cur_active_tab", cur_active_tab);
+    if (cur_active_tab == tab_names["wt"]) {
+        _cols = wt_cols;
+        master_slider = wt_master_slider;
+        wt_master_slider
+    } else if (cur_active_tab == tab_names["s1"]) {
+        _cols = s1_cols;
+        master_slider = s1_master_slider;
+
+    }
+
+
+    let stats_results = calc_all_stats_normal_mode(_df, _cols.slice(1), _cols[0], master_slider);
+    const df = new DataFrame(stats_results, [..._cols.slice(1), "#genes"]);
 
     create_stats_table(statsTable, df.toCollection());
 
@@ -115,26 +140,6 @@ function calc_and_show_stats_table() {
             let my_table = $(statsTable).DataTable({
 
                 // Todo: show the sorting arrows
-
-
-                // 'rowCallback': function (row, data, index) {
-                //     data.forEach((d, index_) => {
-                //         let cell = $(row).find(`td:eq(${index_})`);
-                //
-                //         if (d.toString() == "true") {
-                //
-                //             cell.css('background', MY_COLORS.green);
-                //             cell.text("");
-                //
-                //         } else if (d.toString() == "false") {
-                //             cell.css('background', MY_COLORS.orange);
-                //             cell.text("");
-                //
-                //         }
-                //     });
-                //
-                // },
-
                 order: [[df.dim()[1] - 1, 'des']],
 
 

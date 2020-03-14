@@ -16,7 +16,13 @@ let svgCharts;
 let num_obser;
 let color_arr = [MY_COLORS.default, MY_COLORS.green, MY_COLORS.orange, MY_COLORS.gray];
 let _df;
-
+const tab_names = {
+    "wt": "WT(s) Comparison",
+    "s1": "S1(s) Comparison",
+    "pair": 'Pairwise Comparison',
+    "custom": "Custom Mode"
+};
+let cur_active_tab = tab_names["wt"];
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
 let w = $("#unemploymentCharts").width() * 0.99 - margin.left - margin.right;
 let h = 200 - margin.bottom - margin.top;
@@ -26,6 +32,8 @@ var x = d3.scale.linear().range([0, w]);
 var y = d3.scale.linear().domain([0, 1]).range([h, 0]);
 var xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(7);
 var yAxis = d3.svg.axis().scale(y).orient("left").ticks(5);
+
+
 
 // Define the line.
 var valueLine = d3.svg.line()
@@ -76,7 +84,6 @@ function change_color_when_click_btn(_this, color) {
         $(_this).css('background-color', color);
     }
 
-    console.log("color = ", color);
     $(_this).css('background-color', color);
 
     if (color == MY_COLORS.default) {
@@ -89,13 +96,11 @@ function change_color_when_click_btn(_this, color) {
 
 function wt_filter() {
 
-    console.log("running wt_filter....");
     $("#stateComparisonListdown").val("wthp6");
 
     let button_list = d3.selectAll('.wt_filter_btn')[0];
     filter(button_list, false, ".wt_slider").then(df => {
         updateTableWithColor(dataTable, df.toCollection());
-        console.log(`df.shape = ${df.dim()}`);
     });
 }
 
@@ -104,8 +109,9 @@ function s1_filter() {
     $("#stateComparisonListdown").val("s1hp6");
 
     let button_list = d3.selectAll('.s1_filter_btn')[0];
-    filter(button_list, false).then(df => {
-        updateTableWithColor(dataTable, df.toCollection(), false, false);
+
+    filter(button_list, false, ".s1_slider").then(df => {
+        updateTableWithColor(dataTable, df.toCollection());
     });
 
 }

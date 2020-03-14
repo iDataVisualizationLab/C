@@ -101,14 +101,58 @@
     </div>
 
     <div id="S1(s) Comparison" class="tabcontent">
-        <p>Compare each conditioned <b>s1</b> with <b>s1hp6</b></p>
+
+        <p>Compare each conditioned test s1 with <b>s1hp6</b></p>
         <div class="btn-group">
-            <button id="s1_bt1" class="s1_filter_btn filter_btn">s1lp6</button>
-            <button id="s1_bt2" class="s1_filter_btn filter_btn">s1hp5</button>
-            <button id="s1_bt3" class="s1_filter_btn filter_btn">s1lp5</button>
-            <button id="s1_bt4" class="s1_filter_btn filter_btn">s1al</button>
-            <button id="s1_bt5" class="s1_filter_btn filter_btn">s1fe</button>
+            <!--      <button id="s1_bt1" class="button button1" onclick="changeColor()">2px</button>-->
+            <!--        <button id="s1_bt1" class="waves-effect waves-light s1_btn s1_filter_btn">Button 1</button>-->
+            <div class="btn_and_slide_container">
+                <button id="s1_bt1" class="s1_filter_btn filter_btn">s1lp6 vs. s1hp6</button>
+                <input type="range" min="0" max="100" value="0" class="slider s1_slider" id="s1lp6_slider">
+                <p><span id="s1lp6_slider_value"></span></p>
+            </div>
+
+
+            <div class="btn_and_slide_container">
+                <button id="s1_bt2" class="s1_filter_btn filter_btn">s1hp5 vs. s1hp6</button>
+
+                <input type="range" min="0" max="100" value="0" class="slider s1_slider" id="s1hp5_slider">
+                <p><span id="s1hp5_slider_value"></span></p>
+            </div>
+
+            <div class="btn_and_slide_container">
+                <button id="s1_bt3" class="s1_filter_btn filter_btn">s1lp5 vs. s1hp6</button>
+                <input type="range" min="0" max="100" value="0" class="slider s1_slider" id="s1lp5_slider">
+                <p><span id="s1lp5_slider_value"></span></p>
+            </div>
+
+            <div class="btn_and_slide_container">
+                <button id="s1_bt4" class="s1_filter_btn filter_btn">s1al vs. s1hp6</button>
+                <input type="range" min="0" max="100" value="0" class="slider s1_slider" id="s1al_slider">
+                <p><span id="s1al_slider_value"></span></p>
+            </div>
+
+
+            <div class="btn_and_slide_container">
+                <button id="s1_bt5" class="s1_filter_btn filter_btn">s1fe vs. s1hp6</button>
+                <input type="range" min="0" max="100" value="0" class="slider s1_slider" id="s1fe_slider">
+                <p><span id="s1fe_slider_value"></span></p>
+            </div>
+            <!--        <a class="waves-effect waves-light s1_btn">button</a>-->
         </div>
+
+        <div id="s1_master_slider_div">
+            <div class="btn_and_slide_container">
+                <input type="range" min="0" max="100" value="0" class="slider s1_master_slider master_slider"
+                       id="s1_master_slider">
+                <br>
+                <p>Main slider: <span id="s1_master_slider_value"></span></p>
+            </div>
+
+        </div>
+
+
+
     </div>
 
 

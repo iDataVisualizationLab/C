@@ -1,3 +1,5 @@
+
+
 function openTab(evt, scenarioName) {
     let i, tabcontent, tablinks, btns_list = [];;
     updateData(_df);
@@ -13,16 +15,16 @@ function openTab(evt, scenarioName) {
     }
     document.getElementById(scenarioName).style.display = "block";
 
-    if (scenarioName == "WT(s) Comparison") {
+    if (scenarioName == tab_names["wt"]) {
         wt_ctrl_btn();
 
-    } else if (scenarioName == "S1(s) Comparison") {
+    } else if (scenarioName == tab_names["s1"]) {
 
         s1_ctrl_btn();
-    } else if (scenarioName == 'Pairwise Comparison') {
+    } else if (scenarioName ==  tab_names["pair"]) {
         pairwise_ctrl_btn();
 
-    } else if (scenarioName == 'Custom Mode') {
+    } else if (scenarioName ==  tab_names["custom"]) {
         custom_ctrl_btn();
     }
 
@@ -34,5 +36,7 @@ function openTab(evt, scenarioName) {
     btns_list.push(btns3);
 
     btns_list.forEach(reset_color);
+
+    cur_active_tab = scenarioName;
     evt.currentTarget.className += " active";
 };
