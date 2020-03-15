@@ -19,10 +19,11 @@ let _df;
 const tab_names = {
     "wt": "WT(s) Comparison",
     "s1": "S1(s) Comparison",
-    "pair": 'Pairwise Comparison',
+    "pairwise": 'Pairwise Comparison',
     "custom": "Custom Mode"
 };
 let cur_active_tab = tab_names["wt"];
+let my_stats_table;
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
 let w = $("#unemploymentCharts").width() * 0.99 - margin.left - margin.right;
 let h = 200 - margin.bottom - margin.top;
@@ -119,7 +120,7 @@ function s1_filter() {
 
 function pairwise_filter() {
     let button_list = d3.selectAll('.pairwise_filter_btn')[0];
-    filter(button_list, true).then(df => {
+    filter(button_list, true, ".pairwise_slider").then(df => {
         updateTableWithColor(dataTable, df.toCollection(), true);
         // console.log(`df.shape = ${df.dim()}`);
     });
@@ -466,6 +467,8 @@ function wt_ctrl_btn() {
 }
 
 function s1_ctrl_btn() {
+    calc_and_show_stats_table();
+
     // Tick all s1_cols, except the first one\
     let checkboxes = document.getElementsByName("stateSelection");
     for (var i = 0, n = checkboxes.length; i < n; i++) {
@@ -495,6 +498,8 @@ function s1_ctrl_btn() {
 }
 
 function pairwise_ctrl_btn() {
+    calc_and_show_stats_table();
+
     // Tick all wt_cols, except the first one
     let checkboxes = document.getElementsByName("stateSelection");
     for (var i = 0, n = checkboxes.length; i < n; i++) {
@@ -769,6 +774,8 @@ function filter_data(button_list, pairwise, df, slider_class) {
             let bt = d3.select(button_list[i]);
             let col = bt.text().split(" ")[0];
             cur_base_condition = get_responding_wt_from_s1(col);
+            let slider = slider_ctrl_list.find((slider => slider.id.split("_")[1] == col.replace("s1","")));
+
 
             if (bt.style("background-color").toString() == color_arr[0]) {
                 filteredDf = filteredDf

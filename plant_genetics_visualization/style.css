@@ -19,6 +19,7 @@ p {
     display: inline;
 }
 
+
 .inactive {
     fill: #AAA;
 }
@@ -174,7 +175,6 @@ h1 {
     max-width: 500px;
     background: white;
 }
-
 
 #stateOptions {
     height: 220px;

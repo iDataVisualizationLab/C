@@ -26,7 +26,6 @@
     </div>
 
     <div id="Custom Mode" class="tabcontent">
-        <p></p>
         <div id="comparisonOptions">
             <h4>Compare To</h4>
             <form id="option_form">
@@ -40,7 +39,6 @@
             <br>
             <br>
         </div>
-
         <h4>Genes Shown</h4>
         <div id="stateOptions">
             <input type="checkbox" id="all" name="stateSelection"> Select All<br>
@@ -152,20 +150,64 @@
         </div>
 
 
-
     </div>
 
 
     <div id="Pairwise Comparison" class="tabcontent">
         <p>Compare each conditioned <b>s1</b> with its responding <b>wt</b> (e.g., <i>s1hp6 vs. wthp6</i>)</p>
+
         <div class="btn-group">
-            <button id="bt-pairwise-1" class="pairwise_filter_btn filter_btn">s1hp6 vs. wthp6</button>
-            <button id="bt-pairwise-2" class="pairwise_filter_btn filter_btn">s1lp6 vs. wtlp6</button>
-            <button id="bt-pairwise-3" class="pairwise_filter_btn filter_btn">s1hp5 vs. wthp5</button>
-            <button id="bt-pairwise-4" class="pairwise_filter_btn filter_btn">s1lp5 vs. wtlp5</button>
-            <button id="bt-pairwise-5" class="pairwise_filter_btn filter_btn">s1al vs. wtal</button>
-            <button id="bt-pairwise-6" class="pairwise_filter_btn filter_btn">s1fe vs. wtfe</button>
+            <div class="btn_and_slide_container">
+                <button id="bt-pairwise-0" class="pairwise_filter_btn filter_btn">s1hp6 vs. wthp6</button>
+                <input type="range" min="0" max="100" value="0" class="slider pairwise_slider" id="pairwise_hp6_slider">
+                <p><span id="pairwise_hp6_slider_value"></span></p>
+            </div>
+
+            <div class="btn_and_slide_container">
+                <button id="bt-pairwise-1" class="pairwise_filter_btn filter_btn">s1lp6 vs. wtlp6</button>
+                <input type="range" min="0" max="100" value="0" class="slider pairwise_slider" id="pairwise_lp6_slider">
+                <p><span id="pairwise_lp6_slider_value"></span></p>
+            </div>
+
+
+            <div class="btn_and_slide_container">
+                <button id="bt-pairwise-2" class="pairwise_filter_btn filter_btn">s1hp5 vs. wthp5</button>
+
+                <input type="range" min="0" max="100" value="0" class="slider pairwise_slider" id="pairwise_hp5_slider">
+                <p><span id="pairwise_hp5_slider_value"></span></p>
+            </div>
+
+            <div class="btn_and_slide_container">
+                <button id="bt-pairwise-3" class="pairwise_filter_btn filter_btn">s1lp5 vs. wtlp5</button>
+                <input type="range" min="0" max="100" value="0" class="slider pairwise_slider" id="pairwise_lp5_slider">
+                <p><span id="pairwise_lp5_slider_value"></span></p>
+            </div>
+
+            <div class="btn_and_slide_container">
+                <button id="bt-pairwise-4" class="pairwise_filter_btn filter_btn">s1al vs. wtal</button>
+                <input type="range" min="0" max="100" value="0" class="slider pairwise_slider" id="pairwise_al_slider">
+                <p><span id="pairwise_al_slider_value"></span></p>
+            </div>
+
+
+            <div class="btn_and_slide_container">
+                <button id="bt-pairwise-5" class="pairwise_filter_btn filter_btn">s1fe vs. wtfe</button>
+                <input type="range" min="0" max="100" value="0" class="slider pairwise_slider" id="pairwise_fe_slider">
+                <p><span id="pairwise_fe_slider_value"></span></p>
+            </div>
         </div>
+
+        <div id="pairwise_master_slider_div">
+            <div class="btn_and_slide_container">
+                <input type="range" min="0" max="100" value="0" class="slider pairwise_master_slider master_slider"
+                       id="pairwise_master_slider">
+                <br>
+                <p>Main slider: <span id="pairwise_master_slider_value"></span></p>
+            </div>
+
+        </div>
+
+
     </div>
 </div>
 
