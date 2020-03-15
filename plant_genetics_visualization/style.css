@@ -100,7 +100,7 @@ p {
 
 #unemploymentCharts {
     float: left;
-    width: 65%;
+    width: 62%;
     height: 98%;
     margin: 0px 0px 0px 1px;
     padding: 1px;
@@ -112,7 +112,7 @@ p {
 
 #options {
     float: left;
-    width: 32%;
+    width: 36%;
     height: 320px;
     /*min-height: 350px;*/
     /*max-height: 400px;*/
@@ -142,7 +142,7 @@ h1 {
     /*padding: 5px 8px;*/
     font-size: 12px;
 
-    padding: 3px 0.5em;
+    padding: 1px 0.5em;
     margin-left: 3px;
     border: 1px solid #778;
     border-bottom: none;
@@ -267,6 +267,7 @@ tr:nth-child(even) {
     height: 60px;
     display: inline-block;
     margin-right: 10px;
+    margin-top: 0px;
 }
 
 /*.wt_master_slider_div{*/
@@ -294,13 +295,13 @@ tr:nth-child(even) {
     margin-top: 10px;
     display: inline-block;
     width: 320px;
-    height: 135px;
+    height: 125px;
 
 }
 
 .statsTableClass {
     width: 100%;
-    height: 130px;
+    height: 120px;
     overflow-y: auto;
 
 }

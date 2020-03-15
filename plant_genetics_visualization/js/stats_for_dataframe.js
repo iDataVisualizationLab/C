@@ -154,10 +154,11 @@ function calc_and_show_stats_table() {
     }
 
 
-    console.log("starting calc... It takes too long => need a server to handle the computation");
+    console.log("...calculating the  summary table");
     let tick = new Date;
     let stats_results = calc_all_stats(_df, _cols, base, master_slider, pairwise);
-    console.log(`thank goodness, finally its done, running time = ${ (tick - new Date) / 1000}s`);
+    console.log(`thank goodness, finally its done, running time = ${ (new Date - tick) / 1000}s`);
+
 
     let new_header = [...stats_col_names, "#genes"];
     const df = new DataFrame(stats_results, new_header);
