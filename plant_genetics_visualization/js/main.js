@@ -529,6 +529,7 @@ function pairwise_ctrl_btn() {
 
 function custom_ctrl_btn() {
 
+    console.log("HERE")
 
     // untick all, except the first one\
     let checkboxes = document.getElementsByName("stateSelection");

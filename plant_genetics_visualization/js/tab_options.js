@@ -1,7 +1,6 @@
 
 
 function openTab(evt, scenarioName) {
-    my_stats_table.destroy();
     cur_active_tab = scenarioName;
 
     let i, tabcontent, tablinks, btns_list = [];;
@@ -19,18 +18,23 @@ function openTab(evt, scenarioName) {
     document.getElementById(scenarioName).style.display = "block";
 
     if (scenarioName == tab_names["wt"]) {
+        my_stats_table.destroy();
+
         wt_ctrl_btn();
 
+
     } else if (scenarioName == tab_names["s1"]) {
+        my_stats_table.destroy();
 
         s1_ctrl_btn();
     } else if (scenarioName ==  tab_names["pairwise"]) {
+        my_stats_table.destroy();
+
         pairwise_ctrl_btn();
 
     } else if (scenarioName ==  tab_names["custom"]) {
-        console.log("tab_names[\"custom\"]", tab_names["custom"]);
+
         custom_ctrl_btn();
-        my_stats_table.destroy();
 
     }
 
