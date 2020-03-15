@@ -21,20 +21,28 @@ function openTab(evt, scenarioName) {
         my_stats_table.destroy();
 
         wt_ctrl_btn();
+        $('.statsTable_and_print').show();
+
 
 
     } else if (scenarioName == tab_names["s1"]) {
         my_stats_table.destroy();
 
         s1_ctrl_btn();
+        $('.statsTable_and_print').show();
+
     } else if (scenarioName ==  tab_names["pairwise"]) {
         my_stats_table.destroy();
 
         pairwise_ctrl_btn();
+        $('.statsTable_and_print').show();
+
 
     } else if (scenarioName ==  tab_names["custom"]) {
 
         custom_ctrl_btn();
+        $('.statsTable_and_print').hide();
+
 
     }
 
