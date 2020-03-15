@@ -171,6 +171,8 @@ $("#option_form").on("change", () => {
 });
 
 DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
+    document.getElementById("printStats").innerHTML = "Summary for threshold = 0";
+
     _df = data;
     num_obser = _df.dim()[0];
     let my_all_data = {};

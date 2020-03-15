@@ -2,7 +2,7 @@
 
 function openTab(evt, scenarioName) {
     cur_active_tab = scenarioName;
-    document.getElementById("printStats").innerHTML = `Summary for threshold = 0`;
+    document.getElementById("printStats").innerHTML = "Summary for threshold = 0";
 
 
     let i, tabcontent, tablinks, btns_list = [];;
