@@ -291,12 +291,12 @@ tr:nth-child(even) {
     margin-right: 10px;
 }
 
-.wt_master_slider_div{
-    width: 180px;
-    height: 50px;
-    display: inline-block;
-    margin-right: 50px;
-}
+/*.wt_master_slider_div{*/
+/*    width: 180px;*/
+/*    height: 50px;*/
+/*    display: inline-block;*/
+/*    margin-right: 50px;*/
+/*}*/
 
 .dataTable_and_print{
      display: inline-block;

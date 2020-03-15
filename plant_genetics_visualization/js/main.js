@@ -23,7 +23,6 @@ const tab_names = {
     "custom": "Custom Mode"
 };
 let cur_active_tab = tab_names["wt"];
-let my_stats_table;
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
 let w = $("#unemploymentCharts").width() * 0.99 - margin.left - margin.right;
 let h = 200 - margin.bottom - margin.top;
@@ -434,7 +433,6 @@ d3.select("#stateComparisonListdown").on("change", () => {
 });
 
 function wt_ctrl_btn() {
-    document.getElementById("printStats").innerHTML = `Summary for threshold = 0`;
     calc_and_show_stats_table();
 
     // Tick all wt_cols, except the first one\
@@ -467,6 +465,7 @@ function wt_ctrl_btn() {
 }
 
 function s1_ctrl_btn() {
+
     calc_and_show_stats_table();
 
     // Tick all s1_cols, except the first one\

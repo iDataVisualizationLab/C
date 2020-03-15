@@ -2,6 +2,8 @@
 
 function openTab(evt, scenarioName) {
     cur_active_tab = scenarioName;
+    document.getElementById("printStats").innerHTML = `Summary for threshold = 0`;
+
 
     let i, tabcontent, tablinks, btns_list = [];;
     updateData(_df);
@@ -18,7 +20,6 @@ function openTab(evt, scenarioName) {
     document.getElementById(scenarioName).style.display = "block";
 
     if (scenarioName == tab_names["wt"]) {
-        my_stats_table.destroy();
 
         wt_ctrl_btn();
         $('.statsTable_and_print').show();
@@ -26,13 +27,13 @@ function openTab(evt, scenarioName) {
 
 
     } else if (scenarioName == tab_names["s1"]) {
-        my_stats_table.destroy();
 
         s1_ctrl_btn();
         $('.statsTable_and_print').show();
 
     } else if (scenarioName ==  tab_names["pairwise"]) {
-        my_stats_table.destroy();
+
+
 
         pairwise_ctrl_btn();
         $('.statsTable_and_print').show();

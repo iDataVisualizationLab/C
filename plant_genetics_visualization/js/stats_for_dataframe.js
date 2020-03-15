@@ -3,7 +3,7 @@ const ENCODE_COLOR = {
     2: MY_COLORS.orange,
     3: MY_COLORS.gray,
 }
-
+let my_stats_table;
 function calc_stat_for_1_combination(df, cols, base_col, compare_conditions, master_slider, pairwise) {
     for (let i = 0, n = cols.length; i < n; i++) {
         let condition = compare_conditions[i];
@@ -47,6 +47,9 @@ function calc_all_stats(df, cols, base_col, master_slider, pairwise) {
 }
 
 function create_stats_table(tbl, rows) {
+    $(statsTable).empty();
+
+
 
     tbl.innerHTML = '';
     if (rows && rows.length > 0) {
@@ -151,21 +154,39 @@ function calc_and_show_stats_table() {
     }
 
 
+    console.log("starting calc... It takes too long => need a server to handle the computation");
     let stats_results = calc_all_stats(_df, _cols, base, master_slider, pairwise);
+    console.log("thank goodness, its done.");
 
-    const df = new DataFrame(stats_results, [...stats_col_names, "#genes"]);
+    let new_header = [...stats_col_names, "#genes"];
+    const df = new DataFrame(stats_results, new_header);
+
+
+    if( my_stats_table){
+        my_stats_table.destroy();
+        $(statsTable).empty();
+    }
+
+
 
     create_stats_table(statsTable, df.toCollection());
+
+    df.show();
+    // console.log("new_header", new_header);
+    // for (let i=0; i < new_header.length; i++){
+    //     let head_item = my_stats_table.columns(i).header();
+    //     $(head_item ).text(new_header[i]);
+    // }
+
 
     $(document).ready(function () {
 
 
             my_stats_table = $(statsTable).DataTable({
-
                 // Todo: show the sorting arrows
                 order: [[df.dim()[1] - 1, 'des']],
 
-
+                destroy: true,
                 // scrollY:        '200px',
                 // scrollCollapse: true,
                 paging: false,
@@ -179,10 +200,10 @@ function calc_and_show_stats_table() {
                 let row_data = my_stats_table.row(this).data();
                 click_row_callback(row_data.slice(0, row_data.length - 1));
             });
-
-
         }
     )
+
+
 }
 
 // function show_stats_table(tbl, df.toCollection()) {
