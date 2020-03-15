@@ -70,7 +70,7 @@ p {
 
 .slider {
     -webkit-appearance: none;
-    width: 170px;
+    width: 120px;
     height: 5px;
     border-radius: 5px;
     background: #d3d3d3;
@@ -113,9 +113,9 @@ p {
 #options {
     float: left;
     width: 32%;
-    height: fit-content;
-    min-height: 350px;
-    max-height: 400px;
+    height: 320px;
+    /*min-height: 350px;*/
+    /*max-height: 400px;*/
     padding: 5px;
 }
 
@@ -167,7 +167,7 @@ h1 {
     padding: 3px 5px;
     border: 1px solid #ccc;
     border-top: none;
-    height: fit-content;
+    height: 250px;
     /*min-height: 300px;*/
     /*max-height: 400px;*/
     width: 95%;
@@ -215,7 +215,7 @@ h1 {
     font-size: 11px;
     margin: 2px 1px;
     border-radius: 1px;
-    width: 200px;
+    width: 150px;
     height: 30px;
     cursor: pointer;
     background-image: linear-gradient(to right, rgb(145, 207, 96), rgb(252, 141, 89)); /* Standard syntax (must be last) */
@@ -285,14 +285,14 @@ tr:nth-child(even) {
 
 
 .btn_and_slide_container{
-    width: 220px;
+    width: 180px;
     height: 60px;
     display: inline-block;
     margin-right: 10px;
 }
 
 .wt_master_slider_div{
-    width: 230px;
+    width: 180px;
     height: 50px;
     display: inline-block;
     margin-right: 50px;
