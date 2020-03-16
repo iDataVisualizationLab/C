@@ -204,9 +204,9 @@ h1 {
     text-decoration: none;
     display: inline-block;
     font-size: 11px;
-    margin: 2px 10px 0px 0px;
+    margin: 2px 10px 2px 2px;
     border-radius: 1px;
-    width: 100px;
+    width: 120px;
     height: 30px;
     cursor: pointer;
     background-image: linear-gradient(to right, rgb(145, 207, 96), rgb(252, 141, 89)); /* Standard syntax (must be last) */
@@ -263,7 +263,7 @@ tr:nth-child(even) {
 
 
 .btn_and_slide_container{
-    width: 100px;
+    width: 130px;
     height: 60px;
     display: inline-block;
     margin-right: 10px;

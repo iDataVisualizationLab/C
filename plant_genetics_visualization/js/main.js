@@ -127,18 +127,24 @@ function pairwise_filter() {
 }
 
 
-function wt_filter_btn_click_func(d) {
+function wt_filter_btn_click_func() {
     let _this = this;
 
     change_color_when_click_btn(_this);
     wt_filter();
+
+    let slider  = document.getElementById(_this.id.split("_")[0] + "_slider");
+    change_color_ctrl_slider_bar_auto_choose_color(_this, slider, slider.value);
 }
 
 function s1_filter_btn_click_func() {
     let _this = this;
-
     change_color_when_click_btn(_this);
+
     s1_filter();
+
+    let slider  = document.getElementById(_this.id.split("_")[0] + "_slider");
+    change_color_ctrl_slider_bar_auto_choose_color(_this, slider, slider.value);
 }
 
 function pairwise_filter_btn_click_func() {
@@ -146,6 +152,9 @@ function pairwise_filter_btn_click_func() {
 
     change_color_when_click_btn(_this);
     pairwise_filter();
+
+    let slider  = document.getElementById(_this.id.split("_")[0].replace("s1", "pairwise_") + "_slider");
+    change_color_ctrl_slider_bar_auto_choose_color(_this, slider, slider.value);
 
 }
 
