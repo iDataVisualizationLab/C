@@ -4,51 +4,54 @@ const ENCODE_COLOR = {
     3: MY_COLORS.gray,
 }
 let my_stats_table;
-function calc_stat_for_1_combination(df, cols, base_col, compare_conditions, master_slider, pairwise) {
-    for (let i = 0, n = cols.length; i < n; i++) {
-        let condition = compare_conditions[i];
-        let col = cols[i];
+let my_stats_data;
+let _row;
 
+
+function row_to_cluster(row, condition_cols, base_col, thres, pairwise, all_cluster) {
+    let cluster = [];
+
+    for (let i = 0; i < condition_cols.length; i++) {
         if (pairwise) {
-            base_col = col.replace("s1", "wt");
+            base_col = condition_cols[i].replace("s1", "wt"); // Todo add variable
         }
 
-        if (condition == 1) {  //greater
-            df = df
-                .filter(row => row.get(base_col) < (row.get(col) - parseInt(master_slider.value) / 100));
-        } else if (condition == 2) {  //less
-            df = df
-                .filter(row => row.get(base_col) - parseInt(master_slider.value) / 100 > (row.get(col)));
-        } else if (condition == 3) {  // does NOT change
-            df = df
-                .filter(row => Math.abs(row.get(base_col) - row.get(col)) <= parseInt(master_slider.value) / 100);
+        if (parseFloat(row.get(condition_cols[i])) - parseFloat(row.get(base_col)) > parseFloat(thres)) {
+            cluster.push(1);
+        } else if (parseFloat(row.get(base_col)) - parseFloat(row.get(condition_cols[i])) > parseFloat(thres)) {
+            cluster.push(2);
+        } else if (Math.abs(parseFloat(row.get(base_col)) - parseFloat(row.get(condition_cols[i]))) <= parseFloat(thres)) {
+            cluster.push(3);
         }
     }
-    return df.dim()[0];
+    all_cluster[cluster] += 1;
+
 }
 
-function calc_all_stats(df, cols, base_col, master_slider, pairwise) {
+function calc_stat_for_1_combination(df, condition_cols, base_col, master_slider, pairwise, all_cluster) {
+    let thres = master_slider.value / 100;
+    df.map((row) => row_to_cluster(row, condition_cols, base_col, thres, pairwise, all_cluster));
+
+    return all_cluster;
+}
+
+
+function calc_all_stats(df, condition_cols, base_col, master_slider, pairwise) {
     let compare_conditions_list = [];
-    permutator_base_3([], compare_conditions_list, cols.length);
+    let all_cluster = {};
+    permutator_base_3([], compare_conditions_list, condition_cols.length);
 
-    let results = [];
-    for (let i = 0, n = compare_conditions_list.length; i < n; i++) {
-        let compare_conditions = compare_conditions_list[i]
+    compare_conditions_list.forEach(cluster => all_cluster[cluster] = 0);
 
-        results.push(calc_stat_for_1_combination(df, cols, base_col, compare_conditions, master_slider, pairwise));
-
-
-    }
-    let stats_results = zip([compare_conditions_list, results]).map((x) => x.flat());
-    // console.log(stats_results);
+    let stats_results = [];
+    all_cluster = calc_stat_for_1_combination(df, condition_cols, base_col, master_slider, pairwise, all_cluster);
+    stats_results = Object.entries(all_cluster).map(x => [...x[0].split(","), x[1]]);
 
     return stats_results;
-
 }
 
 function create_stats_table(tbl, rows) {
     $(statsTable).empty();
-
 
 
     tbl.innerHTML = '';
@@ -129,61 +132,49 @@ function click_row_callback(row_data) {
     filter_func();
 }
 
-function calc_and_show_stats_table() {
-
-    let _cols, master_slider, base, stats_col_names;
+function calc_and_show_stats_table(testing = false) {
+    let condition_cols, master_slider, base, stats_col_names, df;
     let pairwise = false;
-    console.log("cur_active_tab", cur_active_tab);
+
     if (cur_active_tab == tab_names["wt"]) {
-        _cols = wt_cols.slice(1);
-        stats_col_names = _cols;
+        condition_cols = wt_cols.slice(1);
+        stats_col_names = condition_cols;
         base = wt_cols[0];
         master_slider = wt_master_slider;
     } else if (cur_active_tab == tab_names["s1"]) {
-        _cols = s1_cols.slice(1);
+        condition_cols = s1_cols.slice(1);
         base = s1_cols[0];
-        stats_col_names = _cols;
+        stats_col_names = condition_cols;
         master_slider = s1_master_slider;
 
     } else if (cur_active_tab == tab_names["pairwise"]) {
-        _cols = s1_cols;
+        condition_cols = s1_cols;
         master_slider = pairwise_master_slider;
         pairwise = true;
-        stats_col_names = _cols.map(x => x.replace('s1', ""));
+        stats_col_names = condition_cols.map(x => x.replace('s1', ""));
         // No need to set "base" for pairwise
     }
 
 
     console.log("...calculating the  summary table");
     let tick = new Date;
-    let stats_results = calc_all_stats(_df, _cols, base, master_slider, pairwise);
-    console.log(`thank goodness, finally its done, running time = ${ (new Date - tick) / 1000}s`);
+    let stats_results = calc_all_stats(_df, condition_cols, base, master_slider, pairwise);
+    console.log(`thank goodness, finally its done, running time = ${(new Date - tick) / 1000}s`);
 
 
     let new_header = [...stats_col_names, "#genes"];
-    const df = new DataFrame(stats_results, new_header);
+    df = new DataFrame(stats_results, new_header);
 
 
-    if( my_stats_table){
+    if (my_stats_table) {
         my_stats_table.destroy();
         $(statsTable).empty();
     }
 
-
-
     create_stats_table(statsTable, df.toCollection());
-
-    df.show();
-    // console.log("new_header", new_header);
-    // for (let i=0; i < new_header.length; i++){
-    //     let head_item = my_stats_table.columns(i).header();
-    //     $(head_item ).text(new_header[i]);
-    // }
 
 
     $(document).ready(function () {
-
-
             my_stats_table = $(statsTable).DataTable({
                 // Todo: show the sorting arrows
                 order: [[df.dim()[1] - 1, 'des']],
@@ -196,8 +187,6 @@ function calc_and_show_stats_table() {
                 bInfo: false,
 
             });
-
-
             $("#statsTable tbody").on('click', 'tr', function () {
                 let row_data = my_stats_table.row(this).data();
                 click_row_callback(row_data.slice(0, row_data.length - 1));
