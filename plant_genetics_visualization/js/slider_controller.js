@@ -8,36 +8,37 @@ const pairwise_master_slider = document.getElementById("pairwise_master_slider")
 const pairwise_master_slider_value = document.getElementById("pairwise_master_slider_value");
 
 
-
-
-
 function change_all_slider_values_to_the_master(master_val, cols, pairwise) {
-    if (!pairwise){
+    let col_slider_value, col_slider, col_btn;
+
+    if (!pairwise) {
 
         cols.forEach((col) => {
-            let col_slider_value, col_slider,  col_btn ;
             col_slider_value = document.getElementById(col + "_slider_value");
             col_slider = document.getElementById(col + "_slider");
             col_btn = document.getElementById(col + "_btn");
 
             col_slider_value.innerHTML = master_val / 100;
             $("#" + col + "_slider").val(master_val);
-
             change_color_ctrl_slider_bar_auto_choose_color(col_btn, col_slider, master_val);
 
+
         })
-    }
-    else{
+    } else {
         cols.forEach((col) => {
-        let col_slider_value;
-        col_slider_value = document.getElementById(col.replace("s1", "pairwise_") + "_slider_value");
+            col_slider_value = document.getElementById(col.replace("s1", "pairwise_") + "_slider_value");
+            col_slider = document.getElementById(col.replace("s1", "pairwise_") + "_slider");
+            col_btn = document.getElementById(col.replace("s1", "pairwise_") + "_btn");
 
-        col_slider_value.innerHTML = master_val / 100;
-        $("#" + col.replace("s1", "pairwise_") + "_slider").val(master_val);
+            col_slider_value.innerHTML = master_val / 100;
+            $("#" + col.replace("s1", "pairwise_") + "_slider").val(master_val);
+            change_color_ctrl_slider_bar_auto_choose_color(col_btn, col_slider, master_val);
 
-    })
+
+        })
 
     }
+
 }
 
 function update_text_when_sliders_change(sl, filter_func, pairwise = false) {
@@ -47,11 +48,10 @@ function update_text_when_sliders_change(sl, filter_func, pairwise = false) {
         slider_value = document.getElementById(sl + "_slider_value");
         col_btn = document.getElementById(sl + "_btn");
 
-    }
-    else{
+    } else {
         slider = document.getElementById(sl.replace("s1", "pairwise_") + "_slider");
         slider_value = document.getElementById(sl.replace("s1", "pairwise_") + "_slider_value");
-        col_btn = document.getElementById(sl.replace("s1", "pairwise_")  + "_btn");
+        col_btn = document.getElementById(sl.replace("s1", "pairwise_") + "_btn");
 
     }
 
@@ -94,7 +94,6 @@ s1_master_slider_value.innerHTML = s1_master_slider.value;
 s1_master_slider.oninput = function () {
 
     let master_val = this.value;
-
 
 
     s1_master_slider_value.innerHTML = master_val / 100;
