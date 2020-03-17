@@ -34,7 +34,6 @@ var xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(7);
 var yAxis = d3.svg.axis().scale(y).orient("left").ticks(5);
 
 
-
 // Define the line.
 var valueLine = d3.svg.line()
     .x(function (d) {
@@ -99,7 +98,6 @@ function wt_filter() {
     $("#stateComparisonListdown").val("wthp6");
 
 
-
     let button_list = d3.selectAll('.wt_filter_btn')[0];
     filter(button_list, false, ".wt_slider").then(df => {
         updateTableWithColor(dataTable, df.toCollection());
@@ -135,7 +133,7 @@ function wt_filter_btn_click_func() {
     change_color_when_click_btn(_this);
     wt_filter();
 
-    let slider  = document.getElementById(_this.id.split("_")[0] + "_slider");
+    let slider = document.getElementById(_this.id.split("_")[0] + "_slider");
     change_color_ctrl_slider_bar_auto_choose_color(_this, slider, slider.value);
 }
 
@@ -145,7 +143,7 @@ function s1_filter_btn_click_func() {
 
     s1_filter();
 
-    let slider  = document.getElementById(_this.id.split("_")[0] + "_slider");
+    let slider = document.getElementById(_this.id.split("_")[0] + "_slider");
     change_color_ctrl_slider_bar_auto_choose_color(_this, slider, slider.value);
 }
 
@@ -155,7 +153,7 @@ function pairwise_filter_btn_click_func() {
     change_color_when_click_btn(_this);
     pairwise_filter();
 
-    let slider  = document.getElementById(_this.id.replace("btn", "slider"));
+    let slider = document.getElementById(_this.id.replace("btn", "slider"));
     change_color_ctrl_slider_bar_auto_choose_color(_this, slider, slider.value);
 
 }
@@ -447,7 +445,39 @@ d3.select("#stateComparisonListdown").on("change", () => {
 
 function wt_ctrl_btn() {
 
-    let  wt_btn_group = d3.select('wt_comparison').selectAll('btn-group');
+    // Todo: use svg
+    let wt_btn_group = d3.select('#wt_comparison')
+        .select('.btn-group')
+        .append('div')
+        .attr("class", "btn_and_slide_container"); // or .classed("btn_and_slide_container", true)
+
+    wt_btn_group.append("button")
+        .attr("id", "XYZ_btn")
+        .classed("wt_filter_btn", true)
+        .classed("filter_btn", true)
+        .text("XYZ vs. wthp6");
+
+    wt_btn_group.append("input")
+        .attr("id", "XYZ_slider")
+        .attr("type", "range")
+        .attr("min", 0)
+        .attr("max", 100)
+        .attr("value", 0)
+        .classed("slider", true)
+        .classed("wt_slider", true)
+        .style("text", "XYZ vs. wthp6");
+
+    wt_btn_group.append("p")
+        .append("span")
+        .attr("id", "XYZ_slider_value")
+
+        // .append(`<div class="btn_and_slide_container">
+        //         <button id="XYZ_btn" class="wt_filter_btn filter_btn">XYZ vs. wthp6</button>
+        //         <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="XYZ_slider">
+        //         <p><span id="XYZ_slider_value"></span></p>
+        //     </div>`);
+    console.log("use sgv ...");
+
 
     console.log("======  wt_btn_group", wt_btn_group);
     calc_and_show_stats_table();
@@ -791,7 +821,7 @@ function filter_data(button_list, pairwise, df, slider_class) {
             let bt = d3.select(button_list[i]);
             let col = bt.text().split(" ")[0];
             cur_base_condition = get_responding_wt_from_s1(col);
-            let slider = slider_ctrl_list.find((slider => slider.id.split("_")[1] == col.replace("s1","")));
+            let slider = slider_ctrl_list.find((slider => slider.id.split("_")[1] == col.replace("s1", "")));
 
 
             if (bt.style("background-color").toString() == color_arr[0]) {
