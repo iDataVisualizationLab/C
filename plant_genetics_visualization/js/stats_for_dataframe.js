@@ -156,10 +156,10 @@ function calc_and_show_stats_table(testing = false) {
     }
 
 
-    console.log("...calculating the  summary table");
+    console.log("Calculating the summary table...");
     let tick = new Date;
     let stats_results = calc_all_stats(_df, condition_cols, base, master_slider, pairwise);
-    console.log(`Done calc, running time = ${(new Date - tick) / 1000}s`);
+    console.log(`Done the computation, running time = ${(new Date - tick) / 1000}s`);
 
 
     let new_header = [...stats_col_names, "#genes"];

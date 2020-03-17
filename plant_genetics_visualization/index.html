@@ -18,14 +18,14 @@
 <div id="options">
     <h1>Control Panel</h1>
     <div class="tab">
-        <button class="tablinks active" onclick="openTab(event, 'WT(s) Comparison')">WT(s) Comparison</button>
-        <button class="tablinks" onclick="openTab(event, 'S1(s) Comparison')">S1(s) Comparison</button>
-        <button class="tablinks" onclick="openTab(event, 'Pairwise Comparison')">S1(s) vs. WT(s)</button>
-        <button class="tablinks" onclick="openTab(event, 'Custom Mode')">Custom Mode</button>
+        <button class="tablinks active" onclick="openTab(event, 'wt_comparison')">WT(s) Comparison</button>
+        <button class="tablinks" onclick="openTab(event, 's1_comparison')">S1(s) Comparison</button>
+        <button class="tablinks" onclick="openTab(event, 'pairwise_comparison')">S1(s) vs. WT(s)</button>
+        <button class="tablinks" onclick="openTab(event, 'custom_mode')">Custom Mode</button>
 
     </div>
 
-    <div id="Custom Mode" class="tabcontent">
+    <div id="custom_mode" class="tabcontent">
         <div id="comparisonOptions">
             <h4>Compare To</h4>
             <form id="option_form">
@@ -44,41 +44,41 @@
         </div>
     </div>
 
-    <div id="WT(s) Comparison" class="tabcontent" style="display:block">
+    <div id="wt_comparison" class="tabcontent" style="display:block">
         <p>Compare each conditioned test with <b>wthp6</b></p>
         <div class="btn-group">
-<!--            <div class="btn_and_slide_container">-->
-<!--                <button id="wtlp6_btn" class="wt_filter_btn filter_btn">wtlp6 vs. wthp6</button>-->
-<!--                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtlp6_slider">-->
-<!--                <p><span id="wtlp6_slider_value"></span></p>-->
-<!--            </div>-->
+            <div class="btn_and_slide_container">
+                <button id="wtlp6_btn" class="wt_filter_btn filter_btn">wtlp6 vs. wthp6</button>
+                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtlp6_slider">
+                <p><span id="wtlp6_slider_value"></span></p>
+            </div>
 
 
-<!--            <div class="btn_and_slide_container">-->
-<!--                <button id="wthp5_btn" class="wt_filter_btn filter_btn">wthp5 vs. wthp6</button>-->
+            <div class="btn_and_slide_container">
+                <button id="wthp5_btn" class="wt_filter_btn filter_btn">wthp5 vs. wthp6</button>
 
-<!--                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wthp5_slider">-->
-<!--                <p><span id="wthp5_slider_value"></span></p>-->
-<!--            </div>-->
+                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wthp5_slider">
+                <p><span id="wthp5_slider_value"></span></p>
+            </div>
 
-<!--            <div class="btn_and_slide_container">-->
-<!--                <button id="wtlp5_btn" class="wt_filter_btn filter_btn">wtlp5 vs. wthp6</button>-->
-<!--                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtlp5_slider">-->
-<!--                <p><span id="wtlp5_slider_value"></span></p>-->
-<!--            </div>-->
+            <div class="btn_and_slide_container">
+                <button id="wtlp5_btn" class="wt_filter_btn filter_btn">wtlp5 vs. wthp6</button>
+                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtlp5_slider">
+                <p><span id="wtlp5_slider_value"></span></p>
+            </div>
 
-<!--            <div class="btn_and_slide_container">-->
-<!--                <button id="wtal_btn" class="wt_filter_btn filter_btn">wtal vs. wthp6</button>-->
-<!--                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtal_slider">-->
-<!--                <p><span id="wtal_slider_value"></span></p>-->
-<!--            </div>-->
+            <div class="btn_and_slide_container">
+                <button id="wtal_btn" class="wt_filter_btn filter_btn">wtal vs. wthp6</button>
+                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtal_slider">
+                <p><span id="wtal_slider_value"></span></p>
+            </div>
 
 
-<!--            <div class="btn_and_slide_container">-->
-<!--                <button id="wtfe_btn" class="wt_filter_btn filter_btn">wtfe vs. wthp6</button>-->
-<!--                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtfe_slider">-->
-<!--                <p><span id="wtfe_slider_value"></span></p>-->
-<!--            </div>-->
+            <div class="btn_and_slide_container">
+                <button id="wtfe_btn" class="wt_filter_btn filter_btn">wtfe vs. wthp6</button>
+                <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="wtfe_slider">
+                <p><span id="wtfe_slider_value"></span></p>
+            </div>
         </div>
 
         <div id="wt_master_slider_div">
@@ -94,7 +94,7 @@
 
     </div>
 
-    <div id="S1(s) Comparison" class="tabcontent">
+    <div id="s1_comparison" class="tabcontent">
 
         <p>Compare each conditioned test s1 with <b>s1hp6</b></p>
         <div class="btn-group">
@@ -149,7 +149,7 @@
     </div>
 
 
-    <div id="Pairwise Comparison" class="tabcontent">
+    <div id="pairwise_comparison" class="tabcontent">
         <p>Compare each conditioned <b>s1</b> with its responding <b>wt</b> (e.g., <i>s1hp6 vs. wthp6</i>)</p>
 
         <div class="btn-group">

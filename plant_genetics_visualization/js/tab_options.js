@@ -21,8 +21,6 @@ function openTab(evt, scenarioName) {
 
     if (scenarioName == tab_names["wt"]) {
 
-        let  a = d3.selectAll()
-
         wt_ctrl_btn();
         $('.statsTable_and_print').show();
 

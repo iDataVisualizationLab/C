@@ -17,10 +17,10 @@ let num_obser;
 let color_arr = [MY_COLORS.default, MY_COLORS.green, MY_COLORS.orange, MY_COLORS.gray];
 let _df;
 const tab_names = {
-    "wt": "WT(s) Comparison",
-    "s1": "S1(s) Comparison",
-    "pairwise": 'Pairwise Comparison',
-    "custom": "Custom Mode"
+    "wt": "wt_comparison",
+    "s1": "s1_comparison",
+    "pairwise": 'pairwise_comparison',
+    "custom": "custom_mode"
 };
 let cur_active_tab = tab_names["wt"];
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
@@ -447,8 +447,9 @@ d3.select("#stateComparisonListdown").on("change", () => {
 
 function wt_ctrl_btn() {
 
+    let  wt_btn_group = d3.select('wt_comparison').selectAll('btn-group');
 
-
+    console.log("======  wt_btn_group", wt_btn_group);
     calc_and_show_stats_table();
 
     // Tick all wt_cols, except the first one\
