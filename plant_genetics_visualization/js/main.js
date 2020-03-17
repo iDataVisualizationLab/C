@@ -153,7 +153,7 @@ function pairwise_filter_btn_click_func() {
     change_color_when_click_btn(_this);
     pairwise_filter();
 
-    let slider  = document.getElementById(_this.id.split("_")[0].replace("s1", "pairwise_") + "_slider");
+    let slider  = document.getElementById(_this.id.replace("btn", "slider"));
     change_color_ctrl_slider_bar_auto_choose_color(_this, slider, slider.value);
 
 }
