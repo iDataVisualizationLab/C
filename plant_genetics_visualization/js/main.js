@@ -98,6 +98,8 @@ function wt_filter() {
 
     $("#stateComparisonListdown").val("wthp6");
 
+
+
     let button_list = d3.selectAll('.wt_filter_btn')[0];
     filter(button_list, false, ".wt_slider").then(df => {
         updateTableWithColor(dataTable, df.toCollection());
@@ -444,6 +446,9 @@ d3.select("#stateComparisonListdown").on("change", () => {
 });
 
 function wt_ctrl_btn() {
+
+
+
     calc_and_show_stats_table();
 
     // Tick all wt_cols, except the first one\
