@@ -9,9 +9,9 @@ const MY_COLORS = {
 
 }
 
-// function sleep(time) {
-//     return new Promise((resolve) => setTimeout(resolve, time));
-// }
+function sleep(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+}
 
 zip = rows => rows[0].map((_, c) => rows.map(row => row[c])) //zip([[1,2,3], [11,12,13]])
 

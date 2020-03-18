@@ -278,11 +278,11 @@ tr:nth-child(even) {
 /*}*/
 
 .dataTable_and_print{
-     display: inline-block;
-     width: 28%;
-     height: 205px;
+    display: inline-block;
+    width: 28%;
+    height: 225px;
 
- }
+}
 
 .dataTable{
     width: 100%;
@@ -313,4 +313,24 @@ tr:nth-child(even) {
     margin-right: 10px;
     display: block;
     float: left;
+}
+
+a {
+    text-decoration: none;
+    display: inline-block;
+    padding: 8px 16px;
+}
+
+a:hover {
+    background-color: lightskyblue;
+    color: black;
+}
+
+.previous, .next {
+    background-color: lightblue;
+    color: white;
+}
+
+.round {
+    border-radius: 50%;
 }

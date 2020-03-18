@@ -5,9 +5,8 @@ function openTab(evt, scenarioName) {
     document.getElementById("printStats").innerHTML = "Summary for threshold = 0";
 
 
-    let i, tabcontent, tablinks, btns_list = [];;
-    updateData(_df);
-    num_obser = _df.dim()[0];
+    let i, tabcontent, tablinks, btns_list = [];
+    updateData(_total_df);
 
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
