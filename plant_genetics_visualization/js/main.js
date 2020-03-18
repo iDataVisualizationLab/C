@@ -9,6 +9,10 @@ const names = {
     "gene": "state"
 };
 
+const base_class = "wt";
+const mutant_class = "s1";
+const pairwise_class = "pairwise";
+
 let dataTable = document.getElementById('ipdatacsvTbl');
 let statsTable = document.getElementById('statsTable');
 let comparison_radio = $(document.getElementsByName("comparison"));
@@ -17,10 +21,10 @@ let num_obser;
 let color_arr = [MY_COLORS.default, MY_COLORS.green, MY_COLORS.orange, MY_COLORS.gray];
 let _df;
 const tab_names = {
-    "wt": "WT(s) Comparison",
-    "s1": "S1(s) Comparison",
-    "pairwise": 'Pairwise Comparison',
-    "custom": "Custom Mode"
+    "wt": "wt_comparison",
+    "s1": "s1_comparison",
+    "pairwise": 'pairwise_comparison',
+    "custom": "custom_mode"
 };
 let cur_active_tab = tab_names["wt"];
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
@@ -32,6 +36,32 @@ var x = d3.scale.linear().range([0, w]);
 var y = d3.scale.linear().domain([0, 1]).range([h, 0]);
 var xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(7);
 var yAxis = d3.svg.axis().scale(y).orient("left").ticks(5);
+
+
+
+
+
+// Todo: use svg
+let wt_base = wt_cols[0];
+let S1_base = s1_cols[0];
+let wt_condition_cols = wt_cols.slice(1);
+let s1_condition_cols = s1_cols.slice(1);
+let pairwise_condition_cols = s1_cols;
+
+wt_condition_cols.forEach(wt => {
+    create_filter_btn(wt, base_class, wt_base, false);
+});
+
+s1_condition_cols.forEach(s1 => {
+    create_filter_btn(s1, mutant_class, S1_base, false);
+});
+
+pairwise_condition_cols.forEach(p => {
+    create_filter_btn(p, pairwise_class, "",true, mutant_class, base_class);
+});
+
+
+
 
 
 
@@ -98,6 +128,7 @@ function wt_filter() {
 
     $("#stateComparisonListdown").val("wthp6");
 
+
     let button_list = d3.selectAll('.wt_filter_btn')[0];
     filter(button_list, false, ".wt_slider").then(df => {
         updateTableWithColor(dataTable, df.toCollection());
@@ -133,7 +164,7 @@ function wt_filter_btn_click_func() {
     change_color_when_click_btn(_this);
     wt_filter();
 
-    let slider  = document.getElementById(_this.id.split("_")[0] + "_slider");
+    let slider = document.getElementById(_this.id.split("_")[0] + "_slider");
     change_color_ctrl_slider_bar_auto_choose_color(_this, slider, slider.value);
 }
 
@@ -143,7 +174,7 @@ function s1_filter_btn_click_func() {
 
     s1_filter();
 
-    let slider  = document.getElementById(_this.id.split("_")[0] + "_slider");
+    let slider = document.getElementById(_this.id.split("_")[0] + "_slider");
     change_color_ctrl_slider_bar_auto_choose_color(_this, slider, slider.value);
 }
 
@@ -153,7 +184,7 @@ function pairwise_filter_btn_click_func() {
     change_color_when_click_btn(_this);
     pairwise_filter();
 
-    let slider  = document.getElementById(_this.id.replace("btn", "slider"));
+    let slider = document.getElementById(_this.id.replace("btn", "slider"));
     change_color_ctrl_slider_bar_auto_choose_color(_this, slider, slider.value);
 
 }
@@ -180,6 +211,14 @@ $("#option_form").on("change", () => {
 });
 
 DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
+
+
+
+
+
+
+
+
     document.getElementById("printStats").innerHTML = "Summary for threshold = 0";
 
     _df = data;
@@ -435,6 +474,7 @@ DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
 
     }
 
+
     wt_ctrl_btn();
 });
 
@@ -443,8 +483,12 @@ d3.select("#stateComparisonListdown").on("change", () => {
 
 });
 
+
 function wt_ctrl_btn() {
-    calc_and_show_stats_table();
+
+
+
+
 
     // Tick all wt_cols, except the first one\
     let checkboxes = document.getElementsByName("stateSelection");
@@ -785,7 +829,7 @@ function filter_data(button_list, pairwise, df, slider_class) {
             let bt = d3.select(button_list[i]);
             let col = bt.text().split(" ")[0];
             cur_base_condition = get_responding_wt_from_s1(col);
-            let slider = slider_ctrl_list.find((slider => slider.id.split("_")[1] == col.replace("s1","")));
+            let slider = slider_ctrl_list.find((slider => slider.id.split("_")[1] == col.replace("s1", "")));
 
 
             if (bt.style("background-color").toString() == color_arr[0]) {
