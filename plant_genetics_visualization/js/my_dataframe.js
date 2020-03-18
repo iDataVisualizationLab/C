@@ -37,6 +37,9 @@ function updateTable(tbl, rows) {
 }
 
 function updateTableWithColor(tbl, rows, pairwise = false, is_wt=true) {
+    console.log("inside updateTableWithColor...");
+    let tick = new Date;
+
     document.getElementById("printNumGenes").innerHTML = "Number of genes:" + rows.length;
     tbl.innerHTML = '';
     if (rows && rows.length > 0) {
@@ -99,5 +102,7 @@ function updateTableWithColor(tbl, rows, pairwise = false, is_wt=true) {
             });
         });
     }
+    console.log(`.....---- FINISH drawing table in ${(new Date - tick)/1000}s`);
+
 }
 

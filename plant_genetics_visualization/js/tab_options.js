@@ -1,6 +1,10 @@
 
 
 function openTab(evt, scenarioName) {
+    cur_df = _total_df;
+    reset_from_and_to_indices();
+    print_paging_sms_for_chart();
+
     cur_active_tab = scenarioName;
     document.getElementById("printStats").innerHTML = "Summary for threshold = 0";
 

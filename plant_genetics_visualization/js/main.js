@@ -29,7 +29,7 @@ let comparison_radio = $(document.getElementsByName("comparison"));
 let svgCharts;
 let from_index;
 let to_index;
-let MAXIMUM_DISPLAY = 1000;
+let MAXIMUM_DISPLAY = 400;
 let _pair_wise = false;
 let color_arr = [MY_COLORS.default, MY_COLORS.green, MY_COLORS.orange, MY_COLORS.gray];
 let _total_df;
@@ -209,6 +209,8 @@ $("#option_form").on("change", () => {
 
 DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
 
+    console.log("here, DataFrame.fromCSV");
+
     document.getElementById("printStats").innerHTML = "Summary for threshold = 0";
 
     _total_df = data;
@@ -246,6 +248,9 @@ DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
     var stateOptions = d3.select("#stateOptions");
     var stateComparisons = d3.select("#stateComparisonListdown");
 
+
+    let tick_ = new Date;
+    console.log(".... Inside CHART + READ CSV");
     stateChartData.forEach(function (d) {
         var option = stateOptions
             .append("label")
@@ -394,6 +399,10 @@ DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
         .text(function (d) {
             return d;
         });
+
+
+    console.log(`..... END of read+svg ${(new Date - tick_)/100}s`);
+
 
 // Register mouse handlers.
     d3.select("#unemploymentCharts").selectAll("svg")
@@ -582,8 +591,6 @@ function pairwise_ctrl_btn() {
 
 function custom_ctrl_btn() {
 
-    console.log("HERE")
-
     // untick all, except the first one\
     let checkboxes = document.getElementsByName("stateSelection");
     for (var i = 0, n = checkboxes.length; i < n; i++) {
@@ -704,8 +711,6 @@ function updateChartStateComparison(d, fromYear, toYear, pairwise) {
 
 function updateCharts(fromYear = from_index, toYear = to_index, pairwise = false) {
 
-    console.log("fromYear", fromYear);
-    console.log("toYear", toYear);
     xScale.domain([fromYear, toYear]);
 
 
@@ -787,11 +792,11 @@ function updateData(filteredDf) {
 }
 
 
-function reset_from_and_to_indices(){
+function reset_from_and_to_indices(df = cur_df){
     // check the number of rows currently
     from_index = 1;
-    if (cur_df.count() < MAXIMUM_DISPLAY){
-        to_index =  cur_df.count()
+    if (df.count() < MAXIMUM_DISPLAY){
+        to_index =  df.count()
     }
     else{
         to_index =  MAXIMUM_DISPLAY;
