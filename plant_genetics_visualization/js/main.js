@@ -45,7 +45,8 @@ var svgWidth = w + margin.left + margin.right;
 
 var xScale = d3.scale.linear().range([0, w]);
 var yScale = d3.scale.linear().domain([0, 1]).range([h, 0]);
-var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(7);
+let cur_df;
+var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(7).tickFormat((_, i) => cur_df.select("atID").toArray().flat()[i]);
 var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
 
@@ -61,7 +62,6 @@ s1_condition_cols.forEach(s1 => {
 pairwise_condition_cols.forEach(p => {
     create_filter_btn(p, pairwise_class, "", true, mutant_class, base_class);
 });
-
 
 // Define the line.
 var valueLine = d3.svg.line()
@@ -98,7 +98,6 @@ var zeroArea = d3.svg.area()
 var bisect = d3.bisector(function (d) {
     return d.year;
 }).left;
-
 
 function change_color_when_click_btn(_this, color) {
 
@@ -144,7 +143,6 @@ function s1_filter() {
 
 }
 
-
 function pairwise_filter() {
     let button_list = d3.selectAll('.pairwise_filter_btn')[0];
     filter(button_list, true, ".pairwise_slider").then(df => {
@@ -153,7 +151,6 @@ function pairwise_filter() {
     });
 
 }
-
 
 function wt_filter_btn_click_func() {
     let _this = this;
@@ -212,6 +209,8 @@ DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
     document.getElementById("printStats").innerHTML = "Summary for threshold = 0";
 
     _df = data;
+    cur_df = _df;
+
     num_obser = _df.dim()[0];
     let my_all_data = {};
     all_cols.forEach((gene_name) => {
@@ -342,7 +341,7 @@ DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
             "translate(" + (w - 20) + " ," +
             (h + margin.top) + ")")
         .style("text-anchor", "end")
-        .text("Gene Index");
+        .text("Gene Name");
 
 
     svgCharts.append("g")
@@ -774,6 +773,8 @@ function updateData(filteredDf) {
 
 async function filter(button_list, pairwise = false, slider_class) {
     let filteredDf = filter_data(button_list, pairwise, _df, slider_class);
+    cur_df = filteredDf;
+
     updateData(filteredDf);
 
     num_obser = filteredDf.dim()[0];
