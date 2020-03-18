@@ -9,6 +9,10 @@ const names = {
     "gene": "state"
 };
 
+const base_class = "wt";
+const mutant_class = "s1";
+const pairwise_class = "pairwise";
+
 let dataTable = document.getElementById('ipdatacsvTbl');
 let statsTable = document.getElementById('statsTable');
 let comparison_radio = $(document.getElementsByName("comparison"));
@@ -32,6 +36,33 @@ var x = d3.scale.linear().range([0, w]);
 var y = d3.scale.linear().domain([0, 1]).range([h, 0]);
 var xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(7);
 var yAxis = d3.svg.axis().scale(y).orient("left").ticks(5);
+
+
+
+
+
+// Todo: use svg
+let wt_base = wt_cols[0];
+let S1_base = s1_cols[0];
+let wt_condition_cols = wt_cols.slice(1);
+let s1_condition_cols = s1_cols.slice(1);
+let pairwise_condition_cols = s1_cols;
+
+wt_condition_cols.forEach(wt => {
+    create_filter_btn(wt, base_class, wt_base, false);
+});
+
+s1_condition_cols.forEach(s1 => {
+    create_filter_btn(s1, mutant_class, S1_base, false);
+});
+
+pairwise_condition_cols.forEach(p => {
+    create_filter_btn(p, pairwise_class, "",true, mutant_class, base_class);
+});
+
+
+
+
 
 
 // Define the line.
@@ -180,6 +211,14 @@ $("#option_form").on("change", () => {
 });
 
 DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
+
+
+
+
+
+
+
+
     document.getElementById("printStats").innerHTML = "Summary for threshold = 0";
 
     _df = data;
@@ -435,6 +474,7 @@ DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
 
     }
 
+
     wt_ctrl_btn();
 });
 
@@ -443,44 +483,12 @@ d3.select("#stateComparisonListdown").on("change", () => {
 
 });
 
+
 function wt_ctrl_btn() {
 
-    // Todo: use svg
-    let wt_btn_group = d3.select('#wt_comparison')
-        .select('.btn-group')
-        .append('div')
-        .attr("class", "btn_and_slide_container"); // or .classed("btn_and_slide_container", true)
-
-    wt_btn_group.append("button")
-        .attr("id", "XYZ_btn")
-        .classed("wt_filter_btn", true)
-        .classed("filter_btn", true)
-        .text("XYZ vs. wthp6");
-
-    wt_btn_group.append("input")
-        .attr("id", "XYZ_slider")
-        .attr("type", "range")
-        .attr("min", 0)
-        .attr("max", 100)
-        .attr("value", 0)
-        .classed("slider", true)
-        .classed("wt_slider", true)
-        .style("text", "XYZ vs. wthp6");
-
-    wt_btn_group.append("p")
-        .append("span")
-        .attr("id", "XYZ_slider_value")
-
-        // .append(`<div class="btn_and_slide_container">
-        //         <button id="XYZ_btn" class="wt_filter_btn filter_btn">XYZ vs. wthp6</button>
-        //         <input type="range" min="0" max="100" value="0" class="slider wt_slider" id="XYZ_slider">
-        //         <p><span id="XYZ_slider_value"></span></p>
-        //     </div>`);
-    console.log("use sgv ...");
 
 
-    console.log("======  wt_btn_group", wt_btn_group);
-    calc_and_show_stats_table();
+
 
     // Tick all wt_cols, except the first one\
     let checkboxes = document.getElementsByName("stateSelection");
