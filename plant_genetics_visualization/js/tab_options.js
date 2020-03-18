@@ -57,4 +57,5 @@ function openTab(evt, scenarioName) {
     btns_list.forEach(reset_color);
 
     evt.currentTarget.className += " active";
+
 };

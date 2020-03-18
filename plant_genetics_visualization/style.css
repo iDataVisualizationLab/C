@@ -280,13 +280,13 @@ tr:nth-child(even) {
 .dataTable_and_print{
      display: inline-block;
      width: 28%;
-     height: 175px;
+     height: 205px;
 
  }
 
 .dataTable{
     width: 100%;
-    height: 170px;
+    height: 200px;
     overflow-y: auto;
 
 }

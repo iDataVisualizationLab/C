@@ -196,9 +196,3 @@ function calc_and_show_stats_table(testing = false) {
 
 
 }
-
-// function show_stats_table(tbl, df.toCollection()) {
-// test
-// calc_stat_for_1_normal_mode(_df, wt_cols.slice(1), wt_cols[0], [1,1,1,1,1])
-
-// calc_all_stats_normal_mode(_df, wt_cols.slice(1), wt_cols[0])
