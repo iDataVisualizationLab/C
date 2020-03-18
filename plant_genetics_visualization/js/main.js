@@ -29,7 +29,11 @@ let comparison_radio = $(document.getElementsByName("comparison"));
 let svgCharts;
 let num_obser;
 let color_arr = [MY_COLORS.default, MY_COLORS.green, MY_COLORS.orange, MY_COLORS.gray];
-let _df;
+let _df; // total data goes into here
+let cur_df; //filter data here
+let display_df; // shown data, maximum display only MAXIMUM_DISPLAY_ROWS rows
+let index_of_display_df; // keep track on the index of cur_df to display
+const MAXIMUM_DISPLAY_ROWS = 100;
 const tab_names = {
     "wt": "wt_comparison",
     "s1": "s1_comparison",
@@ -45,10 +49,8 @@ var svgWidth = w + margin.left + margin.right;
 
 var xScale = d3.scale.linear().range([0, w]);
 var yScale = d3.scale.linear().domain([0, 1]).range([h, 0]);
-let cur_df;
 var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(7).tickFormat((_, i) => cur_df.select("atID").toArray().flat()[i]);
 var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
-
 
 // draw filter btns
 wt_condition_cols.forEach(wt => {
@@ -210,8 +212,23 @@ DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
 
     _df = data;
     cur_df = _df;
+    num_obser = _df.count();
 
-    num_obser = _df.dim()[0];
+
+    if (num_obser > MAXIMUM_DISPLAY_ROWS ){
+        display_df = _df.slice(0,MAXIMUM_DISPLAY_ROWS);
+        index_of_display_df = MAXIMUM_DISPLAY_ROWS;
+        num_obser= MAXIMUM_DISPLAY_ROWS;
+    }
+    else{
+        display_df  = _df;
+        index_of_display_df = 0;
+    }
+
+    document.getElementById("next_page_sms").innerText = `Show ${num_obser}/${cur_df.count()} genes`;
+
+
+
     let my_all_data = {};
     all_cols.forEach((gene_name) => {
         let df = data.select('atID', gene_name);
@@ -749,11 +766,12 @@ function updateCharts(fromYear = 1, toYear = num_obser, pairwise = false) {
 
 }
 
-function updateData(filteredDf) {
-    let my_all_data = {};
+function updateData() {
+    update_data_to_display();
 
+    let my_all_data = {};
     all_cols.forEach((gene_name) => {
-        let tmp_df = filteredDf.select('atID', gene_name);
+        let tmp_df = display_df.select('atID', gene_name);
         tmp_df = tmp_df.rename("atID", names["atID"]).rename(gene_name, names["value"]);
         tmp_df = tmp_df.withColumn(names['index'], (row, i) => i + 1)
             .withColumn(names['gene'], () => gene_name);
@@ -772,12 +790,14 @@ function updateData(filteredDf) {
 }
 
 async function filter(button_list, pairwise = false, slider_class) {
+    console.log("running the filter...");
+    let tick = new Date;
     let filteredDf = filter_data(button_list, pairwise, _df, slider_class);
-    cur_df = filteredDf;
+    console.log(`Done in ${(new Date - tick)/1000} s`);
 
+    cur_df = filteredDf;
     updateData(filteredDf);
 
-    num_obser = filteredDf.dim()[0];
     updateCharts(1, num_obser, pairwise);
     return filteredDf;
 };
@@ -851,5 +871,40 @@ function filter_data(button_list, pairwise, df, slider_class) {
 
 
 
+
+
+function update_data_to_display(){
+    let from, to;
+    if (cur_df.count() > index_of_display_df){
+        let num_rows_left = cur_df.count() - index_of_display_df;
+        if (num_rows_left <= MAXIMUM_DISPLAY_ROWS){
+            from  = index_of_display_df;
+            to = cur_df.count();
+
+            display_df = cur_df.slice(index_of_display_df, cur_df.count());
+            index_of_display_df = 0; // No more to show
+            num_obser = num_rows_left;
+            document.getElementById("next_page_sms").innerText = `Show ${num_rows_left}, from ${from} to ${to}/${cur_df.count()} genes`;
+
+        }
+        else{
+            from  = index_of_display_df;
+            to = index_of_display_df + MAXIMUM_DISPLAY_ROWS;
+            display_df = cur_df.slice(index_of_display_df, index_of_display_df + MAXIMUM_DISPLAY_ROWS);
+            index_of_display_df += MAXIMUM_DISPLAY_ROWS;
+            num_obser = MAXIMUM_DISPLAY_ROWS;
+            document.getElementById("next_page_sms").innerText = `Show ${MAXIMUM_DISPLAY_ROWS},  from ${from} to ${to}/${cur_df.count()} genes`;
+        }
+
+    }
+}
+
+$(document.getElementById("next_page")).on("click", () => {
+    updateData(cur_df);
+    let pairwise = false;
+    updateCharts(1, num_obser,pairwise );
+
+    }
+);
 
 
