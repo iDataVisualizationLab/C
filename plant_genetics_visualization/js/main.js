@@ -219,6 +219,9 @@ DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
     if (_total_df.count() > MAXIMUM_DISPLAY) {
         to_index = MAXIMUM_DISPLAY;
     }
+    else{
+        to_index = _total_df.count();
+    }
     document.getElementById("next_page_sms").innerText = `Show ${to_index - from_index + 1},  from ${from_index} to ${to_index}, out of ${cur_df.count()} genes`;
 
     let my_all_data = {};
