@@ -50,7 +50,7 @@ var svgWidth = w + margin.left + margin.right;
 var xScale = d3.scale.linear().range([0, w]);
 var yScale = d3.scale.linear().domain([0, 1]).range([h, 0]);
 let cur_df;
-var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(7).tickFormat((_, i) => cur_df.select("atID").toArray().flat()[i]);
+var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(5).tickFormat((_, i) => display_df.select("atID").toArray().flat()[i]);
 var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
 
