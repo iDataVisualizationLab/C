@@ -6,7 +6,7 @@ const s1_cols = ['s1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];
 const all_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe', 's1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];
 
 const wt_base = wt_cols[0];
-const S1_base = s1_cols[0];
+const s1_base = s1_cols[0];
 const wt_condition_cols = wt_cols.slice(1);
 const s1_condition_cols = s1_cols.slice(1);
 const pairwise_condition_cols = s1_cols;
@@ -80,7 +80,7 @@ wt_condition_cols.forEach(wt => {
 });
 
 s1_condition_cols.forEach(s1 => {
-    create_filter_btn(s1, mutant_class, S1_base, false);
+    create_filter_btn(s1, mutant_class, s1_base, false);
 });
 
 pairwise_condition_cols.forEach(p => {
