@@ -30,7 +30,7 @@ let svgCharts;
 let cur_index;
 let display_index;
 let display_df;
-let MAXIMUM_DISPLAY = 400;
+let MAXIMUM_DISPLAY = 1000;
 let _pair_wise = false;
 let color_arr = [MY_COLORS.default, MY_COLORS.green, MY_COLORS.orange, MY_COLORS.gray];
 let _total_df;
@@ -52,19 +52,19 @@ var yScale = d3.scale.linear().domain([0, 1]).range([h, 0]);
 let cur_df;
 
 // todo: auto update num ticks when having a few datum.
-function num_tick(){
+function num_tick() {
     let num_ticks = 0;
     console.log("#####Num_tick_display_index", display_index);
-    if (typeof display_index != "undefined"){
-        num_ticks =  Math.min(6, display_index);
-    }
-    else{
-        num_ticks =  6;
+    if (typeof display_index != "undefined") {
+        num_ticks = Math.min(6, display_index);
+    } else {
+        num_ticks = 6;
     }
     console.log("the num of ticks is", num_ticks);
     return num_ticks;
 }
-var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(num_tick() ).tickFormat((_, i) =>{
+
+var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(num_tick()).tickFormat((_, i) => {
     console.log("==============here inside xAxis");
 
     return display_df.select("atID").toArray().flat()[i];
@@ -820,6 +820,7 @@ function reset_DisplayIndex_and_DisplayDF(df = cur_df) {
 }
 
 async function filter(button_list, pairwise = false, slider_class) {
+    reset_s1_target_sort_sms();
     let filteredDf = filter_data(button_list, pairwise, _total_df, slider_class);
     cur_df = filteredDf;
 
@@ -906,8 +907,7 @@ $(document.getElementById("next_page")).on("click", () => {
                 cur_index += MAXIMUM_DISPLAY;
                 display_index = MAXIMUM_DISPLAY;
             }
-        }
-        else{
+        } else {
             console.log("return");
             return;
         }
@@ -924,7 +924,7 @@ $(document.getElementById("next_page")).on("click", () => {
 
 $(document.getElementById("previous_page")).on("click", () => {
         let pairwise = false;
-        if  (cur_index==0){
+        if (cur_index == 0) {
             console.log("return");
             return;
 
@@ -947,9 +947,9 @@ $(document.getElementById("previous_page")).on("click", () => {
         updateCharts(pairwise);
 
         // todo: fix pairwise (have a func to auto pick mode) + class for color
-    updateTableWithColor();
+        updateTableWithColor();
 
-    print_paging_sms_for_chart();
+        print_paging_sms_for_chart();
     }
 );
 
@@ -958,8 +958,43 @@ function print_paging_sms_for_chart() {
 }
 
 
+$(document.getElementById("s1_target_sort")).on("click", () => {
+
+    // todo: measure time => read text only
+    DataFrame.fromCSV("data/STOP1_targets_EckerLab.csv").then(data => {
+        let s1_target_list = data.select("atID").toArray().flat();
+
+        let tmp_df = cur_df.withColumn("s1_target", (row) => {
+            if (s1_target_list.includes(row.get("atID"))){
+                return 1
+            }
+            else{
+                return 0;
+            }
+        })
+            .sortBy(["s1_target", wt_base], [true, false]);
+        tmp_df.show();
+        let num_rows_in = tmp_df.stat.sum("s1_target");
+        console.log("num_rows_in", num_rows_in);
+        cur_df = tmp_df.drop('s1_target');
+
+        let pairwise = false; // todo
+        reset_DisplayIndex_and_DisplayDF();
+        updateDataForSVGCharts();
+        updateCharts(pairwise);
+        updateTableWithColor();
+        print_paging_sms_for_chart();
+
+        document.getElementById("s1_target_sort_sms").innerText = `${num_rows_in}/ total ${cur_df.count()}`;
+
+    });
+});
+
+function reset_s1_target_sort_sms() {
+    document.getElementById("s1_target_sort_sms").innerText = "";
 
 
+}
 
 
 
