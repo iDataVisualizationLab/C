@@ -27,8 +27,9 @@ let dataTable = document.getElementById('ipdatacsvTbl');
 let statsTable = document.getElementById('statsTable');
 let comparison_radio = $(document.getElementsByName("comparison"));
 let svgCharts;
-let from_index;
-let to_index;
+let cur_index;
+let display_index;
+let display_df;
 let MAXIMUM_DISPLAY = 400;
 let _pair_wise = false;
 let color_arr = [MY_COLORS.default, MY_COLORS.green, MY_COLORS.orange, MY_COLORS.gray];
@@ -207,28 +208,26 @@ $("#option_form").on("change", () => {
     updateCharts();
 });
 
-DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
-
+DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
     console.log("here, DataFrame.fromCSV");
-
     document.getElementById("printStats").innerHTML = "Summary for threshold = 0";
 
     _total_df = data;
     cur_df = _total_df;
 
-    from_index = 1;
-
     if (_total_df.count() > MAXIMUM_DISPLAY) {
-        to_index = MAXIMUM_DISPLAY;
+        display_index = MAXIMUM_DISPLAY;
+    } else {
+        display_index = _total_df.count();
     }
-    else{
-        to_index = _total_df.count();
-    }
-    document.getElementById("next_page_sms").innerText = `Show ${to_index - from_index + 1},  from ${from_index} to ${to_index}, out of ${cur_df.count()} genes`;
 
+    cur_index = display_index;
+    document.getElementById("next_page_sms").innerText = `Show the first ${display_index}, out of ${cur_df.count()} genes`;
+
+    display_df = _total_df.slice(0, display_index);
     let my_all_data = {};
     all_cols.forEach((gene_name) => {
-        let df = data.select('atID', gene_name);
+        let df = display_df.select('atID', gene_name);
         df = df.rename("atID", names["atID"]).rename(gene_name, names["value"]);
         df = df.withColumn(names['index'], (row, i) => i + 1)
             .withColumn(names['gene'], () => gene_name);
@@ -275,7 +274,7 @@ DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
     });
 
     // re-Scale the range of the data
-    xScale.domain([1, to_index]);
+    xScale.domain([1, display_index]);
     // y.domain([0, d3.max(data, function(d) { return d.unemployment; })]);
 
     // Create the svgs for the charts.
@@ -401,7 +400,7 @@ DataFrame.fromCSV("data/data_SAMPLE_norm.csv").then(data => {
         });
 
 
-    console.log(`..... END of read+svg ${(new Date - tick_)/100}s`);
+    console.log(`..... END of read+svg ${(new Date - tick_) / 100}s`);
 
 
 // Register mouse handlers.
@@ -517,7 +516,7 @@ function wt_ctrl_btn() {
         }
 
     }
-    updateTableWithColor(dataTable, _total_df.toCollection());
+    updateTableWithColor(dataTable, display_df.toCollection());
 
     // mark comparison
     comparison_radio.prop("checked", true).trigger("click");
@@ -550,7 +549,7 @@ function s1_ctrl_btn() {
 
     }
 
-    updateTableWithColor(dataTable, _total_df.toCollection(), false, false);
+    updateTableWithColor(dataTable, display_df.toCollection(), false, false);
 
     // mark comparison
     comparison_radio.prop("checked", true).trigger("click");
@@ -581,12 +580,12 @@ function pairwise_ctrl_btn() {
         }
     }
 
-    updateTableWithColor(dataTable, _total_df.toCollection(), true);
+    updateTableWithColor(dataTable, display_df.toCollection(), true);
 
     // mark comparison for s1
     comparison_radio.prop("checked", true);
     $("#stateComparisonListdown").attr("disabled", true);
-    updateCharts(from_index, to_index, true);
+    updateCharts(true);
 }
 
 function custom_ctrl_btn() {
@@ -608,8 +607,8 @@ function custom_ctrl_btn() {
         }
     }
 
-    updateData(_total_df);
-    updateTable(dataTable, _total_df.toCollection());
+    updateDataForSVGCharts();
+    updateTable(dataTable, display_df.toCollection());
 
     $("#stateComparisonListdown").attr("disabled", false);
     $("#stateComparisonListdown").val("wthp6");
@@ -644,7 +643,7 @@ function changeChartDisplay(d) {
     stateChart.classed("chartActive", !active);
 }
 
-function updateChartNoComparison(d, fromYear, toYear) {
+function updateChartNoComparison() {
     this.select(".area.below")
         .attr("fill", "steelblue")
         .attr("d", function (d) {
@@ -668,16 +667,15 @@ function updateChartNoComparison(d, fromYear, toYear) {
         .call(yAxis);
 }
 
-function updateChartStateComparison(d, fromYear, toYear, pairwise) {
+function updateChartStateComparison(d, pairwise) {
     let comparedState;
     //Todo: need a better way to get the data
     if (pairwise) {
         comparedState = get_responding_wt_from_s1(d["0"]["0"].__data__.state)//document.getElementById("stateComparisonListdown").value;
-        // console.log(`PAIRWISE: compare ${d["0"]["0"].__data__.state} to ${comparedState}`);
     } else {
         comparedState = document.getElementById("stateComparisonListdown").value;
-        // console.log(`NORMAL MODE: compare ${d["0"]["0"].__data__.state} to ${comparedState}`);
     }
+
     // Update areas.
     this.select(".area.below")
         .attr("fill", MY_COLORS.green)
@@ -709,11 +707,10 @@ function updateChartStateComparison(d, fromYear, toYear, pairwise) {
         .call(yAxis);
 }
 
-function updateCharts(fromYear = from_index, toYear = to_index, pairwise = false) {
+function updateCharts(pairwise = false) {
 
-    xScale.domain([fromYear, toYear]);
-
-
+    console.log("display_index", display_index);
+    xScale.domain([1, display_index]);
 
     // Update the charts.
     var activeCharts = d3.select("#unemploymentCharts").selectAll(".chartActive");
@@ -732,17 +729,17 @@ function updateCharts(fromYear = from_index, toYear = to_index, pairwise = false
             // If the chart is active, transition.  Otherwise, don't.
             if (array[i].id == array[array.length - 1].id) {
                 d3.select(d)
-                    .call(updateChartNoComparison, fromYear, toYear)
+                    .call(updateChartNoComparison)
                     .transition().duration(1)
                     .each("end", function (a) {
                         inactiveCharts[0].forEach(function (d) {
-                            d3.select(d).call(updateChartNoComparison, fromYear, toYear);
+                            d3.select(d).call(updateChartNoComparison);
                         });
                     });
 
             } else {
                 d3.select(d)
-                    .call(updateChartNoComparison, fromYear, toYear);
+                    .call(updateChartNoComparison);
             }
         });
     } else if (document.getElementById("stateComparison").checked) {
@@ -751,29 +748,29 @@ function updateCharts(fromYear = from_index, toYear = to_index, pairwise = false
             // If the chart is active, transition.  Otherwise, don't.
             if (array[i].id == array[array.length - 1].id) {
                 d3.select(d)
-                    .call(updateChartStateComparison, fromYear, toYear, pairwise)
+                    .call(updateChartStateComparison, pairwise)
                     .transition().duration(1)
                     .each("end", function (a) {
                         inactiveCharts[0].forEach(function (d) {
                             d = d3.select(d);
-                            d.call(updateChartStateComparison, fromYear, toYear, pairwise);
+                            d.call(updateChartStateComparison, pairwise);
                         });
                     });
 
             } else {
                 d3.select(d)
-                    .call(updateChartStateComparison, fromYear, toYear, pairwise);
+                    .call(updateChartStateComparison, pairwise);
             }
         });
     }
 
 }
 
-function updateData(filteredDf) {
+function updateDataForSVGCharts() {
     let my_all_data = {};
 
     all_cols.forEach((gene_name) => {
-        let tmp_df = filteredDf.select('atID', gene_name);
+        let tmp_df = display_df.select('atID', gene_name);
         tmp_df = tmp_df.rename("atID", names["atID"]).rename(gene_name, names["value"]);
         tmp_df = tmp_df.withColumn(names['index'], (row, i) => i + 1)
             .withColumn(names['gene'], () => gene_name);
@@ -792,29 +789,31 @@ function updateData(filteredDf) {
 }
 
 
-function reset_from_and_to_indices(df = cur_df){
+function reset_DisplayIndex_and_DisplayDF(df = cur_df) {
     // check the number of rows currently
-    from_index = 1;
-    if (df.count() < MAXIMUM_DISPLAY){
-        to_index =  df.count()
+    if (df.count() < MAXIMUM_DISPLAY) {
+        display_index = df.count()
+    } else {
+        display_index = MAXIMUM_DISPLAY;
     }
-    else{
-        to_index =  MAXIMUM_DISPLAY;
-    }
+
+    cur_index = display_index;
+    display_df = cur_df.slice(0, display_index);
 }
+
 async function filter(button_list, pairwise = false, slider_class) {
     let filteredDf = filter_data(button_list, pairwise, _total_df, slider_class);
     cur_df = filteredDf;
 
-    updateData(filteredDf);
+    reset_DisplayIndex_and_DisplayDF();
+    updateDataForSVGCharts();
 
-    reset_from_and_to_indices();
     print_paging_sms_for_chart();
 
     console.log("updateCharts in filter!");
-    updateCharts(from_index, to_index, pairwise);
+    updateCharts(pairwise);
 
-    return filteredDf;
+    return display_df;
 };
 
 function filter_data(button_list, pairwise, df, slider_class) {
@@ -877,16 +876,27 @@ function filter_data(button_list, pairwise, df, slider_class) {
 $(document.getElementById("next_page")).on("click", () => {
         let pairwise = false;
 
-        if (cur_df.count() > to_index) {
-            from_index = to_index + 1;
+        if (cur_df.count() > cur_index) {
+            if (cur_index + MAXIMUM_DISPLAY > cur_df.count()) {
+                display_df = cur_df.slice(cur_index, cur_df.count());
+                console.log(display_df.dim());
 
-            if (to_index + MAXIMUM_DISPLAY > cur_df.count()) {
-                to_index = cur_df.count();
+                display_index = cur_df.count() - cur_index;
+                cur_index = cur_df.count();
             } else {
-                to_index += MAXIMUM_DISPLAY;
+                display_df = cur_df.slice(cur_index, cur_index + MAXIMUM_DISPLAY);
+                cur_index += MAXIMUM_DISPLAY;
+                display_index = MAXIMUM_DISPLAY;
             }
         }
-        updateCharts(from_index, to_index, pairwise);
+        else{
+            console.log("return");
+            return;
+        }
+
+        updateDataForSVGCharts();
+        updateCharts(pairwise);
+        updateTableWithColor()
         print_paging_sms_for_chart();
 
 
@@ -896,25 +906,37 @@ $(document.getElementById("next_page")).on("click", () => {
 
 $(document.getElementById("previous_page")).on("click", () => {
         let pairwise = false;
+        if  (cur_index==0){
+            console.log("return");
+            return;
 
-        if (from_index > 1) {
-            to_index = from_index - 1;
-
-            if (from_index - MAXIMUM_DISPLAY > 1) {
-                from_index -= MAXIMUM_DISPLAY;
-            } else {
-                from_index = 1;
-            }
         }
-    console.log("updateCharts in next_page btn!");
-        updateCharts(from_index, to_index, pairwise);
-        print_paging_sms_for_chart();
 
+        if (cur_index % MAXIMUM_DISPLAY == 0) {
+            if (cur_index >= MAXIMUM_DISPLAY) {
+                display_df = cur_df.slice(cur_index - MAXIMUM_DISPLAY, cur_index);
+
+                cur_index = cur_index - MAXIMUM_DISPLAY;
+                display_index = MAXIMUM_DISPLAY;
+            }
+        } else {
+            display_df = cur_df.slice(cur_index - cur_index % MAXIMUM_DISPLAY, cur_index);
+            display_index = cur_index % MAXIMUM_DISPLAY;
+            cur_index = cur_index - cur_index % MAXIMUM_DISPLAY;
+        }
+
+        updateDataForSVGCharts();
+        updateCharts(pairwise);
+
+        // todo: fix pairwise (have a func to auto pick mode) + class for color
+    updateTableWithColor();
+
+    print_paging_sms_for_chart();
     }
 );
 
 function print_paging_sms_for_chart() {
-    document.getElementById("next_page_sms").innerText = `Show ${to_index - from_index + 1},  from ${from_index} to ${to_index}, out of ${cur_df.count()} genes`;
+    document.getElementById("next_page_sms").innerText = `Show ${display_index}, cur_index=${cur_index}, out of ${cur_df.count()} genes`;
 }
 
 

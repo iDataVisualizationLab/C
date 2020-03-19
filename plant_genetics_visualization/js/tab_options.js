@@ -2,7 +2,7 @@
 
 function openTab(evt, scenarioName) {
     cur_df = _total_df;
-    reset_from_and_to_indices();
+    reset_DisplayIndex_and_DisplayDF();
     print_paging_sms_for_chart();
 
     cur_active_tab = scenarioName;
@@ -10,7 +10,7 @@ function openTab(evt, scenarioName) {
 
 
     let i, tabcontent, tablinks, btns_list = [];
-    updateData(_total_df);
+    updateDataForSVGCharts();
 
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {

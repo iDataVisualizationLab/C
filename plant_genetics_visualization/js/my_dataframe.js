@@ -36,7 +36,7 @@ function updateTable(tbl, rows) {
     }
 }
 
-function updateTableWithColor(tbl, rows, pairwise = false, is_wt=true) {
+function updateTableWithColor(tbl=dataTable, rows = display_df.toCollection(), pairwise = false, is_wt=true) {
     console.log("inside updateTableWithColor...");
     let tick = new Date;
 
