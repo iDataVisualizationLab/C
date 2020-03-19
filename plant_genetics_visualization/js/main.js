@@ -50,7 +50,25 @@ var svgWidth = w + margin.left + margin.right;
 var xScale = d3.scale.linear().range([0, w]);
 var yScale = d3.scale.linear().domain([0, 1]).range([h, 0]);
 let cur_df;
-var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(5).tickFormat((_, i) => display_df.select("atID").toArray().flat()[i]);
+
+// todo: auto update num ticks when having a few datum.
+function num_tick(){
+    let num_ticks = 0;
+    console.log("#####Num_tick_display_index", display_index);
+    if (typeof display_index != "undefined"){
+        num_ticks =  Math.min(6, display_index);
+    }
+    else{
+        num_ticks =  6;
+    }
+    console.log("the num of ticks is", num_ticks);
+    return num_ticks;
+}
+var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(num_tick() ).tickFormat((_, i) =>{
+    console.log("==============here inside xAxis");
+
+    return display_df.select("atID").toArray().flat()[i];
+});
 var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
 

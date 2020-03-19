@@ -5,7 +5,7 @@ const cell_colors = {
 }
 
 function updateTable(tbl, rows) {
-    document.getElementById("printNumGenes").innerHTML = "Number of genes:" + rows.length;
+    // document.getElementById("printNumGenes").innerHTML = "Number of genes:" + rows.length;
     tbl.innerHTML = '';
     if (rows && rows.length > 0) {
         let headers = Object.keys(rows[0]);
@@ -40,7 +40,7 @@ function updateTableWithColor(tbl=dataTable, rows = display_df.toCollection(), p
     console.log("inside updateTableWithColor...");
     let tick = new Date;
 
-    document.getElementById("printNumGenes").innerHTML = "Number of genes:" + rows.length;
+    // document.getElementById("printNumGenes").innerHTML = "Number of genes:" + rows.length + "/"+ "";
     tbl.innerHTML = '';
     if (rows && rows.length > 0) {
         let headers = Object.keys(rows[0]);
