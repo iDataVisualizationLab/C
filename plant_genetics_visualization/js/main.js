@@ -130,7 +130,7 @@ function change_color_when_click_btn(_this, color) {
 
 }
 
-function auto_filter(){
+function auto_filter() {
     console.log("auto_filter...");
 
     $("#stateComparisonListdown").val(_cur_base);
@@ -342,8 +342,8 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 // text label for the x axis
     svgCharts.append("text")
         .attr("transform",
-            "translate(" + (w - 20) + " ," +
-            (h + margin.top) + ")")
+            "translate(" + (w) + " ," +
+            (h) + ")")
         .style("text-anchor", "end")
         .text("Gene Name");
 
@@ -375,6 +375,20 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 
     svgCharts.append("text")
         .datum(function (d) {
+            //     if (cur_active_tab == tab_names["base_class"]) {
+            //
+            //             return "aa";
+            //     } else if (cur_active_tab == tab_names["mutant_class"]) {
+            //         return "bb";
+            //
+            //
+            //     } else if (cur_active_tab == tab_names["pairwise_class"]) {
+            //         return "cc";
+            //
+            //     }
+            //
+            //     return "dd";//
+            //
             return d.state;
         })
         .attr("x", w)
@@ -471,7 +485,8 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
     }
 
     wt_ctrl_btn();
-});
+})
+;
 
 d3.select("#stateComparisonListdown").on("change", () => {
     updateCharts();
@@ -695,7 +710,6 @@ function updateChartStateComparison(d, pairwise) {
 
 function updateCharts(pairwise = _pairwise) {
 
-    console.log("display_index", display_index);
     xScale.domain([1, display_index]);
 
     // Update the charts.
@@ -788,7 +802,7 @@ function reset_DisplayIndex_and_DisplayDF(df = _cur_df) {
 }
 
 async function filter(button_list, pairwise = false, slider_class) {
-    reset_s1_target_sort_sms();
+    reset_sort_smses();
     let filteredDf = filter_data(button_list, pairwise, _total_df, slider_class);
     _cur_df = filteredDf;
 
@@ -957,13 +971,52 @@ $(document.getElementById("s1_target_sort")).on("click", () => {
     });
 });
 
-function reset_s1_target_sort_sms() {
+$(document.getElementById("up_down_sort")).on("click", () => {
+    // todo: measure time => read text only
+    DataFrame.fromCSV("data/Targets_differentially_expressed.csv").then(data => {
+        let up_list = data.select("up").toArray().flat();
+        let down_list = data.select("down").toArray().flat();
+        let up_and_down_list = data.select("up_and_down").toArray().flat();
+        let num_up, num_down, num_up_and_down;
+
+        let encode = {"up":3, "down":2, "up_and_down":1, "otherwise":0};
+        let tmp_df = _cur_df.withColumn("target", (row) => {
+            if (up_list.includes(row.get("atID"))) {
+                return encode["up"];
+            } else if (down_list.includes(row.get("atID"))) {
+                return  encode["down"];
+            } else if (up_and_down_list.includes(row.get("atID"))) {
+                return  encode["up_and_down"];
+            } else return  encode["otherwise"];
+        })
+            .sortBy(["target", wt_base], [true, false]);
+
+        num_up = tmp_df.filter(r => r.get("target") ==  encode["up"]).count();
+        num_down = tmp_df.filter(r => r.get("target") ==  encode["down"]).count();
+        num_up_and_down = tmp_df.filter(r => r.get("target") ==  encode["up_and_down"]).count();
+
+        _cur_df = tmp_df.drop('target');
+
+        reset_DisplayIndex_and_DisplayDF();
+        updateDataForSVGCharts();
+        updateCharts();
+        updateTableWithColor();
+        print_paging_sms_for_chart();
+
+        document.getElementById("up_down_sort_sms").innerText = `${num_up} up; ${num_down} down; ${num_up_and_down} up and down/ total ${_cur_df.count()}`;
+
+    });
+});
+
+function reset_sort_smses() {
     document.getElementById("s1_target_sort_sms").innerText = "";
+    document.getElementById("up_down_sort_sms").innerText = "";
+
 }
 
 
-function set_global_varibles_by_CurActiveTab(){
-    console.log("cur_active_tab ===="  , cur_active_tab);
+function set_global_varibles_by_CurActiveTab() {
+    console.log("cur_active_tab ====", cur_active_tab);
     if (cur_active_tab == tab_names["base_class"]) {
         _pairwise = false;
         _cur_base = wt_base;
@@ -975,7 +1028,7 @@ function set_global_varibles_by_CurActiveTab(){
         _cur_base = s1_base;
         _cur_condition_cols = s1_condition_cols;
         _cur_class = mutant_class;
-        console.log("cur_active_tab ===="  , cur_active_tab);
+        console.log("cur_active_tab ====", cur_active_tab);
 
     } else if (cur_active_tab == tab_names["pairwise_class"]) {
         _pairwise = true;

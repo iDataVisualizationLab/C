@@ -7,6 +7,8 @@ function openTab(evt, scenarioName) {
 
     reset_DisplayIndex_and_DisplayDF();
     print_paging_sms_for_chart();
+    reset_sort_smses();
+
 
     cur_active_tab = scenarioName;
     set_global_varibles_by_CurActiveTab();
