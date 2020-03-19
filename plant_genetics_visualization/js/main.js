@@ -924,23 +924,25 @@ $(document.getElementById("next_page")).on("click", () => {
 
 $(document.getElementById("previous_page")).on("click", () => {
         let pairwise = false;
-        if (cur_index == 0) {
+        if (cur_index <= MAXIMUM_DISPLAY) {
             console.log("return");
             return;
 
         }
 
         if (cur_index % MAXIMUM_DISPLAY == 0) {
-            if (cur_index >= MAXIMUM_DISPLAY) {
-                display_df = cur_df.slice(cur_index - MAXIMUM_DISPLAY, cur_index);
+            display_df = cur_df.slice(cur_index - MAXIMUM_DISPLAY, cur_index);
 
-                cur_index = cur_index - MAXIMUM_DISPLAY;
-                display_index = MAXIMUM_DISPLAY;
-            }
+            cur_index = cur_index - MAXIMUM_DISPLAY;
+            display_index = MAXIMUM_DISPLAY;
         } else {
-            display_df = cur_df.slice(cur_index - cur_index % MAXIMUM_DISPLAY, cur_index);
-            display_index = cur_index % MAXIMUM_DISPLAY;
+            display_df = cur_df.slice(cur_index - cur_index % MAXIMUM_DISPLAY - MAXIMUM_DISPLAY, cur_index - cur_index % MAXIMUM_DISPLAY);
+
+            console.log("cur_index - cur_index % MAXIMUM_DISPLAY - MAXIMUM_DISPLAY", cur_index - cur_index % MAXIMUM_DISPLAY - MAXIMUM_DISPLAY);
+            console.log("cur_index - cur_index % MAXIMUM_DISPLAY", cur_index - cur_index % MAXIMUM_DISPLAY);
+            display_index = MAXIMUM_DISPLAY;
             cur_index = cur_index - cur_index % MAXIMUM_DISPLAY;
+            console.log("-=-=-= cur_index", cur_index);
         }
 
         updateDataForSVGCharts();
@@ -954,7 +956,7 @@ $(document.getElementById("previous_page")).on("click", () => {
 );
 
 function print_paging_sms_for_chart() {
-    document.getElementById("next_page_sms").innerText = `Show ${display_index}, cur_index=${cur_index}, out of ${cur_df.count()} genes`;
+    document.getElementById("next_page_sms").innerText = `Show ${display_index}, page ${Math.ceil(cur_index / MAXIMUM_DISPLAY)}/${Math.ceil(cur_df.count() / MAXIMUM_DISPLAY)}, out of ${cur_df.count()} genes`;
 }
 
 
@@ -965,10 +967,9 @@ $(document.getElementById("s1_target_sort")).on("click", () => {
         let s1_target_list = data.select("atID").toArray().flat();
 
         let tmp_df = cur_df.withColumn("s1_target", (row) => {
-            if (s1_target_list.includes(row.get("atID"))){
+            if (s1_target_list.includes(row.get("atID"))) {
                 return 1
-            }
-            else{
+            } else {
                 return 0;
             }
         })
