@@ -14,35 +14,36 @@ const base_class = "wt";
 const mutant_class = "s1";
 const pairwise_class = "pairwise";
 
-
-let _cur_base, _cur_condition_cols, _cur_class;
-
 const names = {
     "atID": "month",
     "index": "year",
     "value": "unemployment",
     "gene": "state"
 };
+let _cur_base, _cur_condition_cols, _cur_class;
+let _pairwise = false;
 
 
 let dataTable = document.getElementById('ipdatacsvTbl');
 let statsTable = document.getElementById('statsTable');
 let comparison_radio = $(document.getElementsByName("comparison"));
 let svgCharts;
-let cur_index;
+let _cur_index;
 let display_index;
 let display_df;
 let MAXIMUM_DISPLAY = 1000;
-let _pair_wise = false;
 let color_arr = [MY_COLORS.default, MY_COLORS.green, MY_COLORS.orange, MY_COLORS.gray];
 let _total_df;
+let _cur_df;
+
+
 const tab_names = {
-    "wt": "wt_comparison",
-    "s1": "s1_comparison",
-    "pairwise": 'pairwise_comparison',
+    "base_class": "wt_comparison",
+    "mutant_class": "s1_comparison",
+    "pairwise_class": 'pairwise_comparison',
     "custom": "custom_mode"
 };
-let cur_active_tab = tab_names["wt"];
+let cur_active_tab = tab_names["base_class"];
 var margin = {top: 15, right: 0, bottom: 20, left: 25};
 let w = $("#unemploymentCharts").width() * 0.99 - margin.left - margin.right;
 let h = 200 - margin.bottom - margin.top;
@@ -51,28 +52,13 @@ var svgWidth = w + margin.left + margin.right;
 
 var xScale = d3.scale.linear().range([0, w]);
 var yScale = d3.scale.linear().domain([0, 1]).range([h, 0]);
-let cur_df;
 
 // todo: auto update num ticks when having a few datum.
-function num_tick() {
-    let num_ticks = 0;
-    console.log("#####Num_tick_display_index", display_index);
-    if (typeof display_index != "undefined") {
-        num_ticks = Math.min(6, display_index);
-    } else {
-        num_ticks = 6;
-    }
-    console.log("the num of ticks is", num_ticks);
-    return num_ticks;
-}
-
-var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(num_tick()).tickFormat((_, i) => {
+var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(6).tickFormat((_, i) => {
     console.log("==============here inside xAxis");
-
     return display_df.select("atID").toArray().flat()[i];
 });
 var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
-
 
 // draw filter btns
 wt_condition_cols.forEach(wt => {
@@ -124,7 +110,6 @@ var bisect = d3.bisector(function (d) {
 }).left;
 
 function change_color_when_click_btn(_this, color) {
-
     let nex_index;
     let cur_color = d3.select(_this).style("background-color").toString();
     let cur_index = color_arr.indexOf(cur_color);
@@ -145,42 +130,21 @@ function change_color_when_click_btn(_this, color) {
 
 }
 
-function wt_filter() {
+function auto_filter(){
+    console.log("auto_filter...");
 
-    $("#stateComparisonListdown").val("wthp6");
-
-    let button_list = d3.selectAll('.wt_filter_btn')[0];
-    filter(button_list, false, ".wt_slider").then(df => {
+    $("#stateComparisonListdown").val(_cur_base);
+    let button_list = d3.selectAll(`.${_cur_class}_filter_btn`)[0];
+    filter(button_list, _pairwise, `.${_cur_class}_slider`).then(df => {
         updateTableWithColor(dataTable, df.toCollection());
     });
-}
-
-function s1_filter() {
-
-    $("#stateComparisonListdown").val("s1hp6");
-
-    let button_list = d3.selectAll('.s1_filter_btn')[0];
-
-    filter(button_list, false, ".s1_slider").then(df => {
-        updateTableWithColor(dataTable, df.toCollection());
-    });
-
-}
-
-function pairwise_filter() {
-    let button_list = d3.selectAll('.pairwise_filter_btn')[0];
-    filter(button_list, true, ".pairwise_slider").then(df => {
-        updateTableWithColor(dataTable, df.toCollection(), true);
-        // console.log(`df.shape = ${df.dim()}`);
-    });
-
 }
 
 function wt_filter_btn_click_func() {
     let _this = this;
 
     change_color_when_click_btn(_this);
-    wt_filter();
+    auto_filter();
 
     let slider = document.getElementById(_this.id.split("_")[0] + "_slider");
     change_color_ctrl_slider_bar_auto_choose_color(_this, slider, slider.value);
@@ -190,7 +154,7 @@ function s1_filter_btn_click_func() {
     let _this = this;
     change_color_when_click_btn(_this);
 
-    s1_filter();
+    auto_filter();
 
     let slider = document.getElementById(_this.id.split("_")[0] + "_slider");
     change_color_ctrl_slider_bar_auto_choose_color(_this, slider, slider.value);
@@ -200,7 +164,7 @@ function pairwise_filter_btn_click_func() {
     let _this = this;
 
     change_color_when_click_btn(_this);
-    pairwise_filter();
+    auto_filter();
 
     let slider = document.getElementById(_this.id.replace("btn", "slider"));
     change_color_ctrl_slider_bar_auto_choose_color(_this, slider, slider.value);
@@ -231,11 +195,12 @@ $("#option_form").on("change", () => {
 DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 
     set_global_varibles_by_CurActiveTab();
+
     console.log("here, DataFrame.fromCSV");
     document.getElementById("printStats").innerHTML = "Summary for threshold = 0";
 
     _total_df = data;
-    cur_df = _total_df;
+    _cur_df = _total_df;
 
     if (_total_df.count() > MAXIMUM_DISPLAY) {
         display_index = MAXIMUM_DISPLAY;
@@ -243,8 +208,8 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
         display_index = _total_df.count();
     }
 
-    cur_index = display_index;
-    document.getElementById("next_page_sms").innerText = `Show the first ${display_index}, out of ${cur_df.count()} genes`;
+    _cur_index = display_index;
+    document.getElementById("next_page_sms").innerText = `Show the first ${display_index}, out of ${_cur_df.count()} genes`;
 
     display_df = _total_df.slice(0, display_index);
     let my_all_data = {};
@@ -420,7 +385,6 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
         .text(function (d) {
             return d;
         });
-
 
     console.log(`..... END of read+svg ${(new Date - tick_) / 100}s`);
 
@@ -729,7 +693,7 @@ function updateChartStateComparison(d, pairwise) {
         .call(yAxis);
 }
 
-function updateCharts(pairwise = _pair_wise) {
+function updateCharts(pairwise = _pairwise) {
 
     console.log("display_index", display_index);
     xScale.domain([1, display_index]);
@@ -811,7 +775,7 @@ function updateDataForSVGCharts() {
 }
 
 
-function reset_DisplayIndex_and_DisplayDF(df = cur_df) {
+function reset_DisplayIndex_and_DisplayDF(df = _cur_df) {
     // check the number of rows currently
     if (df.count() < MAXIMUM_DISPLAY) {
         display_index = df.count()
@@ -819,14 +783,14 @@ function reset_DisplayIndex_and_DisplayDF(df = cur_df) {
         display_index = MAXIMUM_DISPLAY;
     }
 
-    cur_index = display_index;
-    display_df = cur_df.slice(0, display_index);
+    _cur_index = display_index;
+    display_df = _cur_df.slice(0, display_index);
 }
 
 async function filter(button_list, pairwise = false, slider_class) {
     reset_s1_target_sort_sms();
     let filteredDf = filter_data(button_list, pairwise, _total_df, slider_class);
-    cur_df = filteredDf;
+    _cur_df = filteredDf;
 
     reset_DisplayIndex_and_DisplayDF();
     updateDataForSVGCharts();
@@ -898,16 +862,16 @@ function filter_data(button_list, pairwise, df, slider_class) {
 $(document.getElementById("next_page")).on("click", () => {
         let pairwise = false;
 
-        if (cur_df.count() > cur_index) {
-            if (cur_index + MAXIMUM_DISPLAY > cur_df.count()) {
-                display_df = cur_df.slice(cur_index, cur_df.count());
+        if (_cur_df.count() > _cur_index) {
+            if (_cur_index + MAXIMUM_DISPLAY > _cur_df.count()) {
+                display_df = _cur_df.slice(_cur_index, _cur_df.count());
                 console.log(display_df.dim());
 
-                display_index = cur_df.count() - cur_index;
-                cur_index = cur_df.count();
+                display_index = _cur_df.count() - _cur_index;
+                _cur_index = _cur_df.count();
             } else {
-                display_df = cur_df.slice(cur_index, cur_index + MAXIMUM_DISPLAY);
-                cur_index += MAXIMUM_DISPLAY;
+                display_df = _cur_df.slice(_cur_index, _cur_index + MAXIMUM_DISPLAY);
+                _cur_index += MAXIMUM_DISPLAY;
                 display_index = MAXIMUM_DISPLAY;
             }
         } else {
@@ -927,25 +891,25 @@ $(document.getElementById("next_page")).on("click", () => {
 
 $(document.getElementById("previous_page")).on("click", () => {
         let pairwise = false;
-        if (cur_index <= MAXIMUM_DISPLAY) {
+        if (_cur_index <= MAXIMUM_DISPLAY) {
             console.log("return");
             return;
 
         }
 
-        if (cur_index % MAXIMUM_DISPLAY == 0) {
-            display_df = cur_df.slice(cur_index - MAXIMUM_DISPLAY, cur_index);
+        if (_cur_index % MAXIMUM_DISPLAY == 0) {
+            display_df = _cur_df.slice(_cur_index - MAXIMUM_DISPLAY, _cur_index);
 
-            cur_index = cur_index - MAXIMUM_DISPLAY;
+            _cur_index = _cur_index - MAXIMUM_DISPLAY;
             display_index = MAXIMUM_DISPLAY;
         } else {
-            display_df = cur_df.slice(cur_index - cur_index % MAXIMUM_DISPLAY - MAXIMUM_DISPLAY, cur_index - cur_index % MAXIMUM_DISPLAY);
+            display_df = _cur_df.slice(_cur_index - _cur_index % MAXIMUM_DISPLAY - MAXIMUM_DISPLAY, _cur_index - _cur_index % MAXIMUM_DISPLAY);
 
-            console.log("cur_index - cur_index % MAXIMUM_DISPLAY - MAXIMUM_DISPLAY", cur_index - cur_index % MAXIMUM_DISPLAY - MAXIMUM_DISPLAY);
-            console.log("cur_index - cur_index % MAXIMUM_DISPLAY", cur_index - cur_index % MAXIMUM_DISPLAY);
+            console.log("cur_index - cur_index % MAXIMUM_DISPLAY - MAXIMUM_DISPLAY", _cur_index - _cur_index % MAXIMUM_DISPLAY - MAXIMUM_DISPLAY);
+            console.log("cur_index - cur_index % MAXIMUM_DISPLAY", _cur_index - _cur_index % MAXIMUM_DISPLAY);
             display_index = MAXIMUM_DISPLAY;
-            cur_index = cur_index - cur_index % MAXIMUM_DISPLAY;
-            console.log("-=-=-= cur_index", cur_index);
+            _cur_index = _cur_index - _cur_index % MAXIMUM_DISPLAY;
+            console.log("-=-=-= cur_index", _cur_index);
         }
 
         updateDataForSVGCharts();
@@ -959,7 +923,7 @@ $(document.getElementById("previous_page")).on("click", () => {
 );
 
 function print_paging_sms_for_chart() {
-    document.getElementById("next_page_sms").innerText = `Show ${display_index}, page ${Math.ceil(cur_index / MAXIMUM_DISPLAY)}/${Math.ceil(cur_df.count() / MAXIMUM_DISPLAY)}, out of ${cur_df.count()} genes`;
+    document.getElementById("next_page_sms").innerText = `Show ${display_index}, page ${Math.ceil(_cur_index / MAXIMUM_DISPLAY)}/${Math.ceil(_cur_df.count() / MAXIMUM_DISPLAY)}, out of ${_cur_df.count()} genes`;
 }
 
 
@@ -969,7 +933,7 @@ $(document.getElementById("s1_target_sort")).on("click", () => {
     DataFrame.fromCSV("data/STOP1_targets_EckerLab.csv").then(data => {
         let s1_target_list = data.select("atID").toArray().flat();
 
-        let tmp_df = cur_df.withColumn("s1_target", (row) => {
+        let tmp_df = _cur_df.withColumn("s1_target", (row) => {
             if (s1_target_list.includes(row.get("atID"))) {
                 return 1
             } else {
@@ -977,43 +941,47 @@ $(document.getElementById("s1_target_sort")).on("click", () => {
             }
         })
             .sortBy(["s1_target", wt_base], [true, false]);
-        tmp_df.show();
+
         let num_rows_in = tmp_df.stat.sum("s1_target");
         console.log("num_rows_in", num_rows_in);
-        cur_df = tmp_df.drop('s1_target');
+        _cur_df = tmp_df.drop('s1_target');
 
-        let pairwise = false; // todo
         reset_DisplayIndex_and_DisplayDF();
         updateDataForSVGCharts();
         updateCharts();
         updateTableWithColor();
         print_paging_sms_for_chart();
 
-        document.getElementById("s1_target_sort_sms").innerText = `${num_rows_in}/ total ${cur_df.count()}`;
+        document.getElementById("s1_target_sort_sms").innerText = `${num_rows_in}/ total ${_cur_df.count()}`;
 
     });
 });
 
 function reset_s1_target_sort_sms() {
     document.getElementById("s1_target_sort_sms").innerText = "";
-
-
 }
 
 
 function set_global_varibles_by_CurActiveTab(){
-    if (cur_active_tab == tab_names["wt"]) {
-        _pair_wise = false;
+    console.log("cur_active_tab ===="  , cur_active_tab);
+    if (cur_active_tab == tab_names["base_class"]) {
+        _pairwise = false;
         _cur_base = wt_base;
         _cur_condition_cols = wt_condition_cols;
-    } else if (cur_active_tab == tab_names["s1"]) {
-        _pair_wise = false;
+        _cur_class = base_class;
+
+    } else if (cur_active_tab == tab_names["mutant_class"]) {
+        _pairwise = false;
         _cur_base = s1_base;
         _cur_condition_cols = s1_condition_cols;
-    } else if (cur_active_tab == tab_names["pairwise"]) {
-        _pair_wise = true;
+        _cur_class = mutant_class;
+        console.log("cur_active_tab ===="  , cur_active_tab);
+
+    } else if (cur_active_tab == tab_names["pairwise_class"]) {
+        _pairwise = true;
         _cur_base = "NO";
         _cur_condition_cols = pairwise_condition_cols;
+        _cur_class = pairwise_class;
 
     }
 }

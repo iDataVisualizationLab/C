@@ -2,14 +2,16 @@
 
 function openTab(evt, scenarioName) {
 
-    set_global_varibles_by_CurActiveTab();
 
-    cur_df = _total_df;
+    _cur_df = _total_df;
 
     reset_DisplayIndex_and_DisplayDF();
     print_paging_sms_for_chart();
 
     cur_active_tab = scenarioName;
+    set_global_varibles_by_CurActiveTab();
+
+
     document.getElementById("printStats").innerHTML = "Summary for threshold = 0";
     document.getElementById("s1_target_sort_sms").innerText = "";
 
@@ -28,7 +30,7 @@ function openTab(evt, scenarioName) {
     }
     document.getElementById(scenarioName).style.display = "block";
 
-    if (scenarioName == tab_names["wt"]) {
+    if (scenarioName == tab_names["base_class"]) {
         wt_master_slider.value = 0;
         wt_master_slider_value.innerText = "0";
         change_color_slider_bar(wt_master_slider, 0, MY_COLORS.gray, MY_COLORS.slider_master);
@@ -40,7 +42,7 @@ function openTab(evt, scenarioName) {
 
 
 
-    } else if (scenarioName == tab_names["s1"]) {
+    } else if (scenarioName == tab_names["mutant_class"]) {
 
         s1_master_slider.value = 0;
         s1_master_slider_value.innerText = "0";
@@ -52,7 +54,7 @@ function openTab(evt, scenarioName) {
 
         $('.statsTable_and_print').show();
 
-    } else if (scenarioName ==  tab_names["pairwise"]) {
+    } else if (scenarioName ==  tab_names["pairwise_class"]) {
 
         pairwise_master_slider.value = 0;
         pairwise_master_slider_value.innerText = "0";

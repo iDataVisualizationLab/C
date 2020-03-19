@@ -4,23 +4,21 @@ const ENCODE_COLOR = {
     3: MY_COLORS.gray,
 }
 let my_stats_table;
-let my_stats_data;
-let _row;
 
 
-function row_to_cluster(row, condition_cols, base_col, thres, pairwise, all_cluster) {
+function row_to_cluster(row, base_col, thres, all_cluster) {
     let cluster = [];
 
-    for (let i = 0; i < condition_cols.length; i++) {
-        if (pairwise) {
-            base_col = condition_cols[i].replace("s1", "wt"); // Todo add variable
+    for (let i = 0; i < _cur_condition_cols.length; i++) {
+        if (_pairwise) {
+            base_col = _cur_condition_cols[i].replace(mutant_class, base_class); // Todo add variable
         }
 
-        if (parseFloat(row.get(condition_cols[i])) - parseFloat(row.get(base_col)) > parseFloat(thres)) {
+        if (parseFloat(row.get(_cur_condition_cols[i])) - parseFloat(row.get(base_col)) > parseFloat(thres)) {
             cluster.push(1);
-        } else if (parseFloat(row.get(base_col)) - parseFloat(row.get(condition_cols[i])) > parseFloat(thres)) {
+        } else if (parseFloat(row.get(base_col)) - parseFloat(row.get(_cur_condition_cols[i])) > parseFloat(thres)) {
             cluster.push(2);
-        } else if (Math.abs(parseFloat(row.get(base_col)) - parseFloat(row.get(condition_cols[i]))) <= parseFloat(thres)) {
+        } else if (Math.abs(parseFloat(row.get(base_col)) - parseFloat(row.get(_cur_condition_cols[i]))) <= parseFloat(thres)) {
             cluster.push(3);
         }
     }
@@ -28,23 +26,23 @@ function row_to_cluster(row, condition_cols, base_col, thres, pairwise, all_clus
 
 }
 
-function calc_stat_for_1_combination(df, condition_cols, base_col, master_slider, pairwise, all_cluster) {
+function calc_stat_for_1_combination(df, base_col, master_slider, all_cluster) {
     let thres = master_slider.value / 100;
-    df.map((row) => row_to_cluster(row, condition_cols, base_col, thres, pairwise, all_cluster));
+    df.map((row) => row_to_cluster(row, base_col, thres, all_cluster));
 
     return all_cluster;
 }
 
 
-function calc_all_stats(df, condition_cols, base_col, master_slider, pairwise) {
+function calc_all_stats(df, base_col, master_slider) {
     let compare_conditions_list = [];
     let all_cluster = {};
-    permutator_base_3([], compare_conditions_list, condition_cols.length);
+    permutator_base_3([], compare_conditions_list, _cur_condition_cols.length);
 
     compare_conditions_list.forEach(cluster => all_cluster[cluster] = 0);
 
     let stats_results = [];
-    all_cluster = calc_stat_for_1_combination(df, condition_cols, base_col, master_slider, pairwise, all_cluster);
+    all_cluster = calc_stat_for_1_combination(df, base_col, master_slider, all_cluster);
     stats_results = Object.entries(all_cluster).map(x => [...x[0].split(","), x[1]]);
 
     return stats_results;
@@ -97,29 +95,26 @@ function create_stats_table(tbl, rows) {
 
 function click_row_callback(row_data) {
 
-    let filter_func, button_list;
+    let button_list;
     //check cur active tab:
-    if (cur_active_tab == tab_names["wt"]) {
+    if (cur_active_tab == tab_names["base_class"]) {
         let master_val = parseInt(wt_master_slider.value);
         wt_master_slider_value.innerHTML = master_val / 100;
         change_all_slider_values_to_the_master(master_val, wt_cols.slice(1));
         button_list = document.getElementsByClassName("wt_filter_btn");
 
-        filter_func = wt_filter;
-    } else if (cur_active_tab == tab_names["s1"]) {
+    } else if (cur_active_tab == tab_names["mutant_class"]) {
         let master_val = parseInt(s1_master_slider.value);
         s1_master_slider_value.innerHTML = master_val / 100;
         change_all_slider_values_to_the_master(master_val, s1_cols.slice(1));
         button_list = document.getElementsByClassName("s1_filter_btn");
 
-        filter_func = s1_filter;
-    } else if (cur_active_tab == tab_names["pairwise"]) {
+    } else if (cur_active_tab == tab_names["pairwise_class"]) {
         let master_val = parseInt(pairwise_master_slider.value);
         pairwise_master_slider_value.innerHTML = master_val / 100;
         change_all_slider_values_to_the_master(master_val, s1_cols, true);
         button_list = document.getElementsByClassName("pairwise_filter_btn");
 
-        filter_func = pairwise_filter;
     }
 
     let color_list = row_data.map(x => ENCODE_COLOR[x]);
@@ -129,36 +124,31 @@ function click_row_callback(row_data) {
 
 
     //  call update all btns function => filter all the btn at once
-    filter_func();
+    auto_filter();
 }
 
 function calc_and_show_stats_table() {
-    let condition_cols, master_slider, base, stats_col_names, df;
-    let pairwise = false;
+    let master_slider, base, stats_col_names, df;
 
-    if (cur_active_tab == tab_names["wt"]) {
-        condition_cols = wt_cols.slice(1);
-        stats_col_names = condition_cols;
+    if (cur_active_tab == tab_names["base_class"]) {
+        stats_col_names = wt_condition_cols;
         base = wt_cols[0];
         master_slider = wt_master_slider;
-    } else if (cur_active_tab == tab_names["s1"]) {
-        condition_cols = s1_cols.slice(1);
+    } else if (cur_active_tab == tab_names["mutant_class"]) {
         base = s1_cols[0];
-        stats_col_names = condition_cols;
+        stats_col_names = s1_condition_cols;
         master_slider = s1_master_slider;
 
-    } else if (cur_active_tab == tab_names["pairwise"]) {
-        condition_cols = s1_cols;
+    } else if (cur_active_tab == tab_names["pairwise_class"]) {
         master_slider = pairwise_master_slider;
-        pairwise = true;
-        stats_col_names = condition_cols.map(x => x.replace('s1', ""));
+        stats_col_names = s1_cols.map(x => x.replace('s1', ""));
         // No need to set "base" for pairwise
     }
 
 
     console.log("Calculating the summary table...");
     let tick = new Date;
-    let stats_results = calc_all_stats(_total_df, condition_cols, base, master_slider, pairwise);
+    let stats_results = calc_all_stats(_total_df, base, master_slider);
     console.log(`Done the computation, running time = ${(new Date - tick) / 1000}s`);
 
 
