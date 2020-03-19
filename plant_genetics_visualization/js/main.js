@@ -5,15 +5,17 @@ const wt_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe'];
 const s1_cols = ['s1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];
 const all_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe', 's1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];
 
-let wt_base = wt_cols[0];
-let S1_base = s1_cols[0];
-let wt_condition_cols = wt_cols.slice(1);
-let s1_condition_cols = s1_cols.slice(1);
-let pairwise_condition_cols = s1_cols;
-
+const wt_base = wt_cols[0];
+const S1_base = s1_cols[0];
+const wt_condition_cols = wt_cols.slice(1);
+const s1_condition_cols = s1_cols.slice(1);
+const pairwise_condition_cols = s1_cols;
 const base_class = "wt";
 const mutant_class = "s1";
 const pairwise_class = "pairwise";
+
+
+let _cur_base, _cur_condition_cols, _cur_class;
 
 const names = {
     "atID": "month",
@@ -227,6 +229,8 @@ $("#option_form").on("change", () => {
 });
 
 DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
+
+    set_global_varibles_by_CurActiveTab();
     console.log("here, DataFrame.fromCSV");
     document.getElementById("printStats").innerHTML = "Summary for threshold = 0";
 
@@ -603,7 +607,7 @@ function pairwise_ctrl_btn() {
     // mark comparison for s1
     comparison_radio.prop("checked", true);
     $("#stateComparisonListdown").attr("disabled", true);
-    updateCharts(true);
+    updateCharts(); //todo check here
 }
 
 function custom_ctrl_btn() {
@@ -725,7 +729,7 @@ function updateChartStateComparison(d, pairwise) {
         .call(yAxis);
 }
 
-function updateCharts(pairwise = false) {
+function updateCharts(pairwise = _pair_wise) {
 
     console.log("display_index", display_index);
     xScale.domain([1, display_index]);
@@ -829,8 +833,7 @@ async function filter(button_list, pairwise = false, slider_class) {
 
     print_paging_sms_for_chart();
 
-    console.log("updateCharts in filter!");
-    updateCharts(pairwise);
+    updateCharts();
 
     return display_df;
 };
@@ -913,7 +916,7 @@ $(document.getElementById("next_page")).on("click", () => {
         }
 
         updateDataForSVGCharts();
-        updateCharts(pairwise);
+        updateCharts();
         updateTableWithColor()
         print_paging_sms_for_chart();
 
@@ -946,7 +949,7 @@ $(document.getElementById("previous_page")).on("click", () => {
         }
 
         updateDataForSVGCharts();
-        updateCharts(pairwise);
+        updateCharts();
 
         // todo: fix pairwise (have a func to auto pick mode) + class for color
         updateTableWithColor();
@@ -982,7 +985,7 @@ $(document.getElementById("s1_target_sort")).on("click", () => {
         let pairwise = false; // todo
         reset_DisplayIndex_and_DisplayDF();
         updateDataForSVGCharts();
-        updateCharts(pairwise);
+        updateCharts();
         updateTableWithColor();
         print_paging_sms_for_chart();
 
@@ -998,6 +1001,22 @@ function reset_s1_target_sort_sms() {
 }
 
 
+function set_global_varibles_by_CurActiveTab(){
+    if (cur_active_tab == tab_names["wt"]) {
+        _pair_wise = false;
+        _cur_base = wt_base;
+        _cur_condition_cols = wt_condition_cols;
+    } else if (cur_active_tab == tab_names["s1"]) {
+        _pair_wise = false;
+        _cur_base = s1_base;
+        _cur_condition_cols = s1_condition_cols;
+    } else if (cur_active_tab == tab_names["pairwise"]) {
+        _pair_wise = true;
+        _cur_base = "NO";
+        _cur_condition_cols = pairwise_condition_cols;
+
+    }
+}
 
 
 

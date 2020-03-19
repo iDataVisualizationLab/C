@@ -2,6 +2,7 @@
 
 function openTab(evt, scenarioName) {
 
+    set_global_varibles_by_CurActiveTab();
 
     cur_df = _total_df;
 

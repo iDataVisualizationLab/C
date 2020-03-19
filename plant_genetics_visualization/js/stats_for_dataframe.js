@@ -132,7 +132,7 @@ function click_row_callback(row_data) {
     filter_func();
 }
 
-function calc_and_show_stats_table(testing = false) {
+function calc_and_show_stats_table() {
     let condition_cols, master_slider, base, stats_col_names, df;
     let pairwise = false;
 
