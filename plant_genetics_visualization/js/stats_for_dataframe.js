@@ -98,6 +98,7 @@ function click_row_callback(row_data) {
     button_list.forEach((btn, i) => change_btn_color_when_click(btn, color_list[i]));
 
     // call update all btns function => filter all the btn at once
+    change_all_slider_values_to_the_master(master_val, _cur_condition_cols);
     auto_filter();
 }
 

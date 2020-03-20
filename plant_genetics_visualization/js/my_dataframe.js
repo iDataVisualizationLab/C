@@ -1,5 +1,4 @@
 
-
 function updateTable(tbl, rows) {
     tbl.innerHTML = '';
     if (rows && rows.length > 0) {
