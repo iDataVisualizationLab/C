@@ -1,74 +1,10 @@
-const DataFrame = dfjs.DataFrame;
-
-// Todo: read the column names from the input file.
-const wt_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe'];
-const s1_cols = ['s1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];
-const all_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe', 's1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];
-
-const wt_base = wt_cols[0];
-const s1_base = s1_cols[0];
-const wt_condition_cols = wt_cols.slice(1);
-const s1_condition_cols = s1_cols.slice(1);
-const pairwise_condition_cols = s1_cols;
-const base_class = "wt";
-const mutant_class = "s1";
-const pairwise_class = "pairwise";
-
-const names = {
-    "atID": "month",
-    "index": "year",
-    "value": "unemployment",
-    "gene": "state"
-};
-let _cur_base, _cur_condition_cols, _cur_class;
-let _pairwise = false;
-
-
-let dataTable = document.getElementById('ipdatacsvTbl');
-let statsTable = document.getElementById('statsTable');
-let comparison_radio = $(document.getElementsByName("comparison"));
-let svgCharts;
-let _cur_index;
-let display_index;
-let display_df;
-let MAXIMUM_DISPLAY = 1000;
-let color_arr = [MY_COLORS.default, MY_COLORS.green, MY_COLORS.orange, MY_COLORS.gray];
-let _total_df;
-let _cur_df;
-
-
-const tab_names = {
-    "base_class": "wt_comparison",
-    "mutant_class": "s1_comparison",
-    "pairwise_class": 'pairwise_comparison',
-    "custom": "custom_mode"
-};
-let cur_active_tab = tab_names["base_class"];
-var margin = {top: 15, right: 0, bottom: 20, left: 25};
-let w = $("#unemploymentCharts").width() * 0.99 - margin.left - margin.right;
-let h = 200 - margin.bottom - margin.top;
-var svgHeight = h + margin.top + margin.bottom;
-var svgWidth = w + margin.left + margin.right;
-
-var xScale = d3.scale.linear().range([0, w]);
-var yScale = d3.scale.linear().domain([0, 1]).range([h, 0]);
-
-// todo: auto update num ticks when having a few datum.
-var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(6).tickFormat((_, i) => {
-    console.log("==============here inside xAxis");
-    return display_df.select("atID").toArray().flat()[i];
-});
-var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
-
 // draw filter btns
 wt_condition_cols.forEach(wt => {
     create_filter_btn(wt, base_class, wt_base, false);
 });
-
 s1_condition_cols.forEach(s1 => {
     create_filter_btn(s1, mutant_class, s1_base, false);
 });
-
 pairwise_condition_cols.forEach(p => {
     create_filter_btn(p, pairwise_class, "", true, mutant_class, base_class);
 });
@@ -109,7 +45,7 @@ var bisect = d3.bisector(function (d) {
     return d.year;
 }).left;
 
-function change_color_when_click_btn(_this, color) {
+function change_btn_color_when_click(_this, color) {
     let nex_index;
     let cur_color = d3.select(_this).style("background-color").toString();
     let cur_index = color_arr.indexOf(cur_color);
@@ -131,7 +67,6 @@ function change_color_when_click_btn(_this, color) {
 }
 
 function auto_filter() {
-    console.log("auto_filter...");
 
     $("#stateComparisonListdown").val(_cur_base);
     let button_list = d3.selectAll(`.${_cur_class}_filter_btn`)[0];
@@ -140,30 +75,10 @@ function auto_filter() {
     });
 }
 
-function wt_filter_btn_click_func() {
+
+function filter_btn_click_func() {
     let _this = this;
-
-    change_color_when_click_btn(_this);
-    auto_filter();
-
-    let slider = document.getElementById(_this.id.split("_")[0] + "_slider");
-    change_color_ctrl_slider_bar_auto_choose_color(_this, slider, slider.value);
-}
-
-function s1_filter_btn_click_func() {
-    let _this = this;
-    change_color_when_click_btn(_this);
-
-    auto_filter();
-
-    let slider = document.getElementById(_this.id.split("_")[0] + "_slider");
-    change_color_ctrl_slider_bar_auto_choose_color(_this, slider, slider.value);
-}
-
-function pairwise_filter_btn_click_func() {
-    let _this = this;
-
-    change_color_when_click_btn(_this);
+    change_btn_color_when_click(_this);
     auto_filter();
 
     let slider = document.getElementById(_this.id.replace("btn", "slider"));
@@ -171,9 +86,9 @@ function pairwise_filter_btn_click_func() {
 
 }
 
-$('.wt_filter_btn').click(wt_filter_btn_click_func);
-$('.s1_filter_btn').click(s1_filter_btn_click_func);
-$('.pairwise_filter_btn').click(pairwise_filter_btn_click_func);
+$('.wt_filter_btn').click(filter_btn_click_func);
+$('.s1_filter_btn').click(filter_btn_click_func);
+$('.pairwise_filter_btn').click(filter_btn_click_func);
 comparison_radio.on("click", function () {
     let _this = this;
 
@@ -187,15 +102,12 @@ comparison_radio.on("click", function () {
 $("#all").on("click", selectAllCheckboxes);
 
 $("#option_form").on("change", () => {
-    // console.log("trigger option_form");
-
     updateCharts();
 });
 
 DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 
     set_global_varibles_by_CurActiveTab();
-
     console.log("here, DataFrame.fromCSV");
     document.getElementById("printStats").innerHTML = "Summary for threshold = 0";
 
@@ -373,6 +285,7 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
         .attr("y", -5)
         .attr("dy", ".35em");
 
+    // todo: change name of the chart
     svgCharts.append("text")
         .datum(function (d) {
             //     if (cur_active_tab == tab_names["base_class"]) {
@@ -485,17 +398,14 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
     }
 
     wt_ctrl_btn();
-})
-;
+});
 
 d3.select("#stateComparisonListdown").on("change", () => {
     updateCharts();
 
 });
 
-
 function wt_ctrl_btn() {
-
     calc_and_show_stats_table();
 
     // Tick all wt_cols, except the first one\
@@ -899,9 +809,7 @@ $(document.getElementById("next_page")).on("click", () => {
         print_paging_sms_for_chart();
 
 
-    }
-);
-
+    });
 
 $(document.getElementById("previous_page")).on("click", () => {
         let pairwise = false;
@@ -933,13 +841,11 @@ $(document.getElementById("previous_page")).on("click", () => {
         updateTableWithValueColor();
 
         print_paging_sms_for_chart();
-    }
-);
+    });
 
 function print_paging_sms_for_chart() {
     document.getElementById("next_page_sms").innerText = `Show ${display_index}, page ${Math.ceil(_cur_index / MAXIMUM_DISPLAY)}/${Math.ceil(_cur_df.count() / MAXIMUM_DISPLAY)}, out of ${_cur_df.count()} genes`;
 }
-
 
 $(document.getElementById("s1_target_sort")).on("click", () => {
 
@@ -981,21 +887,21 @@ $(document.getElementById("up_down_sort")).on("click", () => {
         let up_and_down_list = data.select("up_and_down").toArray().flat();
         let num_up, num_down, num_up_and_down;
 
-        let encode = {"up":3, "down":2, "up_and_down":1, "otherwise":0};
+        let encode = {"up": 3, "down": 2, "up_and_down": 1, "otherwise": 0};
         let tmp_df = _cur_df.withColumn("target", (row) => {
             if (up_list.includes(row.get("atID"))) {
                 return encode["up"];
             } else if (down_list.includes(row.get("atID"))) {
-                return  encode["down"];
+                return encode["down"];
             } else if (up_and_down_list.includes(row.get("atID"))) {
-                return  encode["up_and_down"];
-            } else return  encode["otherwise"];
+                return encode["up_and_down"];
+            } else return encode["otherwise"];
         })
             .sortBy(["target", wt_base], [true, false]);
 
-        num_up = tmp_df.filter(r => r.get("target") ==  encode["up"]).count();
-        num_down = tmp_df.filter(r => r.get("target") ==  encode["down"]).count();
-        num_up_and_down = tmp_df.filter(r => r.get("target") ==  encode["up_and_down"]).count();
+        num_up = tmp_df.filter(r => r.get("target") == encode["up"]).count();
+        num_down = tmp_df.filter(r => r.get("target") == encode["down"]).count();
+        num_up_and_down = tmp_df.filter(r => r.get("target") == encode["up_and_down"]).count();
 
         _cur_df = tmp_df.drop('target');
 
@@ -1003,7 +909,7 @@ $(document.getElementById("up_down_sort")).on("click", () => {
         updateDataForSVGCharts();
         updateCharts();
         // updateTableWithValueColor();
-        updateTableWithValueAndIDColor(dataTable, display_df.toCollection(), [], up_list,down_list, up_and_down_list);
+        updateTableWithValueAndIDColor(dataTable, display_df.toCollection(), [], up_list, down_list, up_and_down_list);
         print_paging_sms_for_chart();
 
 
@@ -1018,7 +924,6 @@ function reset_sort_smses() {
 
 }
 
-
 function set_global_varibles_by_CurActiveTab() {
     console.log("cur_active_tab ====", cur_active_tab);
     if (cur_active_tab == tab_names["base_class"]) {
@@ -1027,18 +932,27 @@ function set_global_varibles_by_CurActiveTab() {
         _cur_condition_cols = wt_condition_cols;
         _cur_class = base_class;
 
+        _cur_master_slider = wt_master_slider;
+        _cur_master_slider_value = wt_master_slider_value;
+
+
     } else if (cur_active_tab == tab_names["mutant_class"]) {
         _pairwise = false;
         _cur_base = s1_base;
         _cur_condition_cols = s1_condition_cols;
         _cur_class = mutant_class;
-        console.log("cur_active_tab ====", cur_active_tab);
+
+        _cur_master_slider = s1_master_slider;
+        _cur_master_slider_value = s1_master_slider_value;
 
     } else if (cur_active_tab == tab_names["pairwise_class"]) {
         _pairwise = true;
         _cur_base = "NO";
         _cur_condition_cols = pairwise_condition_cols;
         _cur_class = pairwise_class;
+
+        _cur_master_slider = pairwise_master_slider;
+        _cur_master_slider_value = pairwise_master_slider_value;
 
     }
 }

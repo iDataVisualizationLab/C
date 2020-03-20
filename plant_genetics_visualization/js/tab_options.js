@@ -38,7 +38,7 @@ function openTab(evt, scenarioName) {
         change_color_slider_bar(wt_master_slider, 0, MY_COLORS.gray, MY_COLORS.slider_master);
 
         wt_ctrl_btn();
-        change_all_slider_values_to_the_master(0, wt_condition_cols, false);
+        change_all_slider_values_to_the_master(0, wt_condition_cols);
 
         $('.statsTable_and_print').show();
 
@@ -52,7 +52,7 @@ function openTab(evt, scenarioName) {
 
 
         s1_ctrl_btn();
-        change_all_slider_values_to_the_master(0, s1_condition_cols, false);
+        change_all_slider_values_to_the_master(0, s1_condition_cols);
 
         $('.statsTable_and_print').show();
 
@@ -63,7 +63,7 @@ function openTab(evt, scenarioName) {
         change_color_slider_bar(pairwise_master_slider, 0, MY_COLORS.gray, MY_COLORS.slider_master);
 
 
-        change_all_slider_values_to_the_master(0, s1_cols, true);
+        change_all_slider_values_to_the_master(0, s1_cols);
 
 
         pairwise_ctrl_btn();

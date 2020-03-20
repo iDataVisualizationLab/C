@@ -1,17 +1,19 @@
-const wt_master_slider = document.getElementById("wt_master_slider");
-const wt_master_slider_value = document.getElementById("wt_master_slider_value");
+function master_slider_oninput(){
+    let master_val = _cur_master_slider.value;
+    _cur_master_slider_value.innerHTML = master_val / 100;
+    change_color_slider_bar(_cur_master_slider, master_val, MY_COLORS.gray, MY_COLORS.slider_master);
 
-const s1_master_slider = document.getElementById("s1_master_slider");
-const s1_master_slider_value = document.getElementById("s1_master_slider_value");
+    change_all_slider_values_to_the_master(master_val, _cur_condition_cols);
+    auto_filter();
+    document.getElementById("printStats").innerHTML = `Summary for threshold = ${master_val / 100}`;
+    calc_and_show_stats_table();
+}
 
-const pairwise_master_slider = document.getElementById("pairwise_master_slider");
-const pairwise_master_slider_value = document.getElementById("pairwise_master_slider_value");
 
-
-function change_all_slider_values_to_the_master(master_val, cols, pairwise) {
+function change_all_slider_values_to_the_master(master_val, cols) {
     let col_slider_value, col_slider, col_btn;
 
-    if (!pairwise) {
+    if (!_pairwise) {
 
         cols.forEach((col) => {
             col_slider_value = document.getElementById(col + "_slider_value");
@@ -21,105 +23,54 @@ function change_all_slider_values_to_the_master(master_val, cols, pairwise) {
             col_slider_value.innerHTML = master_val / 100;
             $("#" + col + "_slider").val(master_val);
             change_color_ctrl_slider_bar_auto_choose_color(col_btn, col_slider, master_val);
-
-
         })
     } else {
         cols.forEach((col) => {
-            col_slider_value = document.getElementById(col.replace("s1", "pairwise_") + "_slider_value");
-            col_slider = document.getElementById(col.replace("s1", "pairwise_") + "_slider");
-            col_btn = document.getElementById(col.replace("s1", "pairwise_") + "_btn");
+            col_slider_value = document.getElementById(col.replace(mutant_class, pairwise_class + "_") + "_slider_value");
+            col_slider = document.getElementById(col.replace(mutant_class, pairwise_class + "_") + "_slider");
+            col_btn = document.getElementById(col.replace(mutant_class, pairwise_class + "_") + "_btn");
 
             col_slider_value.innerHTML = master_val / 100;
-            $("#" + col.replace("s1", "pairwise_") + "_slider").val(master_val);
+            $("#" + col.replace(mutant_class, pairwise_class + "_") + "_slider").val(master_val);
             change_color_ctrl_slider_bar_auto_choose_color(col_btn, col_slider, master_val);
-
-
         })
-
     }
-
 }
 
-function update_text_when_sliders_change(sl, filter_func, pairwise = false) {
+function update_text_when_sliders_change(sld, pairwise) {
     let slider, slider_value, col_btn;
     if (!pairwise) {
-        slider = document.getElementById(sl + "_slider");
-        slider_value = document.getElementById(sl + "_slider_value");
-        col_btn = document.getElementById(sl + "_btn");
+        slider = document.getElementById(sld + "_slider");
+        slider_value = document.getElementById(sld + "_slider_value");
+        col_btn = document.getElementById(sld + "_btn");
 
     } else {
-        slider = document.getElementById(sl.replace("s1", "pairwise_") + "_slider");
-        slider_value = document.getElementById(sl.replace("s1", "pairwise_") + "_slider_value");
-        col_btn = document.getElementById(sl.replace("s1", "pairwise_") + "_btn");
-
+        slider = document.getElementById(sld.replace(mutant_class, pairwise_class + "_") + "_slider");
+        slider_value = document.getElementById(sld.replace(mutant_class, pairwise_class + "_") + "_slider_value");
+        col_btn = document.getElementById(sld.replace(mutant_class, pairwise_class + "_") + "_btn");
     }
 
 
     slider_value.innerHTML = slider.value;
     slider.oninput = function () {
         slider_value.innerHTML = this.value / 100;
-        filter_func();
+        auto_filter();
         change_color_ctrl_slider_bar_auto_choose_color(col_btn, slider, slider.value);
-
     }
 }
 
-
-wt_cols.slice(1).forEach(wt => update_text_when_sliders_change(wt, auto_filter));
-s1_cols.slice(1).forEach(s1 => update_text_when_sliders_change(s1, auto_filter));
-s1_cols.forEach(s1 => update_text_when_sliders_change(s1, auto_filter, true));
+wt_condition_cols.forEach(wt => update_text_when_sliders_change(wt, false));
+s1_condition_cols.forEach(s1 => update_text_when_sliders_change(s1, false));
+pairwise_condition_cols.forEach(pairwise_col => update_text_when_sliders_change(pairwise_col, true));
 
 
 wt_master_slider_value.innerHTML = wt_master_slider.value;
-wt_master_slider.oninput = function () {
-    let master_val = this.value;
-    let _this = this;
-    wt_master_slider_value.innerHTML = master_val / 100;
-
-
-    change_color_slider_bar(_this, master_val, MY_COLORS.gray, MY_COLORS.slider_master);
-
-
-    change_all_slider_values_to_the_master(master_val, wt_cols.slice(1));
-    auto_filter();
-    document.getElementById("printStats").innerHTML = `Summary for threshold = ${master_val / 100}`;
-    calc_and_show_stats_table();
-
-
-}
-
+wt_master_slider.oninput = master_slider_oninput;
 
 s1_master_slider_value.innerHTML = s1_master_slider.value;
-s1_master_slider.oninput = function () {
-
-    let master_val = this.value;
-
-
-    s1_master_slider_value.innerHTML = master_val / 100;
-    let _this = this;
-    change_color_slider_bar(_this, master_val, MY_COLORS.gray, MY_COLORS.slider_master);
-
-
-    change_all_slider_values_to_the_master(master_val, s1_cols.slice(1));
-    s1_filter();
-    document.getElementById("printStats").innerHTML = `Summary for threshold = ${master_val / 100}`;
-    calc_and_show_stats_table();
-}
-
+s1_master_slider.oninput = master_slider_oninput;
 
 pairwise_master_slider_value.innerHTML = pairwise_master_slider.value;
-pairwise_master_slider.oninput = function () {
-    let master_val = this.value;
-    pairwise_master_slider_value.innerHTML = master_val / 100;
-    let _this = this;
-    change_color_slider_bar(_this, master_val, MY_COLORS.gray, MY_COLORS.slider_master);
-
-    change_all_slider_values_to_the_master(master_val, s1_cols, true);
-    auto_filter();
-    document.getElementById("printStats").innerHTML = `Summary for threshold = ${master_val / 100}`;
-    calc_and_show_stats_table();
-}
-
+pairwise_master_slider.oninput = master_slider_oninput;
 
 

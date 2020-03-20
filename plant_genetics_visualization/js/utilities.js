@@ -1,14 +1,4 @@
-const MY_COLORS = {
-    "green": "rgb(145, 207, 96)",
-    "orange": "rgb(252, 141, 89)",
-    "gray": "rgb(232, 232, 232)",
-    "default": "rgb(231, 231, 231)",
-    "gradient": "linear-gradient(to right, rgb(145, 207, 96), rgb(252, 141, 89)",
-    "slider_default": '#c75f04',
-    "slider_master": "mediumvioletred",
-    "blue": "lightblue",
 
-}
 
 function sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
@@ -35,11 +25,11 @@ function get_responding_wt_from_s1(wt_name) {
     return wt_name.replace("s1", "wt");
 }
 
-function change_color_slider_bar(_this, val, left_color, right_color, gradient = false) {
+function change_color_slider_bar(btn, val, left_color, right_color, gradient = false) {
     if (gradient) {
-        $(_this).css('background-image', `linear-gradient(to right, ${MY_COLORS.gray} ${val}%, ${MY_COLORS.green} ${val}%, ${MY_COLORS.orange} 100%)`)
+        $(btn).css('background-image', `linear-gradient(to right, ${MY_COLORS.gray} ${val}%, ${MY_COLORS.green} ${val}%, ${MY_COLORS.orange} 100%)`)
     } else {
-        $(_this).css('background-image', `linear-gradient(90deg, ${left_color} ${val}%, ${right_color} 0%)`);
+        $(btn).css('background-image', `linear-gradient(90deg, ${left_color} ${val}%, ${right_color} 0%)`);
     }
 }
 

@@ -1,17 +1,9 @@
-const ENCODE_COLOR = {
-    1: MY_COLORS.green,
-    2: MY_COLORS.orange,
-    3: MY_COLORS.gray,
-}
-let my_stats_table;
-
-
 function row_to_cluster(row, base_col, thres, all_cluster) {
     let cluster = [];
 
     for (let i = 0; i < _cur_condition_cols.length; i++) {
         if (_pairwise) {
-            base_col = _cur_condition_cols[i].replace(mutant_class, base_class); // Todo add variable
+            base_col = _cur_condition_cols[i].replace(mutant_class, base_class);
         }
 
         if (parseFloat(row.get(_cur_condition_cols[i])) - parseFloat(row.get(base_col)) > parseFloat(thres)) {
@@ -50,7 +42,6 @@ function calc_all_stats(df, base_col, master_slider) {
 
 function create_stats_table(tbl, rows) {
     $(statsTable).empty();
-
 
     tbl.innerHTML = '';
     if (rows && rows.length > 0) {
@@ -94,57 +85,32 @@ function create_stats_table(tbl, rows) {
 
 
 function click_row_callback(row_data) {
+    let master_val, button_list, color_list;
 
-    let button_list;
-    //check cur active tab:
-    if (cur_active_tab == tab_names["base_class"]) {
-        let master_val = parseInt(wt_master_slider.value);
-        wt_master_slider_value.innerHTML = master_val / 100;
-        change_all_slider_values_to_the_master(master_val, wt_cols.slice(1));
-        button_list = document.getElementsByClassName("wt_filter_btn");
+    master_val = parseInt(_cur_master_slider.value);
+    _cur_master_slider_value.innerHTML = master_val / 100;
+    change_all_slider_values_to_the_master(master_val, _cur_condition_cols);
+    button_list = document.getElementsByClassName(_cur_class +"_filter_btn");
 
-    } else if (cur_active_tab == tab_names["mutant_class"]) {
-        let master_val = parseInt(s1_master_slider.value);
-        s1_master_slider_value.innerHTML = master_val / 100;
-        change_all_slider_values_to_the_master(master_val, s1_cols.slice(1));
-        button_list = document.getElementsByClassName("s1_filter_btn");
-
-    } else if (cur_active_tab == tab_names["pairwise_class"]) {
-        let master_val = parseInt(pairwise_master_slider.value);
-        pairwise_master_slider_value.innerHTML = master_val / 100;
-        change_all_slider_values_to_the_master(master_val, s1_cols, true);
-        button_list = document.getElementsByClassName("pairwise_filter_btn");
-
-    }
-
-    let color_list = row_data.map(x => ENCODE_COLOR[x]);
+    color_list = row_data.map(x => ENCODE_COLOR[x]);
 
     // Change color of buttons, do NOT trigger the event button click
-    button_list.forEach((btn, i) => change_color_when_click_btn(btn, color_list[i]));
+    button_list.forEach((btn, i) => change_btn_color_when_click(btn, color_list[i]));
 
-
-    //  call update all btns function => filter all the btn at once
+    // call update all btns function => filter all the btn at once
     auto_filter();
 }
 
 function calc_and_show_stats_table() {
     let master_slider, base, stats_col_names, df;
 
-    if (cur_active_tab == tab_names["base_class"]) {
-        stats_col_names = wt_condition_cols;
-        base = wt_cols[0];
-        master_slider = wt_master_slider;
-    } else if (cur_active_tab == tab_names["mutant_class"]) {
-        base = s1_cols[0];
-        stats_col_names = s1_condition_cols;
-        master_slider = s1_master_slider;
+    base = _cur_base;
+    stats_col_names = _cur_condition_cols;
+    master_slider = _cur_master_slider;
 
-    } else if (cur_active_tab == tab_names["pairwise_class"]) {
-        master_slider = pairwise_master_slider;
-        stats_col_names = s1_cols.map(x => x.replace('s1', ""));
-        // No need to set "base" for pairwise
+    if (_pairwise){
+        stats_col_names = stats_col_names.map(x => x.replace(mutant_class, ""));
     }
-
 
     console.log("Calculating the summary table...");
     let tick = new Date;
@@ -162,7 +128,6 @@ function calc_and_show_stats_table() {
     }
 
     create_stats_table(statsTable, df.toCollection());
-
 
     $(document).ready(function () {
             my_stats_table = $(statsTable).DataTable({

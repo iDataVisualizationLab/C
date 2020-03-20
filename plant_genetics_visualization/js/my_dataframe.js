@@ -1,11 +1,4 @@
-const cell_colors = {
-    "greater": MY_COLORS.green,
-    "less": MY_COLORS.orange,
-    "no_color": MY_COLORS.gray,
-    "gradient": MY_COLORS.gradient,
-    "blue": MY_COLORS.blue
 
-}
 
 function updateTable(tbl, rows) {
     tbl.innerHTML = '';
