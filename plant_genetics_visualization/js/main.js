@@ -136,7 +136,7 @@ function auto_filter() {
     $("#stateComparisonListdown").val(_cur_base);
     let button_list = d3.selectAll(`.${_cur_class}_filter_btn`)[0];
     filter(button_list, _pairwise, `.${_cur_class}_slider`).then(df => {
-        updateTableWithColor(dataTable, df.toCollection());
+        updateTableWithValueColor(dataTable, df.toCollection());
     });
 }
 
@@ -517,7 +517,7 @@ function wt_ctrl_btn() {
         }
 
     }
-    updateTableWithColor(dataTable, display_df.toCollection());
+    updateTableWithValueColor(dataTable, display_df.toCollection());
 
     // mark comparison
     comparison_radio.prop("checked", true).trigger("click");
@@ -550,7 +550,7 @@ function s1_ctrl_btn() {
 
     }
 
-    updateTableWithColor(dataTable, display_df.toCollection(), false, false);
+    updateTableWithValueColor(dataTable, display_df.toCollection());
 
     // mark comparison
     comparison_radio.prop("checked", true).trigger("click");
@@ -581,7 +581,7 @@ function pairwise_ctrl_btn() {
         }
     }
 
-    updateTableWithColor(dataTable, display_df.toCollection(), true);
+    updateTableWithValueColor(dataTable, display_df.toCollection());
 
     // mark comparison for s1
     comparison_radio.prop("checked", true);
@@ -895,7 +895,7 @@ $(document.getElementById("next_page")).on("click", () => {
 
         updateDataForSVGCharts();
         updateCharts();
-        updateTableWithColor()
+        updateTableWithValueColor()
         print_paging_sms_for_chart();
 
 
@@ -930,7 +930,7 @@ $(document.getElementById("previous_page")).on("click", () => {
         updateCharts();
 
         // todo: fix pairwise (have a func to auto pick mode) + class for color
-        updateTableWithColor();
+        updateTableWithValueColor();
 
         print_paging_sms_for_chart();
     }
@@ -963,7 +963,9 @@ $(document.getElementById("s1_target_sort")).on("click", () => {
         reset_DisplayIndex_and_DisplayDF();
         updateDataForSVGCharts();
         updateCharts();
-        updateTableWithColor();
+        // updateTableWithValueColor();
+        updateTableWithValueAndIDColor(dataTable, display_df.toCollection(), s1_target_list, [], [], []);
+
         print_paging_sms_for_chart();
 
         document.getElementById("s1_target_sort_sms").innerText = `${num_rows_in}/ total ${_cur_df.count()}`;
@@ -1000,8 +1002,10 @@ $(document.getElementById("up_down_sort")).on("click", () => {
         reset_DisplayIndex_and_DisplayDF();
         updateDataForSVGCharts();
         updateCharts();
-        updateTableWithColor();
+        // updateTableWithValueColor();
+        updateTableWithValueAndIDColor(dataTable, display_df.toCollection(), [], up_list,down_list, up_and_down_list);
         print_paging_sms_for_chart();
+
 
         document.getElementById("up_down_sort_sms").innerText = `${num_up} up; ${num_down} down; ${num_up_and_down} up and down/ total ${_cur_df.count()}`;
 

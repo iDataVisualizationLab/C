@@ -113,7 +113,7 @@ p {
 #options {
     float: left;
     width: 36%;
-    height: 260px;
+    height: 250px;
     /*min-height: 350px;*/
     /*max-height: 400px;*/
     padding: 5px;
@@ -167,7 +167,7 @@ h1 {
     padding: 3px 5px;
     border: 1px solid #ccc;
     border-top: none;
-    height: 190px;
+    height: 180px;
     /*min-height: 300px;*/
     /*max-height: 400px;*/
     width: 95%;
@@ -280,19 +280,19 @@ tr:nth-child(even) {
 .dataTable_and_print{
     display: inline-block;
     width: 28%;
-    height: 205px;
+    height: 190px;
 
 }
 
 .dataTable{
     width: 100%;
-    height: 200px;
+    height: 190px;
     overflow-y: auto;
 
 }
 
 .statsTable_and_print{
-    margin-top: 10px;
+    margin-top: 5px;
     display: inline-block;
     width: 320px;
     height: 140px;
@@ -333,4 +333,27 @@ a:hover {
 
 .round {
     border-radius: 50%;
+}
+
+.sort_btn{
+    background-color: lightskyblue;
+    border: none;
+    color: black !important;
+    padding: 2px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 10px;
+    margin: 2px 2px 2px 2px;
+    border-radius: 1px;
+    width: fit-content;
+    min-width: 190px;
+    max-width: 220px;
+    height: fit-content;
+    cursor: pointer;
+}
+
+.sort_btn:hover{
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    margin: 1px 1px 1px 1px;
 }

@@ -6,6 +6,7 @@ const MY_COLORS = {
     "gradient": "linear-gradient(to right, rgb(145, 207, 96), rgb(252, 141, 89)",
     "slider_default": '#c75f04',
     "slider_master": "mediumvioletred",
+    "blue": "lightblue",
 
 }
 
