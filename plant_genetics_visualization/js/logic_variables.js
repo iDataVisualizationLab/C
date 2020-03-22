@@ -66,9 +66,10 @@ let _total_df;
 let _cur_df;
 
 let cur_active_tab = tab_names["base_class"];
-let MAXIMUM_DISPLAY = 1000;
+let MAXIMUM_DISPLAY = 500;
 const base_class = "wt";
 const mutant_class = "s1";
 const pairwise_class = "pairwise";
 
 
+let _set_data_venn;

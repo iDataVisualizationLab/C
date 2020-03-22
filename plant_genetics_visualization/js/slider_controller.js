@@ -5,7 +5,6 @@ function master_slider_oninput(){
 
     change_all_slider_values_to_the_master(master_val, _cur_condition_cols);
     auto_filter();
-    document.getElementById("printStats").innerHTML = `Summary for threshold = ${master_val / 100}`;
     calc_and_show_stats_table();
 }
 
@@ -64,13 +63,8 @@ s1_condition_cols.forEach(s1 => update_text_when_sliders_change(s1, false));
 pairwise_condition_cols.forEach(pairwise_col => update_text_when_sliders_change(pairwise_col, true));
 
 
-wt_master_slider_value.innerHTML = wt_master_slider.value;
 wt_master_slider.oninput = master_slider_oninput;
-
-s1_master_slider_value.innerHTML = s1_master_slider.value;
 s1_master_slider.oninput = master_slider_oninput;
-
-pairwise_master_slider_value.innerHTML = pairwise_master_slider.value;
 pairwise_master_slider.oninput = master_slider_oninput;
 
 

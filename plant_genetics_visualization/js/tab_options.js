@@ -7,16 +7,11 @@ function openTab(evt, scenarioName) {
 
     reset_DisplayIndex_and_DisplayDF();
     print_paging_sms_for_chart();
-    reset_sort_smses();
+    // reset_sort_smses();
 
 
     cur_active_tab = scenarioName;
     set_global_varibles_by_CurActiveTab();
-
-
-    document.getElementById("printStats").innerHTML = "Summary for threshold = 0";
-    document.getElementById("s1_target_sort_sms").innerText = "";
-
 
 
     let i, tabcontent, tablinks, btns_list = [];
@@ -40,7 +35,7 @@ function openTab(evt, scenarioName) {
         wt_ctrl_btn();
         change_all_slider_values_to_the_master(0, wt_condition_cols);
 
-        $('.statsTable_and_print').show();
+        // $('.statsTable_and_print').show();
 
 
 
@@ -54,7 +49,7 @@ function openTab(evt, scenarioName) {
         s1_ctrl_btn();
         change_all_slider_values_to_the_master(0, s1_condition_cols);
 
-        $('.statsTable_and_print').show();
+        // $('.statsTable_and_print').show();
 
     } else if (scenarioName ==  tab_names["pairwise_class"]) {
 
@@ -67,13 +62,13 @@ function openTab(evt, scenarioName) {
 
 
         pairwise_ctrl_btn();
-        $('.statsTable_and_print').show();
+        // $('.statsTable_and_print').show();
 
 
     } else if (scenarioName ==  tab_names["custom"]) {
 
         custom_ctrl_btn();
-        $('.statsTable_and_print').hide();
+        // $('.statsTable_and_print').hide();
 
 
     }

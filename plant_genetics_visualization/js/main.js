@@ -1,13 +1,17 @@
 // draw filter btns
 wt_condition_cols.forEach(wt => {
-    create_filter_btn(wt, base_class, wt_base, false);
+    create_filter_btn_and_slider(wt, base_class, wt_base, false);
 });
+
+
 s1_condition_cols.forEach(s1 => {
-    create_filter_btn(s1, mutant_class, s1_base, false);
+    create_filter_btn_and_slider(s1, mutant_class, s1_base, false);
 });
 pairwise_condition_cols.forEach(p => {
-    create_filter_btn(p, pairwise_class, "", true, mutant_class, base_class);
+    create_filter_btn_and_slider(p, pairwise_class, "", true, mutant_class, base_class);
 });
+
+
 
 // Define the line.
 var valueLine = d3.svg.line()
@@ -71,7 +75,7 @@ function auto_filter() {
     $("#stateComparisonListdown").val(_cur_base);
     let button_list = d3.selectAll(`.${_cur_class}_filter_btn`)[0];
     filter(button_list, _pairwise, `.${_cur_class}_slider`).then(df => {
-        updateTableWithValueColor(dataTable, df.toCollection());
+        updateTableAndVenn(dataTable, df.toCollection());
     });
 }
 
@@ -107,9 +111,9 @@ $("#option_form").on("change", () => {
 
 DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 
+    data  = data.sortBy(wt_base);
     set_global_varibles_by_CurActiveTab();
     console.log("here, DataFrame.fromCSV");
-    document.getElementById("printStats").innerHTML = "Summary for threshold = 0";
 
     _total_df = data;
     _cur_df = _total_df;
@@ -124,6 +128,16 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
     document.getElementById("next_page_sms").innerText = `Show the first ${display_index}, out of ${_cur_df.count()} genes`;
 
     display_df = _total_df.slice(0, display_index);
+
+
+
+    read_data_for_venn().then(set_data_venn =>{
+        _set_data_venn = set_data_venn;
+        let sets_venn = create_sets_obj_for_venn();
+        draw_venn(sets_venn);
+    })
+
+
     let my_all_data = {};
     all_cols.forEach((gene_name) => {
         let df = display_df.select('atID', gene_name);
@@ -288,26 +302,12 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
     // todo: change name of the chart
     svgCharts.append("text")
         .datum(function (d) {
-            //     if (cur_active_tab == tab_names["base_class"]) {
-            //
-            //             return "aa";
-            //     } else if (cur_active_tab == tab_names["mutant_class"]) {
-            //         return "bb";
-            //
-            //
-            //     } else if (cur_active_tab == tab_names["pairwise_class"]) {
-            //         return "cc";
-            //
-            //     }
-            //
-            //     return "dd";//
-            //
             return d.state;
         })
         .attr("x", w)
         .attr("y", 0)
         .attr("text-anchor", "end")
-        .style("font", "20px Arial")
+        .style("font", "15px Arial")
         .attr("fill", "#888")
         .text(function (d) {
             return d;
@@ -427,7 +427,7 @@ function wt_ctrl_btn() {
         }
 
     }
-    updateTableWithValueColor(dataTable, display_df.toCollection());
+    updateTableAndVenn(dataTable, display_df.toCollection());
 
     // mark comparison
     comparison_radio.prop("checked", true).trigger("click");
@@ -460,7 +460,7 @@ function s1_ctrl_btn() {
 
     }
 
-    updateTableWithValueColor(dataTable, display_df.toCollection());
+    updateTableAndVenn(dataTable, display_df.toCollection());
 
     // mark comparison
     comparison_radio.prop("checked", true).trigger("click");
@@ -491,7 +491,7 @@ function pairwise_ctrl_btn() {
         }
     }
 
-    updateTableWithValueColor(dataTable, display_df.toCollection());
+    updateTableAndVenn(dataTable, display_df.toCollection());
 
     // mark comparison for s1
     comparison_radio.prop("checked", true);
@@ -712,7 +712,7 @@ function reset_DisplayIndex_and_DisplayDF(df = _cur_df) {
 }
 
 async function filter(button_list, pairwise = false, slider_class) {
-    reset_sort_smses();
+    // reset_sort_smses();
     let filteredDf = filter_data(button_list, pairwise, _total_df, slider_class);
     _cur_df = filteredDf;
 
@@ -725,6 +725,7 @@ async function filter(button_list, pairwise = false, slider_class) {
 
     return display_df;
 };
+
 
 function filter_data(button_list, pairwise, df, slider_class) {
     let slider_ctrl_list = d3.selectAll(slider_class)[0];
@@ -805,7 +806,7 @@ $(document.getElementById("next_page")).on("click", () => {
 
         updateDataForSVGCharts();
         updateCharts();
-        updateTableWithValueColor()
+        updateTableAndVenn()
         print_paging_sms_for_chart();
 
 
@@ -816,7 +817,6 @@ $(document.getElementById("previous_page")).on("click", () => {
         if (_cur_index <= MAXIMUM_DISPLAY) {
             console.log("return");
             return;
-
         }
 
         if (_cur_index % MAXIMUM_DISPLAY == 0) {
@@ -838,90 +838,13 @@ $(document.getElementById("previous_page")).on("click", () => {
         updateCharts();
 
         // todo: fix pairwise (have a func to auto pick mode) + class for color
-        updateTableWithValueColor();
+        updateTableAndVenn();
 
         print_paging_sms_for_chart();
     });
 
 function print_paging_sms_for_chart() {
     document.getElementById("next_page_sms").innerText = `Show ${display_index}, page ${Math.ceil(_cur_index / MAXIMUM_DISPLAY)}/${Math.ceil(_cur_df.count() / MAXIMUM_DISPLAY)}, out of ${_cur_df.count()} genes`;
-}
-
-$(document.getElementById("s1_target_sort")).on("click", () => {
-
-    // todo: measure time => read text only
-    DataFrame.fromCSV("data/STOP1_targets_EckerLab.csv").then(data => {
-        let s1_target_list = data.select("atID").toArray().flat();
-
-        let tmp_df = _cur_df.withColumn("s1_target", (row) => {
-            if (s1_target_list.includes(row.get("atID"))) {
-                return 1
-            } else {
-                return 0;
-            }
-        })
-            .sortBy(["s1_target", wt_base], [true, false]);
-
-        let num_rows_in = tmp_df.stat.sum("s1_target");
-        console.log("num_rows_in", num_rows_in);
-        _cur_df = tmp_df.drop('s1_target');
-
-        reset_DisplayIndex_and_DisplayDF();
-        updateDataForSVGCharts();
-        updateCharts();
-        // updateTableWithValueColor();
-        updateTableWithValueAndIDColor(dataTable, display_df.toCollection(), s1_target_list, [], [], []);
-
-        print_paging_sms_for_chart();
-
-        document.getElementById("s1_target_sort_sms").innerText = `${num_rows_in}/ total ${_cur_df.count()}`;
-
-    });
-});
-
-$(document.getElementById("up_down_sort")).on("click", () => {
-    // todo: measure time => read text only
-    DataFrame.fromCSV("data/Targets_differentially_expressed.csv").then(data => {
-        let up_list = data.select("up").toArray().flat();
-        let down_list = data.select("down").toArray().flat();
-        let up_and_down_list = data.select("up_and_down").toArray().flat();
-        let num_up, num_down, num_up_and_down;
-
-        let encode = {"up": 3, "down": 2, "up_and_down": 1, "otherwise": 0};
-        let tmp_df = _cur_df.withColumn("target", (row) => {
-            if (up_list.includes(row.get("atID"))) {
-                return encode["up"];
-            } else if (down_list.includes(row.get("atID"))) {
-                return encode["down"];
-            } else if (up_and_down_list.includes(row.get("atID"))) {
-                return encode["up_and_down"];
-            } else return encode["otherwise"];
-        })
-            .sortBy(["target", wt_base], [true, false]);
-
-        num_up = tmp_df.filter(r => r.get("target") == encode["up"]).count();
-        num_down = tmp_df.filter(r => r.get("target") == encode["down"]).count();
-        num_up_and_down = tmp_df.filter(r => r.get("target") == encode["up_and_down"]).count();
-
-        _cur_df = tmp_df.drop('target');
-
-        reset_DisplayIndex_and_DisplayDF();
-        updateDataForSVGCharts();
-        updateCharts();
-        // updateTableWithValueColor();
-        updateTableWithValueAndIDColor(dataTable, display_df.toCollection(), [], up_list, down_list, up_and_down_list);
-        print_paging_sms_for_chart();
-
-
-        document.getElementById("up_down_sort_sms").innerText = `${num_up} up; ${num_down} down; ${num_up_and_down} up and down/ total ${_cur_df.count()}`;
-
-    });
-});
-
-function reset_sort_smses() {
-    document.getElementById("s1_target_sort_sms").innerText = "";
-    document.getElementById("up_down_sort_sms").innerText = "";
-
 }
 
 function set_global_varibles_by_CurActiveTab() {
@@ -935,6 +858,10 @@ function set_global_varibles_by_CurActiveTab() {
         _cur_master_slider = wt_master_slider;
         _cur_master_slider_value = wt_master_slider_value;
 
+        _cur_venn_chart = venn_chart_wt;
+        _cur_venn_div = venn_div_wt;
+
+        _cur_statsTable = wt_statsTable;
 
     } else if (cur_active_tab == tab_names["mutant_class"]) {
         _pairwise = false;
@@ -945,6 +872,11 @@ function set_global_varibles_by_CurActiveTab() {
         _cur_master_slider = s1_master_slider;
         _cur_master_slider_value = s1_master_slider_value;
 
+        _cur_venn_chart = venn_chart_s1;
+        _cur_venn_div = venn_div_s1;
+
+        _cur_statsTable = s1_statsTable;
+
     } else if (cur_active_tab == tab_names["pairwise_class"]) {
         _pairwise = true;
         _cur_base = "NO";
@@ -954,6 +886,10 @@ function set_global_varibles_by_CurActiveTab() {
         _cur_master_slider = pairwise_master_slider;
         _cur_master_slider_value = pairwise_master_slider_value;
 
+        _cur_venn_chart = venn_chart_pairwise;
+        _cur_venn_div = venn_div_pairwise;
+
+        _cur_statsTable = pairwise_statsTable;
     }
 }
 

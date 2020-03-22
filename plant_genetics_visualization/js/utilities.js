@@ -1,5 +1,3 @@
-
-
 function sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
@@ -94,15 +92,14 @@ function permutator_base_3(res, results, n) {
 }
 
 
-function create_filter_btn(col, test_class, base_col, pairwise, mutant_class, base_class) {
+function create_filter_btn_and_slider(col, test_class, base_col, pairwise, mutant_class, base_class) {
     let btn_id, btn_text, slider_id, slider_value_id, parent_element, btn_filter_class, slider_class;
     if (pairwise) {
-        base_col =  col.replace(mutant_class, base_class);
+        base_col = col.replace(mutant_class, base_class);
         btn_text = col + " vs. " + base_col;
 
         col = col.replace(mutant_class, "pairwise_"); // after getting btn_text, change col
-    }
-    else{
+    } else {
         btn_text = col + " vs. " + base_col;
 
     }
@@ -140,3 +137,31 @@ function create_filter_btn(col, test_class, base_col, pairwise, mutant_class, ba
         .text("0");
 
 }
+
+
+function* subsets(array, offset = 0) {
+    while (offset < array.length) {
+        let first = array[offset++];
+        for (let subset of subsets(array, offset)) {
+            subset.push(first);
+            yield subset;
+        }
+    }
+    yield [];
+}
+
+
+function get_all_subsets_id(n) {
+    let arr = Array.from(Array(n).keys());
+    all_set_ids = []
+    for (let subset of subsets(arr)) {
+        if (subset.length > 0) {
+            all_set_ids.push(subset);
+
+        }
+    }
+    return all_set_ids;
+
+}
+
+

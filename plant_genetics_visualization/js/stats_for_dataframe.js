@@ -41,7 +41,7 @@ function calc_all_stats(df, base_col, master_slider) {
 }
 
 function create_stats_table(tbl, rows) {
-    $(statsTable).empty();
+    // $(statsTable).empty();
 
     tbl.innerHTML = '';
     if (rows && rows.length > 0) {
@@ -123,15 +123,14 @@ function calc_and_show_stats_table() {
     df = new DataFrame(stats_results, new_header);
 
 
-    if (my_stats_table) {
-        my_stats_table.destroy();
-        $(statsTable).empty();
-    }
+    //todo
 
-    create_stats_table(statsTable, df.toCollection());
+
+
+    create_stats_table(_cur_statsTable, df.toCollection());
 
     $(document).ready(function () {
-            my_stats_table = $(statsTable).DataTable({
+            my_stats_table = $(_cur_statsTable).DataTable({
                 // Todo: show the sorting arrows
                 order: [[df.dim()[1] - 1, 'des']],
 
@@ -143,7 +142,7 @@ function calc_and_show_stats_table() {
                 bInfo: false,
 
             });
-            $("#statsTable tbody").on('click', 'tr', function () {
+            $(`#${_cur_class + "_statsTable"} tbody`).on('click', 'tr', function () {
                 let row_data = my_stats_table.row(this).data();
                 click_row_callback(row_data.slice(0, row_data.length - 1));
             });
@@ -152,3 +151,6 @@ function calc_and_show_stats_table() {
 
 
 }
+
+
+

@@ -47,80 +47,40 @@
 
     <div id="wt_comparison" class="tabcontent" style="display:block">
         <p>Compare each conditioned test with <b>wthp6</b></p>
-        <div class="btn-group">
-        </div>
-
-        <div id="wt_master_slider_div">
-            <div class="btn_and_slide_container">
-                <input type="range" min="0" max="100" value="0" class="slider wt_master_slider master_slider"
-                       id="wt_master_slider">
-                <br>
-                <p>Main slider: <span id="wt_master_slider_value"></span></p>
+        <div class="btn-group"></div>
+        <div class="statTable_and_Venn_div">
+            <div class="statsTable_and_MasterSlider">
+                <div class="master_slider_div"></div>
             </div>
-
+            <div id="venn_wt" class="venn_diagram"></div>
         </div>
-
-
     </div>
 
     <div id="s1_comparison" class="tabcontent">
-
         <p>Compare each conditioned test s1 with <b>s1hp6</b></p>
-        <div class="btn-group">
+        <div class="btn-group"></div>
+        <div class="master_slider_div"></div>
+        <div class="statTable_and_Venn_div">
+            <div class="statsTable_and_MasterSlider"></div>
+            <div id="venn_s1" class="venn_diagram"></div>
         </div>
-
-        <div id="s1_master_slider_div">
-            <div class="btn_and_slide_container">
-                <input type="range" min="0" max="100" value="0" class="slider s1_master_slider master_slider"
-                       id="s1_master_slider">
-                <br>
-                <p>Main slider: <span id="s1_master_slider_value"></span></p>
-            </div>
-
-        </div>
-
-
     </div>
-
 
     <div id="pairwise_comparison" class="tabcontent">
         <p>Compare each conditioned <b>s1</b> with its responding <b>wt</b> (e.g., <i>s1hp6 vs. wthp6</i>)</p>
-
-        <div class="btn-group">
+        <div class="btn-group"></div>
+        <div class="master_slider_div"></div>
+        <div class="statTable_and_Venn_div">
+            <div class="statsTable_and_MasterSlider"></div>
+            <div id="venn_pairwise" class="venn_diagram"></div>
         </div>
-
-        <div id="pairwise_master_slider_div">
-            <div class="btn_and_slide_container">
-                <input type="range" min="0" max="100" value="0" class="slider pairwise_master_slider master_slider"
-                       id="pairwise_master_slider">
-                <br>
-                <p>Main slider: <span id="pairwise_master_slider_value"></span></p>
-            </div>
-
-        </div>
-
 
     </div>
 </div>
-
-
-<div class="statsTable_and_print">
-    <h3 class="printNumber" id="printStats"></h3>
-    <div class="statsTableClass" id="statsTableDiv">
-        <table id="statsTable"></table>
-    </div>
-</div>
-
-<br>
-<button class="  sort_btn" id="s1_target_sort" type="button" title="Show S1 targets first, follow by the rest of genes on the chart. These S1 targets will be in blue on the data table.">Order by S1 Targets (Ecker Lab)</button>
-<p id="s1_target_sort_sms"></p>
-<br>
-<button class="  sort_btn" id="up_down_sort" type="button" title="Show regulated targets first, then the rest on the chart. The up/down/up and down regulated targets will be colored in green/orange/mix of green and orange respectively">Order by Up/Down/UpDown</button>
-<p id="up_down_sort_sms"></p>
 
 
 <div class="dataTable_and_print">
-<!--    <h3 class="printNumber" id="printNumGenes"></h3>-->
+    <!--    <h3 class="printNumber" id="printNumGenes"></h3>-->
     <div class="dataTable" id="ipdatacsvDiv">
         <table id="ipdatacsvTbl"></table>
     </div>
@@ -128,23 +88,25 @@
 
 
 <div class="next_page_btn">
-    <a href="#" id = "previous_page" class="previous round">&#8249;</a>
-    <a href="#" id = "next_page" class="next round">&#8250;</a>
+    <a href="#" id="previous_page" class="previous round">&#8249;</a>
+    <a href="#" id="next_page" class="next round">&#8250;</a>
     <p id="next_page_sms"></p>
 </div>
-
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://gmousse.github.io/dataframe-js/dist/dataframe.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="js/venn.min.js"></script>
 
 <!--<script src="js/d3-3.3.13/d3.js"></script>-->
-<script src="js/ui_variables.js"></script>
 <script src="js/logic_variables.js"></script>
+<script src="js/UI_variables.js"></script>
 <script src="js/utilities.js"></script>
+
 <script src="js/main.js"></script>
+<script src="js/my_venn.js"></script>
 <script src="js/my_dataframe.js"></script>
 <script src="js/tab_options.js"></script>
 <script src="js/slider_controller.js"></script>
