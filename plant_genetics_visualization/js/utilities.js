@@ -165,3 +165,15 @@ function get_all_subsets_id(n) {
 }
 
 
+function mofidy_tooltip_hover_chart(focus, x0) {
+    if (x0 > w/2) {
+        focus.select("rect").attr("x", -110);
+        focus.select(".tooltip-atID").attr("x", -102);
+        focus.select(".tooltip-value").attr("x", -102);
+    } else {
+        focus.select("rect").attr("x", 10);
+        focus.select(".tooltip-atID").attr("x", 18);
+        focus.select(".tooltip-value").attr("x", 18);
+    }
+
+}

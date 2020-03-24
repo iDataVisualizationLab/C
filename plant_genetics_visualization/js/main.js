@@ -12,7 +12,6 @@ pairwise_condition_cols.forEach(p => {
 });
 
 
-
 // Define the line.
 var valueLine = d3.svg.line()
     .x(function (d) {
@@ -111,7 +110,7 @@ $("#option_form").on("change", () => {
 
 DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 
-    data  = data.sortBy(wt_base);
+    data = data.sortBy(wt_base);
     set_global_varibles_by_CurActiveTab();
     console.log("here, DataFrame.fromCSV");
 
@@ -125,13 +124,12 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
     }
 
     _cur_index = display_index;
-    document.getElementById("next_page_sms").innerText = `Show the first ${display_index}, out of ${_cur_df.count()} genes`;
+    document.getElementById("next_page_sms").innerText = `Show ${display_index}/ ${_cur_df.count()} genes, page ${Math.ceil(_cur_index / MAXIMUM_DISPLAY)}/${Math.ceil(_cur_df.count() / MAXIMUM_DISPLAY)}`;
 
     display_df = _total_df.slice(0, display_index);
 
 
-
-    read_data_for_venn().then(set_data_venn =>{
+    read_data_for_venn().then(set_data_venn => {
         _set_data_venn = set_data_venn;
         let sets_venn = create_sets_obj_for_venn();
         draw_venn(sets_venn);
@@ -164,21 +162,29 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
     let tick_ = new Date;
     console.log(".... Inside CHART + READ CSV");
     stateChartData.forEach(function (d) {
+
+        //option checkbox
         var option = stateOptions
             .append("label")
             .datum(d.state);
+
+
+        //check for base col
         option.append("input")
             .attr("type", "checkbox")
             .property("checked", function (d) {
-                return (d == "wthp6")
+                return (d == wt_base)
             })
             .attr("name", "stateSelection")
             .attr("id", removeWhitespace)
             .on("click", changeChartDisplay);
+
         option.append("text")
             .text(d.state);
+
         option.append("br");
 
+        //dropdown boxes
         var comparison = stateComparisons.append("option")
             .datum(d.state)
             .attr("value", d.state)
@@ -200,36 +206,35 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
             return removeWhitespace(d.state);
         })
         .classed("chartActive", function (d) {
-            return d.state == "wthp6";
+            return d.state == wt_base;
         })
         .attr("width", svgWidth)
         .attr("height", function (d) {
-            if (d.state == "wthp6") {
+            if (d.state == wt_base) {
                 return svgHeight;
             } else {
                 return 0;
             }
         })
         .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("transform", "translate(" + padding.left + "," + padding.top + ")");
 
     var defs = svgCharts.append("defs");
-    // console.log("defs is ", defs);
 
     // Add background.
     svgCharts.append("rect")
-        .attr("transform", "translate(0,-" + margin.top + ")")
+        .attr("transform", "translate(0,-" + padding.top + ")")
         .attr("width", w)
-        .attr("height", h + margin.top + margin.bottom)
+        .attr("height", h + padding.top + padding.bottom)
         .attr("fill", "white");
 
     // Side clip-path.
     defs.append("clipPath")
         .attr("id", "sideClip")
         .append("rect")
-        .attr("transform", "translate(0,-" + margin.top + ")")
+        .attr("transform", "translate(0,-" + padding.top + ")")
         .attr("width", w)
-        .attr("height", h + margin.top);
+        .attr("height", h + padding.top);
 
     // Add the baseline.
     svgCharts.append("path")
@@ -286,18 +291,38 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
         .text("Expressed (norm)");
 
 
-// Add focus circle and value.
-    var focus = svgCharts.append("g")
+    // focus - circle when point on the chart
+    _focus = svgCharts.append("g")
         .attr("class", "focus")
         .style("display", "none");
 
-    focus.append("circle")
-        .attr("r", 3.5);
+    _focus.append("circle")
+        .attr("r", 4);
 
-    focus.append("text")
-        .attr("x", 9)
-        .attr("y", -5)
-        .attr("dy", ".35em");
+    _focus.append("rect")
+        .attr("class", "tooltip")
+        .attr("width", 80)
+        .attr("height", 40)
+        .attr("x", 10)
+        .attr("y", -22)
+        .attr("rx", 4)
+        .attr("ry", 4);
+
+    _focus.append("text")
+        .attr("class", "tooltip-atID")
+        .attr("x", 18)
+        .attr("y", -6);
+
+    // focus.append("text")
+    //     .attr("x", 18)
+    //     .attr("y", 18)
+    // .text("Expressed:");
+
+    _focus.append("text")
+        .attr("class", "tooltip-value")
+        .attr("x", 18)
+        .attr("y", 14);
+
 
     // todo: change name of the chart
     svgCharts.append("text")
@@ -320,86 +345,95 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
     d3.select("#unemploymentCharts").selectAll("svg")
         .on("mouseover", function (d) {
             // console.log("mouseOver");
-            var focus = d3.select(this).select(".focus");
-            focus.style("display", null);
+            // var focus = d3.select(this).select(".focus");
+            _focus.style("display", null);
         })
         .on("mouseout", function (d) {
-            var focus = d3.select(this).select(".focus");
-            focus.style("display", "none");
+            // var focus = d3.select(this).select(".focus");
+            _focus.style("display", "none");
         })
-        .on("mousemove", mousemove)
+        .on("mousemove", function (d) {
+            let _this = this;
+            mousemove_chart(d, _this)
+        })
         .on("dblclick", function (d) {
             changeChartDisplay(d.state);
         });
 
-    function mousemove(d) {
 
-        // console.log("mousemove");
-        // console.log(d);
-
-        // todo: Fix i
-        var x0 = xScale.invert(d3.mouse(this)[0]);
-        var i = bisect(d.series[d.state], x0, 1);
-        var d0 = d.series[d.state][i - 1];
-        var d1 = d.series[d.state][i];
-
-        if ((typeof d1 == 'undefined') || (typeof d0 == 'undefined')) {
-            return;
-        }
-
-
-        var d_new = x0 - d0.year > d1.year - x0 ? d1 : d0;
-        var lineElement = d3.select(this).select(".baseline").node();
-        var BBox = lineElement.getBBox();
-        var pathLength = lineElement.getTotalLength();
-        var scale = pathLength / BBox.width;
-        var mouse = d3.mouse(this);
-        var beginning = 0, end = lineElement.getTotalLength(), target = null;
-        while (true) {
-            target = Math.floor((beginning + end) / 2);
-            pos = lineElement.getPointAtLength(target);
-            if ((target === end || target === beginning) && pos.x !== mouse[0]) {
-                break;
-            }
-            if (pos.x > mouse[0]) end = target;
-            else if (pos.x < mouse[0]) beginning = target;
-            else break; //position found
-        }
-
-        var focus = d3.select(this).select(".focus");
-        if (x0 > w / 2) {
-            focus.select("text").attr("x", -0);
-            focus.select("text").attr("text-anchor", "end");
-        } else {
-            focus.select("text").attr("x", 0);
-            focus.select("text").attr("text-anchor", "start");
-        }
-        focus.attr("transform", "translate(" + pos.x + "," + pos.y + ")");
-        focus.select("text").text((d_new.month + ": " + d_new.unemployment));
-
-
-        let rows = document.querySelectorAll("#ipdatacsvTbl tr");// ## $( "#ipdatacsvTbl tr" )[0].scrollIntoView();
-        let cur_row = Array.from(rows).find((d, i) => {
-            return d.firstChild.textContent == d_new.month;
-        });
-
-        Array.from(rows).forEach((d, i) => {
-            d.style.fontWeight = "normal";
-            d.style.backgroundColor = i % 2 == 0 ? '#ececec' : '#ffffff'
-        });
-        cur_row.style.backgroundColor = '#BCD4EC';
-        cur_row.style.fontWeight = "bold";
-
-        cur_row.scrollIntoView({
-            behavior: 'instant',
-            block: 'center'
-        });
-
-    }
 
     wt_ctrl_btn();
 });
 
+
+function show_circle_when_mouseenter_the_dataTable(index, row_data) {
+
+    _focus.attr("transform", "translate(" + xScale(index) + "," + yScale(parseFloat(row_data[1])) + ")"); // test for the first chart
+
+    mofidy_tooltip_hover_chart(_focus, index);
+    console.log("_focus  dataTable", _focus);
+
+    console.log('parseFloat(row_data[1]).toFixed(2', parseFloat(row_data[1]).toFixed(2));
+
+    console.log("xScale(index)", xScale(index));
+    console.log(" yScale(parseFloat(row_data[1]))",  yScale(parseFloat(row_data[1])));
+    _focus.select(".tooltip-atID").text(row_data[0]);
+    _focus.select(".tooltip-value").text(parseFloat(row_data[1]).toFixed(2));
+
+}
+
+function show_circle_when_mouseover_chart(_this, d){
+
+    var focus = d3.select(_this).select(".focus");
+
+    console.log("this", _this);
+    let x0 = xScale.invert(d3.mouse(_this)[0] - padding.left + 1);
+    let i = bisect(d.series[d.state], x0, 1);
+
+    let d0 = d.series[d.state][i - 1];
+    let d1 = d.series[d.state][i];
+
+    if ((typeof d1 == 'undefined') || (typeof d0 == 'undefined')) {
+        return;
+    }
+    let d_new = x0 - d0.year > d1.year - x0 ? d1 : d0;
+    focus.attr("transform", "translate(" + xScale(d_new.year) + "," + yScale(d_new.unemployment) + ")");
+
+    mofidy_tooltip_hover_chart(focus, x0);
+    console.log("_focus  chart", focus);
+
+
+    focus.select(".tooltip-atID").text(d_new.month);
+    focus.select(".tooltip-value").text(parseFloat(d_new.unemployment).toFixed(2));
+    return d_new;
+}
+function mousemove_chart(d, _this) {
+
+    console.log("_this is ", _this);
+
+
+    let d_new = show_circle_when_mouseover_chart(_this, d);
+
+    if (typeof d_new == "undefined"){
+        return;
+    }
+    // change the view of the data table
+    let rows = document.querySelectorAll("#ipdatacsvTbl tr");
+    let cur_row = Array.from(rows).find((d, i) => {
+        return d.firstChild.textContent == d_new.month;
+    });
+
+    Array.from(rows).forEach((d, i) => {
+        d.style.fontWeight = "normal";
+        d.style.backgroundColor = i % 2 == 0 ? '#ececec' : '#ffffff'
+    });
+    cur_row.style.backgroundColor = '#BCD4EC';
+    cur_row.style.fontWeight = "bold";
+    cur_row.scrollIntoView({
+        behavior: 'instant',
+        block: 'center'
+    });
+}
 d3.select("#stateComparisonListdown").on("change", () => {
     updateCharts();
 
@@ -785,66 +819,66 @@ function filter_data(button_list, pairwise, df, slider_class) {
 
 
 $(document.getElementById("next_page")).on("click", () => {
-        let pairwise = false;
+    let pairwise = false;
 
-        if (_cur_df.count() > _cur_index) {
-            if (_cur_index + MAXIMUM_DISPLAY > _cur_df.count()) {
-                display_df = _cur_df.slice(_cur_index, _cur_df.count());
-                console.log(display_df.dim());
+    if (_cur_df.count() > _cur_index) {
+        if (_cur_index + MAXIMUM_DISPLAY > _cur_df.count()) {
+            display_df = _cur_df.slice(_cur_index, _cur_df.count());
+            console.log(display_df.dim());
 
-                display_index = _cur_df.count() - _cur_index;
-                _cur_index = _cur_df.count();
-            } else {
-                display_df = _cur_df.slice(_cur_index, _cur_index + MAXIMUM_DISPLAY);
-                _cur_index += MAXIMUM_DISPLAY;
-                display_index = MAXIMUM_DISPLAY;
-            }
+            display_index = _cur_df.count() - _cur_index;
+            _cur_index = _cur_df.count();
         } else {
-            console.log("return");
-            return;
+            display_df = _cur_df.slice(_cur_index, _cur_index + MAXIMUM_DISPLAY);
+            _cur_index += MAXIMUM_DISPLAY;
+            display_index = MAXIMUM_DISPLAY;
         }
+    } else {
+        console.log("return");
+        return;
+    }
 
-        updateDataForSVGCharts();
-        updateCharts();
-        updateTableAndVenn()
-        print_paging_sms_for_chart();
+    updateDataForSVGCharts();
+    updateCharts();
+    updateTableAndVenn()
+    print_paging_sms_for_chart();
 
 
-    });
+});
 
 $(document.getElementById("previous_page")).on("click", () => {
-        let pairwise = false;
-        if (_cur_index <= MAXIMUM_DISPLAY) {
-            console.log("return");
-            return;
-        }
+    let pairwise = false;
+    if (_cur_index <= MAXIMUM_DISPLAY) {
+        console.log("return");
+        return;
+    }
 
-        if (_cur_index % MAXIMUM_DISPLAY == 0) {
-            display_df = _cur_df.slice(_cur_index - MAXIMUM_DISPLAY, _cur_index);
+    if (_cur_index % MAXIMUM_DISPLAY == 0) {
+        display_df = _cur_df.slice(_cur_index - MAXIMUM_DISPLAY, _cur_index);
 
-            _cur_index = _cur_index - MAXIMUM_DISPLAY;
-            display_index = MAXIMUM_DISPLAY;
-        } else {
-            display_df = _cur_df.slice(_cur_index - _cur_index % MAXIMUM_DISPLAY - MAXIMUM_DISPLAY, _cur_index - _cur_index % MAXIMUM_DISPLAY);
+        _cur_index = _cur_index - MAXIMUM_DISPLAY;
+        display_index = MAXIMUM_DISPLAY;
+    } else {
+        display_df = _cur_df.slice(_cur_index - _cur_index % MAXIMUM_DISPLAY - MAXIMUM_DISPLAY, _cur_index - _cur_index % MAXIMUM_DISPLAY);
 
-            console.log("cur_index - cur_index % MAXIMUM_DISPLAY - MAXIMUM_DISPLAY", _cur_index - _cur_index % MAXIMUM_DISPLAY - MAXIMUM_DISPLAY);
-            console.log("cur_index - cur_index % MAXIMUM_DISPLAY", _cur_index - _cur_index % MAXIMUM_DISPLAY);
-            display_index = MAXIMUM_DISPLAY;
-            _cur_index = _cur_index - _cur_index % MAXIMUM_DISPLAY;
-            console.log("-=-=-= cur_index", _cur_index);
-        }
+        console.log("cur_index - cur_index % MAXIMUM_DISPLAY - MAXIMUM_DISPLAY", _cur_index - _cur_index % MAXIMUM_DISPLAY - MAXIMUM_DISPLAY);
+        console.log("cur_index - cur_index % MAXIMUM_DISPLAY", _cur_index - _cur_index % MAXIMUM_DISPLAY);
+        display_index = MAXIMUM_DISPLAY;
+        _cur_index = _cur_index - _cur_index % MAXIMUM_DISPLAY;
+        console.log("-=-=-= cur_index", _cur_index);
+    }
 
-        updateDataForSVGCharts();
-        updateCharts();
+    updateDataForSVGCharts();
+    updateCharts();
 
-        // todo: fix pairwise (have a func to auto pick mode) + class for color
-        updateTableAndVenn();
+    // todo: fix pairwise (have a func to auto pick mode) + class for color
+    updateTableAndVenn();
 
-        print_paging_sms_for_chart();
-    });
+    print_paging_sms_for_chart();
+});
 
 function print_paging_sms_for_chart() {
-    document.getElementById("next_page_sms").innerText = `Show ${display_index}, page ${Math.ceil(_cur_index / MAXIMUM_DISPLAY)}/${Math.ceil(_cur_df.count() / MAXIMUM_DISPLAY)}, out of ${_cur_df.count()} genes`;
+    document.getElementById("next_page_sms").innerText = `Show ${display_index}/ ${_cur_df.count()} genes, page ${Math.ceil(_cur_index / MAXIMUM_DISPLAY)}/${Math.ceil(_cur_df.count() / MAXIMUM_DISPLAY)}`;
 }
 
 function set_global_varibles_by_CurActiveTab() {

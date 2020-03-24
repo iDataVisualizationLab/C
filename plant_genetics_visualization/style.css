@@ -393,3 +393,17 @@ a:hover {
     display: inline-block;
     float: right;
 }
+
+
+.focus text {
+    font-size: 12px;
+}
+
+.tooltip {
+    fill: white;
+    stroke: #000;
+}
+
+.tooltip-atID, .tooltip-value {
+    font-weight: bold;
+}

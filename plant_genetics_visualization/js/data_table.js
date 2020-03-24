@@ -95,5 +95,25 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
     }
 
     updateTAbleWithColor(tbl, rows);
+
+    $(document).ready(function () {
+            let my_data_table = $(dataTable).DataTable({
+                // Todo: show the sorting arrows
+
+                ordering: false,
+
+                destroy: true,
+                paging: false,
+                bInfo: false,
+            });
+            $("#ipdatacsvTbl tbody").on('mouseenter', 'tr', function () {
+                let row_data = my_data_table.row(this).data();
+                let atID_list = display_df.select("atID").toArray().flat();
+                let index = atID_list.indexOf(row_data[0]);
+                show_circle_when_mouseenter_the_dataTable(index, row_data);
+            });
+
+        }
+    )
 }
 

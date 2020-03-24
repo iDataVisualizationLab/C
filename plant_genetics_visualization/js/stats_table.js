@@ -76,7 +76,7 @@ function create_stats_table(tbl, rows) {
                         cell.style.color = cell.style.background;
                     }
                 } else { //last column => show #genes
-                    cell.innerHTML = text;
+                    cell.innerHTML = text.toLocaleString("en");
                 }
             });
         });
@@ -130,7 +130,7 @@ function calc_and_show_stats_table() {
     create_stats_table(_cur_statsTable, df.toCollection());
 
     $(document).ready(function () {
-            my_stats_table = $(_cur_statsTable).DataTable({
+            let my_stats_table = $(_cur_statsTable).DataTable({
                 // Todo: show the sorting arrows
                 order: [[df.dim()[1] - 1, 'des']],
 

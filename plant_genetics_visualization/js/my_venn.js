@@ -20,7 +20,7 @@ async function read_data_for_venn() {
     await DataFrame.fromCSV("data/Transcription_factors.csv").then(data => {
         set_data["2"] = {};
         set_data["2"]["data"] = data.select("TF_DE").toArray().flat().filter(x => x!="");
-        set_data["2"]["name"] = "TDE";
+        set_data["2"]["name"] = "DE";
 
         set_data["3"] = {};
         set_data["3"]["data"] = data.select("TF_EXP").toArray().flat().filter(x => x!="");
@@ -28,17 +28,13 @@ async function read_data_for_venn() {
     });
 
     await DataFrame.fromCSV("data/Targets_differentially_expressed.csv").then(data => {
+        let up = data.select("up").toArray().flat().filter(x => x!="");
+        let down = data.select("down").toArray().flat().filter(x => x!="");
+        let up_and_down = data.select("up_and_down").toArray().flat().filter(x => x!="");
+
         set_data["4"] = {};
-        set_data["4"]["data"] = data.select("up").toArray().flat().filter(x => x!="");
-        set_data["4"]["name"] = "Up";
-
-        set_data["5"] = {};
-        set_data["5"]["data"] = data.select("down").toArray().flat().filter(x => x!="");
-        set_data["5"]["name"] = "Down";
-
-        set_data["6"] = {}
-        set_data["6"]["data"] = data.select("up_and_down").toArray().flat().filter(x => x!="");;
-        set_data["6"]["name"] = "UpDown";
+        set_data["4"]["data"] = [...up, ...down, ...up_and_down];
+        set_data["4"]["name"] = "UpDown";
     });
 
     return set_data;
