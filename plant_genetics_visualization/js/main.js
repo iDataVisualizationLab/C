@@ -448,7 +448,7 @@ function mousemove_chart(d, _this) {
         d.style.fontWeight = "normal";
         d.style.backgroundColor = i % 2 == 0 ? '#ececec' : '#ffffff'
     });
-    cur_row.style.backgroundColor = '#BCD4EC';
+    cur_row.style.backgroundColor = MY_COLORS.lightbluesky;
     cur_row.style.fontWeight = "bold";
     cur_row.scrollIntoView({
         behavior: 'instant',

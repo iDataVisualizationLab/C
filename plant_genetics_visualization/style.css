@@ -57,7 +57,7 @@ p {
 .axis path,
 .axis line {
     fill: none;
-    stroke: teal;
+    stroke: black;
     stroke-width: 1;
     shape-rendering: crispEdges;
 }
@@ -407,7 +407,7 @@ a:hover {
 }
 
 .tooltip {
-    fill: white;
+    fill: #BCD4EC;
     stroke: #000;
 }
 

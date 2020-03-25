@@ -142,7 +142,7 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
                 let index = atID_list.indexOf(row_data[0].replace(S1_TEXT, ""));
                 show_circle_when_mouseenter_the_dataTable(index, data_and_columnNames);
 
-                this.style.backgroundColor = '#BCD4EC';
+                this.style.backgroundColor = MY_COLORS["lightbluesky"];
                 this.style.fontWeight = "bold";
             });
 

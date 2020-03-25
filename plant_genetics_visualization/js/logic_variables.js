@@ -7,6 +7,7 @@ const MY_COLORS = {
     "slider_default": '#c75f04',
     "slider_master":  "black",//"mediumvioletred",
     "blue": "lightblue",
+    "lightbluesky": "#BCD4EC"
 }
 
 const ENCODE_COLOR = {
