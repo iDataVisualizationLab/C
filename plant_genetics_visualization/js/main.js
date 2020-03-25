@@ -291,6 +291,14 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
         .text("Expressed (norm)");
 
 
+    _focus_s1 = svgCharts.append("g")
+        .attr("class", "s1_focus")
+        .style("display", "none");
+
+    _focus_s1.append("circle")
+        .classed("s1_cirle", true)
+        .attr("r", 4);
+
     // focus - circle when point on the chart
     _focus = svgCharts.append("g")
         .attr("class", "focus")
@@ -301,8 +309,8 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 
     _focus.append("rect")
         .attr("class", "tooltip")
-        .attr("width", 80)
-        .attr("height", 40)
+        .attr("width", 78)
+        .attr("height", 35)
         .attr("x", 10)
         .attr("y", -22)
         .attr("rx", 4)
@@ -311,17 +319,12 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
     _focus.append("text")
         .attr("class", "tooltip-atID")
         .attr("x", 18)
-        .attr("y", -6);
-
-    // focus.append("text")
-    //     .attr("x", 18)
-    //     .attr("y", 18)
-    // .text("Expressed:");
+        .attr("y", -12);
 
     _focus.append("text")
         .attr("class", "tooltip-value")
         .attr("x", 18)
-        .attr("y", 14);
+        .attr("y", 4);
 
 
     // todo: change name of the chart
@@ -344,15 +347,22 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 // Register mouse handlers.
     d3.select("#unemploymentCharts").selectAll("svg")
         .on("mouseover", function (d) {
-            // console.log("mouseOver");
+            console.log("++++++ mouse Over ++++");
             // var focus = d3.select(this).select(".focus");
             _focus.style("display", null);
         })
         .on("mouseout", function (d) {
-            // var focus = d3.select(this).select(".focus");
+            let rows = document.querySelectorAll("#ipdatacsvTbl tr");
+            Array.from(rows).forEach((d, i) => {
+                d.style.fontWeight = "normal";
+                d.style.backgroundColor = i % 2 == 0 ? '#ececec' : '#ffffff'
+            });
+
             _focus.style("display", "none");
         })
         .on("mousemove", function (d) {
+            console.log("+-+-+-+- mouse move +-+-+-");
+
             let _this = this;
             mousemove_chart(d, _this)
         })
@@ -361,35 +371,35 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
         });
 
 
-
     wt_ctrl_btn();
 });
 
 
-function show_circle_when_mouseenter_the_dataTable(index, row_data) {
+function show_circle_when_mouseenter_the_dataTable(index, data_and_columnNames) {
+    let tmp = _focus[0].filter(g => _cur_condition_cols.includes(g.__data__.state));
 
-    _focus.attr("transform", "translate(" + xScale(index) + "," + yScale(parseFloat(row_data[1])) + ")"); // test for the first chart
+    tmp.forEach(g => {
 
-    mofidy_tooltip_hover_chart(_focus, index);
-    console.log("_focus  dataTable", _focus);
+            let focus = d3.select(g);
+            let data = data_and_columnNames.filter((col) => col[0] == g.__data__.state);
+            data = data[0];
+            console.log("____data is", data);
 
-    console.log('parseFloat(row_data[1]).toFixed(2', parseFloat(row_data[1]).toFixed(2));
+            console.log("__focus in for each, ", focus);
+            focus.style("display", null);
 
-    console.log("xScale(index)", xScale(index));
-    console.log(" yScale(parseFloat(row_data[1]))",  yScale(parseFloat(row_data[1])));
-    _focus.select(".tooltip-atID").text(row_data[0]);
-    _focus.select(".tooltip-value").text(parseFloat(row_data[1]).toFixed(2));
-
+            focus.attr("transform", "translate(" + xScale(index) + "," + yScale(data[1]) + ")");
+            adjust_tooltip_hover_chart(focus, index, data[1], false);
+            focus.select(".tooltip-atID").text(data_and_columnNames[0][1].replace(S1_TEXT, ""));
+            focus.select(".tooltip-value").text(g.__data__.state + ": " + parseFloat(data[1]).toFixed(2));
+        }
+    )
 }
 
-function show_circle_when_mouseover_chart(_this, d){
-
-    var focus = d3.select(_this).select(".focus");
-
-    console.log("this", _this);
+function show_circle_when_mouseover_chart(_this, d) {
+    let focus = d3.select(_this).select(".focus");
     let x0 = xScale.invert(d3.mouse(_this)[0] - padding.left + 1);
     let i = bisect(d.series[d.state], x0, 1);
-
     let d0 = d.series[d.state][i - 1];
     let d1 = d.series[d.state][i];
 
@@ -399,28 +409,39 @@ function show_circle_when_mouseover_chart(_this, d){
     let d_new = x0 - d0.year > d1.year - x0 ? d1 : d0;
     focus.attr("transform", "translate(" + xScale(d_new.year) + "," + yScale(d_new.unemployment) + ")");
 
-    mofidy_tooltip_hover_chart(focus, x0);
-    console.log("_focus  chart", focus);
+    adjust_tooltip_hover_chart(focus, d_new.year, d_new.unemployment);
 
-
-    focus.select(".tooltip-atID").text(d_new.month);
-    focus.select(".tooltip-value").text(parseFloat(d_new.unemployment).toFixed(2));
+    focus.select(".tooltip-atID").text(d_new.month.replace(S1_TEXT, ""));
+    focus.select(".tooltip-value").text(d_new.state + ": " + parseFloat(d_new.unemployment).toFixed(2));
     return d_new;
 }
+
 function mousemove_chart(d, _this) {
 
-    console.log("_this is ", _this);
-
-
     let d_new = show_circle_when_mouseover_chart(_this, d);
-
-    if (typeof d_new == "undefined"){
+    if (typeof d_new == "undefined") {
         return;
     }
+
+    let tmp = _focus[0].filter(g => _cur_condition_cols.includes(g.__data__.state) && g.__data__.state != _this.__data__.state);
+
+    tmp.forEach(g => {
+
+            let focus = d3.select(g);
+            let data = d.series[g.__data__.state][d_new.year - 1];
+
+            focus.attr("transform", "translate(" + xScale(data.year) + "," + yScale(data.unemployment) + ")");
+            adjust_tooltip_hover_chart(focus, data.year, data.unemployment, true);
+            focus.select(".tooltip-atID").text("");
+            focus.select(".tooltip-value").text(g.__data__.state + ": " + parseFloat(data.unemployment).toFixed(2));
+        }
+    )
+
+
     // change the view of the data table
     let rows = document.querySelectorAll("#ipdatacsvTbl tr");
     let cur_row = Array.from(rows).find((d, i) => {
-        return d.firstChild.textContent == d_new.month;
+        return d.firstChild.textContent.replace(S1_TEXT, "") == d_new.month;
     });
 
     Array.from(rows).forEach((d, i) => {
@@ -434,6 +455,7 @@ function mousemove_chart(d, _this) {
         block: 'center'
     });
 }
+
 d3.select("#stateComparisonListdown").on("change", () => {
     updateCharts();
 

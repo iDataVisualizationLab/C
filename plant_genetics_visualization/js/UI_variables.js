@@ -92,8 +92,8 @@ let yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
 let venn_div_wt = d3.select("#venn_wt");
 
-let venn_w = 210;
-let venn_h = 210;
+let venn_w = 230;
+let venn_h = 230;
 let venn_chart_wt = venn.VennDiagram()
     .width(venn_w)
     .height(venn_h);
@@ -110,4 +110,4 @@ let venn_chart_pairwise = venn.VennDiagram()
 
 
 let _cur_venn_chart, _cur_venn_div;
-let _focus;
+let _focus, _focus_s1;

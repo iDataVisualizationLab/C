@@ -5,7 +5,7 @@ const MY_COLORS = {
     "default": "rgb(231, 231, 231)",
     "gradient": "linear-gradient(to right, rgb(145, 207, 96), rgb(252, 141, 89)",
     "slider_default": '#c75f04',
-    "slider_master": "mediumvioletred",
+    "slider_master":  "black",//"mediumvioletred",
     "blue": "lightblue",
 }
 
@@ -73,3 +73,6 @@ const pairwise_class = "pairwise";
 
 
 let _set_data_venn;
+
+let STOP1 = "AT1G34370";
+let S1_TEXT = " (STOP1)";

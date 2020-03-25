@@ -7,9 +7,9 @@ async function read_data_for_venn() {
     //     set_data["0"]["name"] = "Total data";
     // });
 
-    set_data["0"] = {};
-    set_data["0"]["data"] = _cur_df.select("atID").toArray().flat();
-    set_data["0"]["name"] = "Data";
+    set_data["4"] = {};
+    set_data["4"]["data"] = _cur_df.select("atID").toArray().flat();
+    set_data["4"]["name"] = "Data";
 
     await DataFrame.fromCSV("data/STOP1_targets_EckerLab.csv").then(data => {
         set_data["1"] = {};
@@ -19,12 +19,12 @@ async function read_data_for_venn() {
 
     await DataFrame.fromCSV("data/Transcription_factors.csv").then(data => {
         set_data["2"] = {};
-        set_data["2"]["data"] = data.select("TF_DE").toArray().flat().filter(x => x!="");
-        set_data["2"]["name"] = "DE";
+        set_data["2"]["data"] = data.select("TF_EXP").toArray().flat().filter(x => x!="");
+        set_data["2"]["name"] = "EXP";
 
         set_data["3"] = {};
-        set_data["3"]["data"] = data.select("TF_EXP").toArray().flat().filter(x => x!="");
-        set_data["3"]["name"] = "EXP";
+        set_data["3"]["data"] = data.select("TF_DE").toArray().flat().filter(x => x!="");
+        set_data["3"]["name"] = "DE";
     });
 
     await DataFrame.fromCSV("data/Targets_differentially_expressed.csv").then(data => {
@@ -32,9 +32,9 @@ async function read_data_for_venn() {
         let down = data.select("down").toArray().flat().filter(x => x!="");
         let up_and_down = data.select("up_and_down").toArray().flat().filter(x => x!="");
 
-        set_data["4"] = {};
-        set_data["4"]["data"] = [...up, ...down, ...up_and_down];
-        set_data["4"]["name"] = "UpDown";
+        set_data["0"] = {};
+        set_data["0"]["data"] = [...up, ...down, ...up_and_down];
+        set_data["0"]["name"] = "UpDown";
     });
 
     return set_data;
@@ -43,7 +43,7 @@ async function read_data_for_venn() {
 function update_data_for_venn() {
     if (typeof _set_data_venn != 'undefined')
     {
-        _set_data_venn["0"]["data"] = _cur_df.distinct("atID").toArray().flat();
+        _set_data_venn["4"]["data"] = _cur_df.distinct("atID").toArray().flat();
 
     }
 };
@@ -105,11 +105,11 @@ function draw_venn(sets_venn) {
             venn.sortAreas(_cur_venn_div, d);
 
             // Display a tooltip with the current size
-            tooltip.transition().duration(400).style("opacity", .9);
+            tooltip.transition().duration(200).style("opacity", .9);
             tooltip.text(d.size + " genes");
 
             // highlight the current path
-            var selection = d3.select(this).transition("tooltip").duration(400);
+            var selection = d3.select(this).transition("tooltip").duration(200);
             selection.select("path")
                 .style("fill-opacity", d.sets.length == 1 ? .4 : .1)
                 .style("stroke-opacity", 1);
@@ -121,8 +121,8 @@ function draw_venn(sets_venn) {
         })
 
         .on("mouseout", function (d, i) {
-            tooltip.transition().duration(400).style("opacity", 0);
-            var selection = d3.select(this).transition("tooltip").duration(400);
+            tooltip.transition().duration(200).style("opacity", 0);
+            var selection = d3.select(this).transition("tooltip").duration(200);
             selection.select("path")
                 .style("fill-opacity", d.sets.length == 1 ? .25 : .0)
                 .style("stroke-opacity", 0);

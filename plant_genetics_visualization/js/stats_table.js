@@ -146,6 +146,11 @@ function calc_and_show_stats_table() {
                 let row_data = my_stats_table.row(this).data();
                 click_row_callback(row_data.slice(0, row_data.length - 1));
             });
+
+        $(`#${_cur_class + "_statsTable"} tbody`).on('mouseover', function () {
+
+            this.setAttribute( 'title', "Click on the row to choose the combination" );        });
+
         }
     )
 

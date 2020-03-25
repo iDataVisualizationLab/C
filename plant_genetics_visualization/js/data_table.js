@@ -22,7 +22,12 @@ function updateTable(tbl, rows) {
                     cell.innerHTML = parseFloat(text).toFixed(2);
 
                 } else {
-                    cell.innerHTML = text;
+                    if (hd != STOP1){
+                        cell.innerHTML = text;
+                    }
+                    else{
+                        cell.innerHTML = text + S1_TEXT;
+                    }
                 }
             });
         });
@@ -75,7 +80,12 @@ function updateTAbleWithColor(tbl = dataTable, rows = display_df.toCollection())
                     cell.innerHTML = parseFloat(text).toFixed(2);
 
                 } else {
-                    cell.innerHTML = text;
+                    if (text != STOP1){
+                        cell.innerHTML = text;
+                    }
+                    else{
+                        cell.innerHTML = text + S1_TEXT;
+                    }
                 }
 
             });
@@ -88,6 +98,25 @@ function updateTAbleWithColor(tbl = dataTable, rows = display_df.toCollection())
 
 
 function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
+
+    //// circel stop1 gene
+    let stop1_row = display_df.find(row => row.get('atID') == STOP1);
+    if (typeof stop1_row != "undefined"){
+
+        let all_data = display_df.select("atID").toArray().flat();
+        let index = all_data.indexOf(STOP1);
+        let data_and_columnNames = zip([display_df.listColumns(), stop1_row.toArray()]);//can use toDict()-> easier+faster
+        let tmp = _focus_s1[0].filter(g => _cur_condition_cols.includes(g.__data__.state));
+        tmp.forEach(g => {
+                let focus = d3.select(g);
+                let data = data_and_columnNames.filter((col) => col[0] == g.__data__.state);
+                data = data[0];
+                focus.style("display", null);
+                focus.attr("transform", "translate(" + xScale(index) + "," + yScale(data[1]) + ")");
+            }
+        )
+    }
+
     if (typeof _set_data_venn != "undefined"){
         update_data_for_venn();
         let sets_venn = create_sets_obj_for_venn();
@@ -98,20 +127,42 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
 
     $(document).ready(function () {
             let my_data_table = $(dataTable).DataTable({
-                // Todo: show the sorting arrows
-
                 ordering: false,
+                searching: false,
 
                 destroy: true,
                 paging: false,
                 bInfo: false,
             });
-            $("#ipdatacsvTbl tbody").on('mouseenter', 'tr', function () {
+            $("#ipdatacsvTbl tbody").on('mouseover', 'tr', function () {
                 let row_data = my_data_table.row(this).data();
+                let headers = display_df.listColumns();
+                let data_and_columnNames = zip([headers, row_data])
                 let atID_list = display_df.select("atID").toArray().flat();
-                let index = atID_list.indexOf(row_data[0]);
-                show_circle_when_mouseenter_the_dataTable(index, row_data);
+                let index = atID_list.indexOf(row_data[0].replace(S1_TEXT, ""));
+                show_circle_when_mouseenter_the_dataTable(index, data_and_columnNames);
+
+                this.style.backgroundColor = '#BCD4EC';
+                this.style.fontWeight = "bold";
             });
+
+
+        $("#ipdatacsvTbl tbody").on('mouseout', 'tr', function () {
+            this.style.fontWeight = "normal";
+            let row_data = my_data_table.row(this).data();
+            let atID_list = display_df.select("atID").toArray().flat();
+            let index = atID_list.indexOf(row_data[0]);
+            this.style.backgroundColor = index % 2 == 0 ? '#ececec' : '#ffffff';
+
+
+        });
+
+
+            $("#ipdatacsvTbl tbody").on('mouseout', function () {
+                _focus.style("display", "none");
+                console.log('asdasdasd');
+            })
+
 
         }
     )

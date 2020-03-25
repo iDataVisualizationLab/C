@@ -165,8 +165,8 @@ function get_all_subsets_id(n) {
 }
 
 
-function mofidy_tooltip_hover_chart(focus, x0) {
-    if (x0 > w/2) {
+function adjust_tooltip_hover_chart(focus, x_index, y_value, turn_off_atID = false) {
+    if (x_index > display_index/2) {
         focus.select("rect").attr("x", -110);
         focus.select(".tooltip-atID").attr("x", -102);
         focus.select(".tooltip-value").attr("x", -102);
@@ -175,5 +175,54 @@ function mofidy_tooltip_hover_chart(focus, x0) {
         focus.select(".tooltip-atID").attr("x", 18);
         focus.select(".tooltip-value").attr("x", 18);
     }
+
+    if (! turn_off_atID){
+        if (y_value > yScale.domain()[1]* 0.7){
+            focus.select("rect").attr("y", 32);
+            focus.select(".tooltip-atID").attr("y", 46);
+            focus.select(".tooltip-value").attr("y", 60);
+
+            // .attr("width", 75)
+            //         .attr("height", 35)
+            //         .attr("x", 10)
+            //         .attr("y", -22)
+            //         .attr("rx", 4)
+            //         .attr("ry", 4);
+            //
+            //     _focus.append("text")
+            //         .attr("class", "tooltip-atID")
+            //         .attr("x", 18)
+            //         .attr("y", -12);
+            //
+            //     // focus.append("text")
+            //     //     .attr("x", 18)
+            //     //     .attr("y", 18)
+            //     // .text("Expressed:");
+            //
+            //     _focus.append("text")
+            //         .attr("class", "tooltip-value")
+            //         .attr("x", 18)
+            //         .attr("y", 4);
+            //
+        }
+        else{
+            focus.select("rect").attr("y", -22);
+            focus.select(".tooltip-atID").attr("y", -6);
+            focus.select(".tooltip-value").attr("y", 8);
+        }
+    }
+    else{
+        if (y_value > 0.6){
+            focus.select("rect").attr("y", 32);
+            // focus.select(".tooltip-atID").attr("y", 44);
+            focus.select(".tooltip-value").attr("y", 53);
+        }
+        else{
+            focus.select("rect").attr("y", -22);
+            // focus.select(".tooltip-atID").attr("y", -8);
+            focus.select(".tooltip-value").attr("y", 1);
+        }
+    }
+
 
 }
