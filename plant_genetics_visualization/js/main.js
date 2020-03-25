@@ -347,7 +347,6 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 // Register mouse handlers.
     d3.select("#unemploymentCharts").selectAll("svg")
         .on("mouseover", function (d) {
-            console.log("++++++ mouse Over ++++");
             // var focus = d3.select(this).select(".focus");
             _focus.style("display", null);
         })
@@ -361,7 +360,6 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
             _focus.style("display", "none");
         })
         .on("mousemove", function (d) {
-            console.log("+-+-+-+- mouse move +-+-+-");
 
             let _this = this;
             mousemove_chart(d, _this)
@@ -383,9 +381,6 @@ function show_circle_when_mouseenter_the_dataTable(index, data_and_columnNames) 
             let focus = d3.select(g);
             let data = data_and_columnNames.filter((col) => col[0] == g.__data__.state);
             data = data[0];
-            console.log("____data is", data);
-
-            console.log("__focus in for each, ", focus);
             focus.style("display", null);
 
             focus.attr("transform", "translate(" + xScale(index) + "," + yScale(data[1]) + ")");
@@ -755,7 +750,7 @@ function updateDataForSVGCharts() {
 }
 
 
-function reset_DisplayIndex_and_DisplayDF_and_FocusS1(df = _cur_df) {
+function reset_DisplayIndex_and_DisplayDF(df = _cur_df) {
     // check the number of rows currently
     if (df.count() < MAXIMUM_DISPLAY) {
         display_index = df.count()
@@ -766,7 +761,6 @@ function reset_DisplayIndex_and_DisplayDF_and_FocusS1(df = _cur_df) {
     _cur_index = display_index;
     display_df = _cur_df.slice(0, display_index);
 
-    _focus_s1.attr("display", "none");
 }
 
 async function filter(button_list, pairwise = false, slider_class) {
@@ -774,7 +768,7 @@ async function filter(button_list, pairwise = false, slider_class) {
     let filteredDf = filter_data(button_list, pairwise, _total_df, slider_class);
     _cur_df = filteredDf;
 
-    reset_DisplayIndex_and_DisplayDF_and_FocusS1();
+    reset_DisplayIndex_and_DisplayDF();
     updateDataForSVGCharts();
 
     print_paging_sms_for_chart();
@@ -878,7 +872,7 @@ $(document.getElementById("previous_page")).on("click", () => {
     }
 
     if (_cur_index % MAXIMUM_DISPLAY == 0) {
-        display_df = _cur_df.slice(_cur_index - MAXIMUM_DISPLAY, _cur_index);
+        display_df = _cur_df.slice(_cur_index - 2* MAXIMUM_DISPLAY, _cur_index-MAXIMUM_DISPLAY);
 
         _cur_index = _cur_index - MAXIMUM_DISPLAY;
         display_index = MAXIMUM_DISPLAY;

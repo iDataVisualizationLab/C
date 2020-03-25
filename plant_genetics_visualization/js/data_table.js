@@ -100,13 +100,14 @@ function updateTAbleWithColor(tbl = dataTable, rows = display_df.toCollection())
 function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
 
     //// circel stop1 gene
-    let stop1_row = display_df.find(row => row.get('atID') == STOP1);
+    let stop1_row = display_df.find(row => row.get('atID').replace(S1_TEXT, "") == STOP1);
+    let tmp = _focus_s1[0].filter(g => _cur_condition_cols.includes(g.__data__.state));
+
     if (typeof stop1_row != "undefined"){
 
         let all_data = display_df.select("atID").toArray().flat();
         let index = all_data.indexOf(STOP1);
         let data_and_columnNames = zip([display_df.listColumns(), stop1_row.toArray()]);//can use toDict()-> easier+faster
-        let tmp = _focus_s1[0].filter(g => _cur_condition_cols.includes(g.__data__.state));
         tmp.forEach(g => {
                 let focus = d3.select(g);
                 let data = data_and_columnNames.filter((col) => col[0] == g.__data__.state);
@@ -115,6 +116,14 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
                 focus.attr("transform", "translate(" + xScale(index) + "," + yScale(data[1]) + ")");
             }
         )
+    }
+    else{
+        tmp.forEach(g => {
+                let focus = d3.select(g);
+                focus.style("display", "none");
+            }
+        )
+
     }
 
     if (typeof _set_data_venn != "undefined"){

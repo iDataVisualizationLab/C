@@ -144,7 +144,7 @@ function draw_venn(sets_venn) {
             let data = _total_df.filter( row => d.data_list.includes(row.get("atID")) );
             _cur_df = data;
 
-            reset_DisplayIndex_and_DisplayDF_and_FocusS1();
+            reset_DisplayIndex_and_DisplayDF();
             updateDataForSVGCharts();
             print_paging_sms_for_chart();
             updateCharts();

@@ -4,8 +4,8 @@ function openTab(evt, scenarioName) {
 
 
     _cur_df = _total_df;
-
-    reset_DisplayIndex_and_DisplayDF_and_FocusS1();
+    // _focus_s1.attr("display", "none");
+    reset_DisplayIndex_and_DisplayDF();
     print_paging_sms_for_chart();
     // reset_sort_smses();
 
