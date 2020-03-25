@@ -755,7 +755,7 @@ function updateDataForSVGCharts() {
 }
 
 
-function reset_DisplayIndex_and_DisplayDF(df = _cur_df) {
+function reset_DisplayIndex_and_DisplayDF_and_FocusS1(df = _cur_df) {
     // check the number of rows currently
     if (df.count() < MAXIMUM_DISPLAY) {
         display_index = df.count()
@@ -765,6 +765,8 @@ function reset_DisplayIndex_and_DisplayDF(df = _cur_df) {
 
     _cur_index = display_index;
     display_df = _cur_df.slice(0, display_index);
+
+    _focus_s1.attr("display", "none");
 }
 
 async function filter(button_list, pairwise = false, slider_class) {
@@ -772,7 +774,7 @@ async function filter(button_list, pairwise = false, slider_class) {
     let filteredDf = filter_data(button_list, pairwise, _total_df, slider_class);
     _cur_df = filteredDf;
 
-    reset_DisplayIndex_and_DisplayDF();
+    reset_DisplayIndex_and_DisplayDF_and_FocusS1();
     updateDataForSVGCharts();
 
     print_paging_sms_for_chart();
@@ -903,6 +905,41 @@ function print_paging_sms_for_chart() {
     document.getElementById("next_page_sms").innerText = `Show ${display_index}/ ${_cur_df.count()} genes, page ${Math.ceil(_cur_index / MAXIMUM_DISPLAY)}/${Math.ceil(_cur_df.count() / MAXIMUM_DISPLAY)}`;
 }
 
+function exportTableToCSV(df, filename) {
+    let csv = df.toCSV();
+
+    // Data URI
+    var csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);
+
+    // For IE (tested 10+)
+    if (window.navigator.msSaveOrOpenBlob) {
+        var blob = new Blob([decodeURIComponent(encodeURI(csv))], {
+            type: "text/csv;charset=utf-8;"
+        });
+        navigator.msSaveBlob(blob, filename);
+    } else {
+        $(this)
+            .attr({
+                'download': filename
+                ,'href': csvData
+                //,'target' : '_blank' //if you want it to open in a new window
+            });
+    }
+}
+
+$("#export").click(function (event) {
+    // var outputFile = 'export'
+    var outputFile = window.prompt("File name: ") || 'export';
+    outputFile = outputFile.replace('.csv','') + '.csv'
+
+    // CSV
+    exportTableToCSV.apply(this, [_cur_df, outputFile]);
+
+    // IF CSV, don't do event.preventDefault() or return false
+    // We actually need this to be a typical hyperlink
+});
+
+
 function set_global_varibles_by_CurActiveTab() {
     console.log("cur_active_tab ====", cur_active_tab);
     if (cur_active_tab == tab_names["base_class"]) {
@@ -948,6 +985,10 @@ function set_global_varibles_by_CurActiveTab() {
         _cur_statsTable = pairwise_statsTable;
     }
 }
+
+
+
+
 
 
 

@@ -105,11 +105,16 @@ function draw_venn(sets_venn) {
             venn.sortAreas(_cur_venn_div, d);
 
             // Display a tooltip with the current size
-            tooltip.transition().duration(200).style("opacity", .9);
-            tooltip.text(d.size + " genes");
+            tooltip.transition().duration(1).style("opacity", .9);
+            if (d.label == "Data"){
+                tooltip.text(d.size + ` from ${_total_df.count()} genes`);
+            }
+            else{
+                tooltip.text(d.size + " genes");
+            }
 
             // highlight the current path
-            var selection = d3.select(this).transition("tooltip").duration(200);
+            var selection = d3.select(this).transition("tooltip").duration(1);
             selection.select("path")
                 .style("fill-opacity", d.sets.length == 1 ? .4 : .1)
                 .style("stroke-opacity", 1);
@@ -121,8 +126,8 @@ function draw_venn(sets_venn) {
         })
 
         .on("mouseout", function (d, i) {
-            tooltip.transition().duration(200).style("opacity", 0);
-            var selection = d3.select(this).transition("tooltip").duration(200);
+            tooltip.transition().duration(1).style("opacity", 0);
+            var selection = d3.select(this).transition("tooltip").duration(1);
             selection.select("path")
                 .style("fill-opacity", d.sets.length == 1 ? .25 : .0)
                 .style("stroke-opacity", 0);
@@ -139,7 +144,7 @@ function draw_venn(sets_venn) {
             let data = _total_df.filter( row => d.data_list.includes(row.get("atID")) );
             _cur_df = data;
 
-            reset_DisplayIndex_and_DisplayDF();
+            reset_DisplayIndex_and_DisplayDF_and_FocusS1();
             updateDataForSVGCharts();
             print_paging_sms_for_chart();
             updateCharts();

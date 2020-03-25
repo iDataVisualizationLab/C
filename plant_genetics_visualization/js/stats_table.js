@@ -90,7 +90,7 @@ function click_row_callback(row_data) {
     master_val = parseInt(_cur_master_slider.value);
     _cur_master_slider_value.innerHTML = master_val / 100;
     change_all_slider_values_to_the_master(master_val, _cur_condition_cols);
-    button_list = document.getElementsByClassName(_cur_class +"_filter_btn");
+    button_list = document.getElementsByClassName(_cur_class + "_filter_btn");
 
     color_list = row_data.map(x => ENCODE_COLOR[x]);
 
@@ -109,7 +109,7 @@ function calc_and_show_stats_table() {
     stats_col_names = _cur_condition_cols;
     master_slider = _cur_master_slider;
 
-    if (_pairwise){
+    if (_pairwise) {
         stats_col_names = stats_col_names.map(x => x.replace(mutant_class, ""));
     }
 
@@ -126,7 +126,6 @@ function calc_and_show_stats_table() {
     //todo
 
 
-
     create_stats_table(_cur_statsTable, df.toCollection());
 
     $(document).ready(function () {
@@ -140,6 +139,7 @@ function calc_and_show_stats_table() {
                 paging: false,
                 searching: false,
                 bInfo: false,
+                hover: true
 
             });
             $(`#${_cur_class + "_statsTable"} tbody`).on('click', 'tr', function () {
@@ -147,9 +147,21 @@ function calc_and_show_stats_table() {
                 click_row_callback(row_data.slice(0, row_data.length - 1));
             });
 
-        $(`#${_cur_class + "_statsTable"} tbody`).on('mouseover', function () {
 
-            this.setAttribute( 'title', "Click on the row to choose the combination" );        });
+            $(`#${_cur_class + "_statsTable"} tbody`).on('mouseover', 'tr', function () {
+                // $(`#${_cur_class + "_statsTable"} tbody > tr`).removeClass('highlight');  //remove the class for all the cells
+                $(this).addClass('highlight');
+
+                this.setAttribute('title', "Click on the row to choose the combination");
+
+            });
+
+        $(`#${_cur_class + "_statsTable"} tbody`).on('mouseout', 'tr', function () {
+            // $(`#${_cur_class + "_statsTable"} tbody > tr`).removeClass('highlight');
+            $(this).removeClass('highlight');
+
+
+        });
 
         }
     )

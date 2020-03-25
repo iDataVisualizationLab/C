@@ -160,7 +160,6 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
 
             $("#ipdatacsvTbl tbody").on('mouseout', function () {
                 _focus.style("display", "none");
-                console.log('asdasdasd');
             })
 
 
