@@ -35,13 +35,27 @@ function updateTable(tbl, rows) {
 }
 
 
-function updateTAbleWithColor(tbl = dataTable, rows = display_df.toCollection()) {
+function updateTAbleWithColor() {
 
-
-
-    console.log("inside updateTableWithColor...");
-    console.log("curr_class", _cur_class);
+    let tbl = dataTable;
+    let rows;
     let tick = new Date;
+
+    console.log("show_raw_data = ", show_raw_data);
+    if (show_raw_data){
+        let all_id_list =  display_df.select("atID").toArray().flat();
+        display_df_RAW = _total_data_RAW.filter(row => all_id_list.includes(row.get("atID")) );
+
+        /////// sort display raw according to display norm, but it's too slow.
+        // display_df_RAW = display_df_RAW.join(display_df.select("atID", wt_base).rename(wt_base, wt_base + "_norm"), "atID", "inner").sortBy(wt_base + "_norm");
+        // display_df_RAW = display_df_RAW.drop(wt_base + "_norm")
+        rows = display_df_RAW.toCollection();
+    }
+    else{
+        rows = display_df.toCollection();
+    }
+    console.log(`.....---- FINISH  filter ${(new Date - tick) / 1000}s`);
+
 
     tbl.innerHTML = '';
     if (rows && rows.length > 0) {
@@ -91,7 +105,6 @@ function updateTAbleWithColor(tbl = dataTable, rows = display_df.toCollection())
             });
         });
     }
-    console.log(`.....---- FINISH drawing table in ${(new Date - tick) / 1000}s`);
 
 }
 
@@ -132,8 +145,11 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
         draw_venn(sets_venn);
     }
 
-    updateTAbleWithColor(tbl, rows);
+    updateTAbleWithColor();
+    add_events_for_dataTable();
 
+}
+function add_events_for_dataTable(){
     $(document).ready(function () {
             let my_data_table = $(dataTable).DataTable({
                 ordering: false,
@@ -144,9 +160,19 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
                 bInfo: false,
             });
             $("#ipdatacsvTbl tbody").on('mouseover', 'tr', function () {
-                let row_data = my_data_table.row(this).data();
+                let row_data;
                 let headers = display_df.listColumns();
-                let data_and_columnNames = zip([headers, row_data])
+                let data_and_columnNames;
+
+                row_data =  my_data_table.row(this).data();
+
+                if (show_raw_data){
+                    row_data = display_df.find(row => row.get("atID").replace(S1_TEXT, "") == row_data[0]).toArray().flat();
+                }
+
+
+                data_and_columnNames = zip([headers, row_data])
+
                 let atID_list = display_df.select("atID").toArray().flat();
                 let index = atID_list.indexOf(row_data[0].replace(S1_TEXT, ""));
                 show_circle_when_mouseenter_the_dataTable(index, data_and_columnNames);
@@ -156,15 +182,15 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
             });
 
 
-        $("#ipdatacsvTbl tbody").on('mouseout', 'tr', function () {
-            this.style.fontWeight = "normal";
-            let row_data = my_data_table.row(this).data();
-            let atID_list = display_df.select("atID").toArray().flat();
-            let index = atID_list.indexOf(row_data[0]);
-            this.style.backgroundColor = index % 2 == 0 ? '#ececec' : '#ffffff';
+            $("#ipdatacsvTbl tbody").on('mouseout', 'tr', function () {
+                this.style.fontWeight = "normal";
+                let row_data = my_data_table.row(this).data();
+                let atID_list = display_df.select("atID").toArray().flat();
+                let index = atID_list.indexOf(row_data[0]);
+                this.style.backgroundColor = (index + 1) % 2 == 0 ? '#ececec' : '#ffffff';
 
 
-        });
+            });
 
 
             $("#ipdatacsvTbl tbody").on('mouseout', function () {

@@ -65,7 +65,7 @@ let display_df;
 let color_arr = [MY_COLORS.default, MY_COLORS.green, MY_COLORS.orange, MY_COLORS.gray];
 let _total_df;
 let _cur_df;
-
+let _total_data_RAW, display_df_RAW;
 let cur_active_tab = tab_names["base_class"];
 let MAXIMUM_DISPLAY = 500;
 const base_class = "wt";
@@ -77,3 +77,5 @@ let _set_data_venn;
 
 let STOP1 = "AT1G34370";
 let S1_TEXT = " (STOP1)";
+
+let show_raw_data=false;

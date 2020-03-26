@@ -426,8 +426,20 @@ tr.highlight {
 
 
 }
+#next_page_sms{
+    margin-top: 12px;
+
+}
+#choose_data_form{
+    float:left;
+    display: inline-block;
+    margin-left: 10px;
+    margin-top: 6px;
+    margin-right: 10px;
+}
+
 .down_btn {
-    margin-top: 10px;
+    margin-top: 4px;
     margin-right: 20px;
     background-color: lightblue;
     border: none;
@@ -442,3 +454,4 @@ tr.highlight {
 .down_btn:hover {
     background-color: deepskyblue;
 }
+

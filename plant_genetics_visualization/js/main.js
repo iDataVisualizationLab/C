@@ -110,6 +110,9 @@ $("#option_form").on("change", () => {
 
 DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 
+    DataFrame.fromCSV("data/data_ALL_raw_sorted_by_wthp6Norm.csv").then(df=> {
+        _total_data_RAW = df;
+    })
     data = data.sortBy(wt_base);
     set_global_varibles_by_CurActiveTab();
     console.log("here, DataFrame.fromCSV");
@@ -933,6 +936,22 @@ $("#export").click(function (event) {
     // We actually need this to be a typical hyperlink
 });
 
+
+$("#choose_data_form :checkbox").change( () => {
+
+    if (typeof _total_RAW_data == "undefined"){
+    }
+
+    if ($("#choose_data").is(':checked'))
+    {
+        show_raw_data=true;
+    }
+    else{
+        show_raw_data=false;
+    }
+    updateTAbleWithColor();
+    add_events_for_dataTable();
+})
 
 function set_global_varibles_by_CurActiveTab() {
     console.log("cur_active_tab ====", cur_active_tab);
