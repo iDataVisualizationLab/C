@@ -12,6 +12,7 @@ function openTab(evt, scenarioName) {
 
     cur_active_tab = scenarioName;
     set_global_varibles_by_CurActiveTab();
+    _set_data_venn[id_set_data - 1]["data"] = _cur_filter_set;
 
 
     let i, tabcontent, tablinks, btns_list = [];

@@ -111,3 +111,6 @@ let venn_chart_pairwise = venn.VennDiagram()
 
 let _cur_venn_chart, _cur_venn_div;
 let _focus, _focus_s1;
+
+let _cur_filter_set;
+let wt_filter_set, s1_filter_set, pairwise_filter_set;

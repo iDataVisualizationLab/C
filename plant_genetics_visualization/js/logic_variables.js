@@ -79,3 +79,5 @@ let STOP1 = "AT1G34370";
 let S1_TEXT = " (STOP1)";
 
 let show_raw_data=false;
+
+let id_set_data;

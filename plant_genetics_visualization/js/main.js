@@ -969,6 +969,8 @@ function set_global_varibles_by_CurActiveTab() {
 
         _cur_statsTable = wt_statsTable;
 
+        _cur_filter_set = wt_filter_set;
+
     } else if (cur_active_tab == tab_names["mutant_class"]) {
         _pairwise = false;
         _cur_base = s1_base;
@@ -982,6 +984,7 @@ function set_global_varibles_by_CurActiveTab() {
         _cur_venn_div = venn_div_s1;
 
         _cur_statsTable = s1_statsTable;
+        _cur_filter_set = s1_filter_set;
 
     } else if (cur_active_tab == tab_names["pairwise_class"]) {
         _pairwise = true;
@@ -996,6 +999,7 @@ function set_global_varibles_by_CurActiveTab() {
         _cur_venn_div = venn_div_pairwise;
 
         _cur_statsTable = pairwise_statsTable;
+        _cur_filter_set = pairwise_filter_set;
     }
 }
 

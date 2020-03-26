@@ -1,89 +1,120 @@
 async function read_data_for_venn() {
 
-    let set_data = {};
-    // await DataFrames.fromCSV("data_ALL_norm.csv").then(data => {
-    //     set_data["0"] = {};
-    //     set_data["0"]["data"] = data.select("atID").toArray().flat();
-    //     set_data["0"]["name"] = "Total data";
-    // });
+    let tick = new Date;
 
-    set_data["4"] = {};
-    set_data["4"]["data"] = _cur_df.select("atID").toArray().flat();
-    set_data["4"]["name"] = "Data";
+    let set_data = {};
+    id_set_data = 0;
+
+    set_data[id_set_data] = {};
+    set_data[id_set_data]["data"] = [STOP1, STOP1, STOP1, STOP1, STOP1, STOP1, STOP1, STOP1, STOP1, STOP1];
+    set_data[id_set_data]["name"] = "S1";
+    id_set_data++;
+
+
+    await DataFrame.fromCSV("data/Targets_differentially_expressed.csv").then(data => {
+        let up = data.select("up").toArray().flat().filter(x => x != "");
+        let down = data.select("down").toArray().flat().filter(x => x != "");
+        let up_and_down = data.select("up_and_down").toArray().flat().filter(x => x != "");
+
+        set_data[id_set_data] = {};
+        set_data[id_set_data]["data"] = [...up, ...down, ...up_and_down];
+        set_data[id_set_data]["name"] = "UpDown";
+        id_set_data++;
+    });
+
 
     await DataFrame.fromCSV("data/STOP1_targets_EckerLab.csv").then(data => {
-        set_data["1"] = {};
-        set_data["1"]["data"] = data.select("atID").toArray().flat().filter(x => x!="");
-        set_data["1"]["name"] = "Ecker";
+        set_data[id_set_data] = {};
+        set_data[id_set_data]["data"] = data.select("atID").toArray().flat().filter(x => x != "");
+        set_data[id_set_data]["name"] = "Ecker";
+        id_set_data++;
     });
 
     await DataFrame.fromCSV("data/Transcription_factors.csv").then(data => {
-        set_data["2"] = {};
-        set_data["2"]["data"] = data.select("TF_EXP").toArray().flat().filter(x => x!="");
-        set_data["2"]["name"] = "EXP";
+        set_data[id_set_data] = {};
+        set_data[id_set_data]["data"] = data.select("TF_EXP").toArray().flat().filter(x => x != "");
+        set_data[id_set_data]["name"] = "EXP";
+        id_set_data++;
 
-        set_data["3"] = {};
-        set_data["3"]["data"] = data.select("TF_DE").toArray().flat().filter(x => x!="");
-        set_data["3"]["name"] = "DE";
+        set_data[id_set_data] = {};
+        set_data[id_set_data]["data"] = data.select("TF_DE").toArray().flat().filter(x => x != "");
+        set_data[id_set_data]["name"] = "DE";
+        id_set_data++;
     });
 
-    await DataFrame.fromCSV("data/Targets_differentially_expressed.csv").then(data => {
-        let up = data.select("up").toArray().flat().filter(x => x!="");
-        let down = data.select("down").toArray().flat().filter(x => x!="");
-        let up_and_down = data.select("up_and_down").toArray().flat().filter(x => x!="");
+    await DataFrame.fromCSV("data/filter_nonexpressed.csv").then(data => {
+        wt_filter_set = data.filter(row => row.get("wt_filter") == 1).select("atID").toArray().flat();
+        s1_filter_set = data.filter(row => row.get("s1_filter") == 1).select("atID").toArray().flat();
+        pairwise_filter_set = data.filter(row => row.get("pairwise_filter") == 1).select("atID").toArray().flat();
+        _cur_filter_set = wt_filter_set;
 
-        set_data["0"] = {};
-        set_data["0"]["data"] = [...up, ...down, ...up_and_down];
-        set_data["0"]["name"] = "UpDown";
+        set_data[id_set_data] = {};
+        set_data[id_set_data]["data"] = _cur_filter_set;
+        set_data[id_set_data]["name"] = "NonEXP";
+        id_set_data++; // id -1; dont move this line  above. stay here.
     });
 
+
+    set_data[id_set_data] = {};
+    set_data[id_set_data]["data"] = _cur_df.select("atID").toArray().flat();
+    set_data[id_set_data]["name"] = "Data";
+
+
+    console.log("time running = ", (new Date - tick) / 1000);
     return set_data;
 
 }
+
 function update_data_for_venn() {
-    if (typeof _set_data_venn != 'undefined')
-    {
-        _set_data_venn["4"]["data"] = _cur_df.distinct("atID").toArray().flat();
+    if (typeof _set_data_venn != 'undefined') {
+        _set_data_venn[id_set_data]["data"] = _cur_df.distinct("atID").toArray().flat();
+        // _set_data_venn[id_set_data - 1]["data"] = _cur_filter_set;
 
     }
 };
 
 
-function calc_overlapping_number_for_venn(sub_set_id, set_data) {
+function calc_overlapping_number_for_venn(set_venn, sub_set_id, set_data) {
     let res = {};
+    res["sets"] = sub_set_id;
+
     if (sub_set_id.length == 1) {
-        res["size"] =  set_data[sub_set_id[0]]["data"].length;
-        res["data_list"] = set_data[sub_set_id[0]]["data"];
+        res["label"] = _set_data_venn[sub_set_id[0]]["name"];
+        res["size"] = _set_data_venn[sub_set_id[0]]["data"].length;
+        res["data_list"] = _set_data_venn[sub_set_id[0]]["data"];
         return res;
     } else {
-        let intersection = set_data[sub_set_id[0]]["data"];
-        for (let i = 1; i < sub_set_id.length; i++) {
-            intersection = intersection.filter(x => set_data[sub_set_id[i]]["data"].includes(x)); // todo can improve (if alread calc 1,2 => 1,2,3
-        }
 
-        res["size"] =  intersection.length;
-        res["data_list"] =intersection;
+        let intersection = set_data[sub_set_id[sub_set_id.length - 1]]["data"];
+
+        let previous_res = set_venn.find(set => JSON.stringify(set["sets"]) == JSON.stringify(sub_set_id.slice(0, sub_set_id.length-1)));
+
+        intersection = intersection.filter(x => previous_res["data_list"].includes(x)); // todo can improve (if alread calc 1,2 => 1,2,3
+
+        res["size"] = intersection.length;
+        res["data_list"] = intersection;
         return res;
 
     }
 
-}function create_sets_obj_for_venn(){
+}
+
+function create_sets_obj_for_venn() {
+
     let sets_venn = [];
-    let all_set_ids =  get_all_subsets_id(Object.keys(_set_data_venn).length);
-    all_set_ids.forEach(sub_set_id => {
-        let tmp = {};
-        tmp["sets"] = sub_set_id;
-        if (sub_set_id.length == 1) {
-            tmp["label"] = _set_data_venn[sub_set_id[0]]["name"];
-            tmp["size"] =  _set_data_venn[sub_set_id[0]]["data"].length;
-            tmp["data_list"] = _set_data_venn[sub_set_id[0]]["data"];
-        }
-        ;
-        let size_and_data_list = calc_overlapping_number_for_venn(sub_set_id, _set_data_venn);
-        tmp["size"] = size_and_data_list["size"];
-        tmp["data_list"] = size_and_data_list["data_list"];
+    let all_set_ids = get_all_subsets_id(Object.keys(_set_data_venn).length);
+    let tick = new Date;
+
+    let time = 0;
+    for (let i = 0; i < all_set_ids.length; i++) {
+
+        let tmp = calc_overlapping_number_for_venn(sets_venn, all_set_ids[i], _set_data_venn);
         sets_venn.push(tmp);
-    })
+    }
+    time += new Date - tick;
+
+
+    console.log("running time of creating set obj === --- ", (time) / 1000);
     return sets_venn;
 }
 
@@ -106,10 +137,16 @@ function draw_venn(sets_venn) {
 
             // Display a tooltip with the current size
             tooltip.transition().duration(1).style("opacity", .9);
-            if (d.label == "Data"){
+            console.log("d.label", d.label);
+
+
+            if (d.label == "Data") {
                 tooltip.text(d.size + ` from ${_total_df.count()} genes`);
             }
-            else{
+            else if (d.sets.includes(0) ) { //include s1's set
+                tooltip.text("STOP1");
+            }
+            else {
                 tooltip.text(d.size + " genes");
             }
 
@@ -136,12 +173,12 @@ function draw_venn(sets_venn) {
             console.log(d);
 
             // trivial code.
-            if (d.label ==  "Data" && d.size == _cur_df.count()){
+            if (d.label == "Data" && d.size == _cur_df.count()) {
                 console.log("it's the current Data => return, nothing change!")
                 return;
 
             }
-            let data = _total_df.filter( row => d.data_list.includes(row.get("atID")) );
+            let data = _total_df.filter(row => d.data_list.includes(row.get("atID")));
             _cur_df = data;
 
             reset_DisplayIndex_and_DisplayDF();
@@ -153,7 +190,6 @@ function draw_venn(sets_venn) {
 
 
         });
-
 
 
 }

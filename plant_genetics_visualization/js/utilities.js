@@ -160,6 +160,13 @@ function get_all_subsets_id(n) {
 
         }
     }
+
+    all_set_ids.sort(function(a, b){
+        // ASC  -> a.length - b.length
+        // DESC -> b.length - a.length
+        return a.length - b.length;
+    });
+
     return all_set_ids;
 
 }
