@@ -4,7 +4,6 @@ function openTab(evt, scenarioName) {
 
 
     _cur_df = _total_df;
-    // _focus_s1.attr("display", "none");
     reset_DisplayIndex_and_DisplayDF();
     print_paging_sms_for_chart();
     // reset_sort_smses();
@@ -12,7 +11,7 @@ function openTab(evt, scenarioName) {
 
     cur_active_tab = scenarioName;
     set_global_varibles_by_CurActiveTab();
-    _set_data_venn[id_set_data - 1]["data"] = _cur_filter_set;
+    // _set_data_venn[id_set_data - 1]["data"] = _cur_filter_set;
 
 
     let i, tabcontent, tablinks, btns_list = [];

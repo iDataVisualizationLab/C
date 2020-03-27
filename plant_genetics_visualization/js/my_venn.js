@@ -6,8 +6,8 @@ async function read_data_for_venn() {
     id_set_data = 0;
 
     set_data[id_set_data] = {};
-    set_data[id_set_data]["data"] = [STOP1, STOP1, STOP1, STOP1, STOP1, STOP1, STOP1, STOP1, STOP1, STOP1];
-    set_data[id_set_data]["name"] = "S1";
+    set_data[id_set_data]["data"] = [STOP1, STOP1, STOP1, STOP1, STOP1];
+    set_data[id_set_data]["name"] = "STOP1";
     id_set_data++;
 
 
@@ -43,15 +43,26 @@ async function read_data_for_venn() {
     });
 
     await DataFrame.fromCSV("data/filter_nonexpressed.csv").then(data => {
+        let wt_strict_filter_set = data.filter(row => row.get("wt_filter_strict") == 1).select("atID").toArray().flat();
+        set_data[id_set_data] = {};
+        set_data[id_set_data]["data"] = wt_strict_filter_set;
+        set_data[id_set_data]["name"] = "Non-NonEXP";
+        id_set_data++;
+
+
+
         wt_filter_set = data.filter(row => row.get("wt_filter") == 1).select("atID").toArray().flat();
-        s1_filter_set = data.filter(row => row.get("s1_filter") == 1).select("atID").toArray().flat();
-        pairwise_filter_set = data.filter(row => row.get("pairwise_filter") == 1).select("atID").toArray().flat();
+        // s1_filter_set = data.filter(row => row.get("s1_filter") == 1).select("atID").toArray().flat();
+        // pairwise_filter_set = data.filter(row => row.get("pairwise_filter") == 1).select("atID").toArray().flat();
         _cur_filter_set = wt_filter_set;
 
         set_data[id_set_data] = {};
         set_data[id_set_data]["data"] = _cur_filter_set;
         set_data[id_set_data]["name"] = "NonEXP";
         id_set_data++; // id -1; dont move this line  above. stay here.
+
+
+
     });
 
 
@@ -75,7 +86,8 @@ function update_data_for_venn() {
 
 
 function calc_overlapping_number_for_venn(set_venn, sub_set_id, set_data) {
-    let res = {};
+    let res = {}, tmp;
+
     res["sets"] = sub_set_id;
 
     if (sub_set_id.length == 1) {
@@ -84,16 +96,29 @@ function calc_overlapping_number_for_venn(set_venn, sub_set_id, set_data) {
         res["data_list"] = _set_data_venn[sub_set_id[0]]["data"];
         return res;
     } else {
+        if (_cur_df.count() == _total_df.count() && sub_set_id.includes(id_set_data)){
+            tmp =  calc_overlapping_number_for_venn(set_venn, sub_set_id.filter(x => x!= id_set_data), set_data);
+            res["size"] = tmp["size"];
+            res["data_list"] = tmp["data_list"];
+        }
+        else if (sub_set_id.includes(id_set_data-1) && sub_set_id.includes(id_set_data-2)){
+            tmp = calc_overlapping_number_for_venn(set_venn, sub_set_id.filter(x => x!= id_set_data-1), set_data);
+            res["size"] = tmp["size"];
+            res["data_list"] = tmp["data_list"];
+        }
+        else{
+            let intersection = set_data[sub_set_id[sub_set_id.length - 1]]["data"];
+            let previous_res = set_venn.find(set => JSON.stringify(set["sets"]) == JSON.stringify(sub_set_id.slice(0, sub_set_id.length-1)));
+            intersection = intersection.filter(x => previous_res["data_list"].includes(x));
+            res["size"] = intersection.length;
+            res["data_list"] = intersection;
 
-        let intersection = set_data[sub_set_id[sub_set_id.length - 1]]["data"];
+        }
 
-        let previous_res = set_venn.find(set => JSON.stringify(set["sets"]) == JSON.stringify(sub_set_id.slice(0, sub_set_id.length-1)));
 
-        intersection = intersection.filter(x => previous_res["data_list"].includes(x)); // todo can improve (if alread calc 1,2 => 1,2,3
-
-        res["size"] = intersection.length;
-        res["data_list"] = intersection;
         return res;
+
+
 
     }
 
@@ -127,8 +152,10 @@ function draw_venn(sets_venn) {
 
     _cur_venn_div.selectAll("path")
         .style("stroke-opacity", 0)
-        .style("stroke", "#fff")
+        // .style("stroke", "#fff")
+        .style("stroke", "lightblue")
         .style("stroke-width", 3)
+
 
     _cur_venn_div.selectAll("g")
         .on("mouseover", function (d, i) {
@@ -153,7 +180,8 @@ function draw_venn(sets_venn) {
             // highlight the current path
             var selection = d3.select(this).transition("tooltip").duration(1);
             selection.select("path")
-                .style("fill-opacity", d.sets.length == 1 ? .4 : .1)
+                // .style("fill-opacity", d.sets.length == 1 ? .4 : .1)
+                .style("fill-opacity", d.sets.includes(0) ? 1 : .1)
                 .style("stroke-opacity", 1);
         })
 
@@ -166,7 +194,8 @@ function draw_venn(sets_venn) {
             tooltip.transition().duration(1).style("opacity", 0);
             var selection = d3.select(this).transition("tooltip").duration(1);
             selection.select("path")
-                .style("fill-opacity", d.sets.length == 1 ? .25 : .0)
+                // .style("fill-opacity", d.sets.length == 1 ? .25 : .0)
+                .style("fill-opacity", d.sets.includes(0) ? 1 : .0)
                 .style("stroke-opacity", 0);
         })
         .on("click", (d) => {
