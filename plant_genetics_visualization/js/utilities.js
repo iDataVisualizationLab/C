@@ -188,29 +188,6 @@ function adjust_tooltip_hover_chart(focus, x_index, y_value, turn_off_atID = fal
             focus.select("rect").attr("y", 32);
             focus.select(".tooltip-atID").attr("y", 46);
             focus.select(".tooltip-value").attr("y", 60);
-
-            // .attr("width", 75)
-            //         .attr("height", 35)
-            //         .attr("x", 10)
-            //         .attr("y", -22)
-            //         .attr("rx", 4)
-            //         .attr("ry", 4);
-            //
-            //     _focus.append("text")
-            //         .attr("class", "tooltip-atID")
-            //         .attr("x", 18)
-            //         .attr("y", -12);
-            //
-            //     // focus.append("text")
-            //     //     .attr("x", 18)
-            //     //     .attr("y", 18)
-            //     // .text("Expressed:");
-            //
-            //     _focus.append("text")
-            //         .attr("class", "tooltip-value")
-            //         .attr("x", 18)
-            //         .attr("y", 4);
-            //
         }
         else{
             focus.select("rect").attr("y", -22);
