@@ -43,10 +43,10 @@ async function read_data_for_venn() {
     });
 
     await DataFrame.fromCSV("data/filter_nonexpressed.csv").then(data => {
-        let wt_strict_filter_set = data.filter(row => row.get("wt_filter_strict") == 1).select("atID").toArray().flat();
+        let wt_strict_filter_set = data.filter(row => row.get("wt_filter_strict") == 0).select("atID").toArray().flat();
         set_data[id_set_data] = {};
         set_data[id_set_data]["data"] = wt_strict_filter_set;
-        set_data[id_set_data]["name"] = "Non-NonEXP";
+        set_data[id_set_data]["name"] = "LowEXP";
         id_set_data++;
 
 
@@ -101,11 +101,11 @@ function calc_overlapping_number_for_venn(set_venn, sub_set_id, set_data) {
             res["size"] = tmp["size"];
             res["data_list"] = tmp["data_list"];
         }
-        else if (sub_set_id.includes(id_set_data-1) && sub_set_id.includes(id_set_data-2)){
-            tmp = calc_overlapping_number_for_venn(set_venn, sub_set_id.filter(x => x!= id_set_data-1), set_data);
-            res["size"] = tmp["size"];
-            res["data_list"] = tmp["data_list"];
-        }
+        // else if (sub_set_id.includes(id_set_data-1) && sub_set_id.includes(id_set_data-2)){
+        //     tmp = calc_overlapping_number_for_venn(set_venn, sub_set_id.filter(x => x!= id_set_data-1), set_data);
+        //     res["size"] = tmp["size"];
+        //     res["data_list"] = tmp["data_list"];
+        // }
         else{
             let intersection = set_data[sub_set_id[sub_set_id.length - 1]]["data"];
             let previous_res = set_venn.find(set => JSON.stringify(set["sets"]) == JSON.stringify(sub_set_id.slice(0, sub_set_id.length-1)));
@@ -180,8 +180,8 @@ function draw_venn(sets_venn) {
             // highlight the current path
             var selection = d3.select(this).transition("tooltip").duration(1);
             selection.select("path")
-                // .style("fill-opacity", d.sets.length == 1 ? .4 : .1)
-                .style("fill-opacity", d.sets.includes(0) ? 1 : .1)
+                .style("fill-opacity", d.sets.length == 1 ? .4 : .1)
+                // .style("fill-opacity", d.sets.includes(0) ? 1 : .1)
                 .style("stroke-opacity", 1);
         })
 
@@ -194,8 +194,8 @@ function draw_venn(sets_venn) {
             tooltip.transition().duration(1).style("opacity", 0);
             var selection = d3.select(this).transition("tooltip").duration(1);
             selection.select("path")
-                // .style("fill-opacity", d.sets.length == 1 ? .25 : .0)
-                .style("fill-opacity", d.sets.includes(0) ? 1 : .0)
+                .style("fill-opacity", d.sets.length == 1 ? .25 : .0)
+                // .style("fill-opacity", d.sets.includes(0) ? 1 : .0)
                 .style("stroke-opacity", 0);
         })
         .on("click", (d) => {

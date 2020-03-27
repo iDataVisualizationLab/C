@@ -1340,7 +1340,7 @@
                     } )
                     .style("fill", function(d) { return colours(label(d)); })
                     .style("fill-opacity", function (d){
-                        console.log("d.sets.includes(0)? \"1\":\".25\"", d.sets.includes(0)? "1":".25");
+                        // console.log("d.sets.includes(0)? \"1\":\".25\"", d.sets.includes(0)? "1":".25");
 
                         return d.sets.includes(0)? "1":".25";
                     });
