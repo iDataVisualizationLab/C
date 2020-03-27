@@ -1240,7 +1240,10 @@
             // since we can support older versions of d3 as long as we don't force this,
             // I'm hackily redefining below. TODO: remove this and change to d3.schemeCategory10
             // colourScheme = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"],
-            colourScheme = ["#000000", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"],
+            colourScheme = ["#000000",
+                "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728",
+                "#9467bd", "#8c564b", "#e377c2", "#7f7f7f",
+                "#bcbd22", "#17becf"],
             colourIndex = 0,
             colours = function(key) {
                 if (key in colourMap) {
