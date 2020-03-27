@@ -3,7 +3,7 @@ html {
 }
 
 body, table {
-    font: 12px Arial;
+    font: 11px Arial;
 }
 
 h4 {
@@ -184,7 +184,7 @@ h1 {
     height: 350px;
     /*min-height: 300px;*/
     /*max-height: 400px;*/
-    width: 97%;
+    width: 99%;
     min-width: 420px;
     max-width: 500px;
     background: white;

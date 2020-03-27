@@ -46,7 +46,7 @@ async function read_data_for_venn() {
         let wt_strict_filter_set = data.filter(row => row.get("wt_filter_strict") == 0).select("atID").toArray().flat();
         set_data[id_set_data] = {};
         set_data[id_set_data]["data"] = wt_strict_filter_set;
-        set_data[id_set_data]["name"] = "LowEXP";
+        set_data[id_set_data]["name"] = "LowCPM";
         id_set_data++;
 
 
@@ -58,7 +58,7 @@ async function read_data_for_venn() {
 
         set_data[id_set_data] = {};
         set_data[id_set_data]["data"] = _cur_filter_set;
-        set_data[id_set_data]["name"] = "NonEXP";
+        set_data[id_set_data]["name"] = "LowLog2Fold";
         id_set_data++; // id -1; dont move this line  above. stay here.
 
 
