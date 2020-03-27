@@ -323,7 +323,7 @@ tr:nth-child(even) {
     padding-left: 0px;
 }
 
-.statsTableClass thead td, .statsTableClass tbody td {
+.statsTableClass thead td, .statsTableClass tbody td , .dataTable tbody td {
     padding: 2px;
     font-size: 10px;
     text-align: right;
