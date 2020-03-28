@@ -82,6 +82,10 @@ p {
     float: left;
 }
 
+body{
+    background: url("/img/pattern.png") repeat;
+
+}
 .slider {
     -webkit-appearance: none;
     width: 100px;
