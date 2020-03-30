@@ -226,6 +226,7 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 
     // Add background.
     svgCharts.append("rect")
+        .classed("rect_class", true)
         .attr("transform", "translate(0,-" + padding.top + ")")
         .attr("width", w)
         .attr("height", h + padding.top + padding.bottom)
@@ -667,6 +668,7 @@ function updateChartStateComparison(d, pairwise) {
 
     this.select(".x.axis")
         .call(xAxis);
+    console.log("xAxis", xAxis);
 
     this.select(".y.axis")
         .call(yAxis);
@@ -1003,38 +1005,45 @@ function set_global_varibles_by_CurActiveTab() {
     }
 }
 
-//
-// function resize() {
-//     var width = parseInt(d3.select("#Svgchart").style("width")) - margin.left - margin.right,
-//         height = parseInt(d3.select("#Svgchart").style("height")) - margin.top - margin.bottom;
-//
-//     // Update the range of the scale with new width/height
-//     xScale.range([0, width]);
-//     yScale.range([height, 0]);
-//
-//     // Update the axis and text with the new scale
-//     svgCharts.select('.x.axis')
-//         .attr("transform", "translate(0," + height + ")")
-//         .call(xAxis);
-//
-//     svgCharts.select('.y.axis')
-//         .call(yAxis);
-//
-//     // Force D3 to recalculate and update the line
-//     svgCharts.selectAll('.line')
-//         .attr("d", function(d) { return line(d.unemployment); });
-//
-//     // Update the tick marks
-//     xAxis.ticks(Math.max(width/75, 2));
-//     yAxis.ticks(Math.max(height/50, 2));
-//
-// };
-//
-// // Call the resize function whenever a resize event occurs
-// d3.select(window).on('resize', resize);
-//
-// // Call the resize function
-// resize();
+
+function resize() {
+    console.log("resize...");
+    var width =parseFloat(d3.select("#unemploymentCharts").style("width"))*0.99 - padding.left - padding.right;
+
+    // Update the range of the scale with new width/height
+    xScale.range([0, width]);
+
+    // Update the axis and text with the new scale
+    svgCharts.selectAll('.x.axis')
+        .call(xAxis);
+
+
+    svgCharts.selectAll(".rect_class")
+        .attr("transform", "translate(0,-" + padding.top + ")")
+        .attr("width", width)
+        .attr("height", h + padding.top + padding.bottom)
+        .attr("fill", "white");
+
+
+    svgCharts.select("defs").selectAll("rect")
+        .attr("transform", "translate(0,-" + padding.top + ")")
+        .attr("width", width)
+        .attr("height", h + padding.top);
+
+
+    // Force D3 to recalculate and update the line
+    updateCharts();
+
+    // // Update the tick marks
+    // xAxis.ticks(Math.max(width/75, 2));
+    // yAxis.ticks(Math.max(h/50, 2));
+
+};
+
+// Call the resize function whenever a resize event occurs
+d3.select(window).on('resize', resize);
+
+// Call the resize function
 
 
 

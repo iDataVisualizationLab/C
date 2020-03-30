@@ -12,7 +12,9 @@ h4 {
 }
 
 body {
-    background: #EEEEEE;
+    /*background: #EEEEEE;*/
+    background: url("img/pattern.png") repeat;
+
 }
 
 p {
@@ -82,10 +84,6 @@ p {
     float: left;
 }
 
-body{
-    background: url("/img/pattern.png") repeat;
-
-}
 .slider {
     -webkit-appearance: none;
     width: 100px;
