@@ -276,6 +276,7 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 
 // text label for the x axis
     svgCharts.append("text")
+        .classed("y_label", true)
         .attr("transform",
             "translate(" + (w) + " ," +
             (h) + ")")
@@ -333,6 +334,7 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 
     // todo: change name of the chart
     svgCharts.append("text")
+        .classed("chart_name_on_the_right",true )
         .datum(function (d) {
             return d.state;
         })
@@ -1008,10 +1010,10 @@ function set_global_varibles_by_CurActiveTab() {
 
 function resize() {
     console.log("resize...");
-    var width =parseFloat(d3.select("#unemploymentCharts").style("width"))*0.99 - padding.left - padding.right;
+    w =parseFloat(d3.select("#unemploymentCharts").style("width"))*0.99 - padding.left - padding.right;
 
     // Update the range of the scale with new width/height
-    xScale.range([0, width]);
+    xScale.range([0, w]);
 
     // Update the axis and text with the new scale
     svgCharts.selectAll('.x.axis')
@@ -1020,21 +1022,47 @@ function resize() {
 
     svgCharts.selectAll(".rect_class")
         .attr("transform", "translate(0,-" + padding.top + ")")
-        .attr("width", width)
+        .attr("width", w)
         .attr("height", h + padding.top + padding.bottom)
         .attr("fill", "white");
 
 
     svgCharts.select("defs").selectAll("rect")
         .attr("transform", "translate(0,-" + padding.top + ")")
-        .attr("width", width)
+        .attr("width", w)
         .attr("height", h + padding.top);
+
+
 
 
     // Force D3 to recalculate and update the line
     updateCharts();
 
     // // Update the tick marks
+
+    xAxis.ticks(2).tickFormat((_, i) => {
+        console.log("==============here inside xAxis");
+        return display_df.select("atID").toArray().flat()[i];
+    });
+
+
+    svgCharts.selectAll(".y_label")
+        .attr("transform",
+            "translate(" + (w) + " ," +
+            (h) + ")")
+
+
+
+
+    svgCharts.selectAll(".chart_name_on_the_right")
+        .attr("x", w)
+        .attr("y", 0)
+
+    svgWidth = w + padding.left + padding.right;
+
+    d3.select("#unemploymentCharts").selectAll("svg")
+        .attr("width", svgWidth)
+
     // xAxis.ticks(Math.max(width/75, 2));
     // yAxis.ticks(Math.max(h/50, 2));
 
