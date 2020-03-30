@@ -76,6 +76,17 @@ function auto_filter() {
     filter(button_list, _pairwise, `.${_cur_class}_slider`).then(df => {
         updateTableAndVenn(dataTable, df.toCollection());
     });
+
+
+    // todo:
+    // if (display_df.count() < 6){
+    //     console.log("123 123 123 123 123 123 123 123 123 123 123 123; display_df.count()", display_df.count()-1);
+    //     xAxis.ticks(display_df.count()).tickFormat((_, i) => {
+    //         console.log("==============123");
+    //         return display_df.select("atID").toArray().flat()[i];
+    //     });
+    // }
+
 }
 
 
@@ -127,7 +138,7 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
     }
 
     _cur_index = display_index;
-    document.getElementById("next_page_sms").innerText = `Show ${display_index}/ ${_cur_df.count()} genes, page ${Math.ceil(_cur_index / MAXIMUM_DISPLAY)}/${Math.ceil(_cur_df.count() / MAXIMUM_DISPLAY)}`;
+    document.getElementById("next_page_sms").innerText = `${display_index}/ ${_cur_df.count()} genes, page ${Math.ceil(_cur_index / MAXIMUM_DISPLAY)}/${Math.ceil(_cur_df.count() / MAXIMUM_DISPLAY)}`;
 
     display_df = _total_df.slice(0, display_index);
 
@@ -782,6 +793,8 @@ async function filter(button_list, pairwise = false, slider_class) {
 
     updateCharts();
 
+
+
     return display_df;
 };
 
@@ -865,7 +878,7 @@ $(document.getElementById("next_page")).on("click", () => {
 
     updateDataForSVGCharts();
     updateCharts();
-    updateTableAndVenn()
+    updateTableAndVenn(); //todo: dont need to change venn
     print_paging_sms_for_chart();
 
 
@@ -903,7 +916,7 @@ $(document.getElementById("previous_page")).on("click", () => {
 });
 
 function print_paging_sms_for_chart() {
-    document.getElementById("next_page_sms").innerText = `Show ${display_index}/ ${_cur_df.count()} genes, page ${Math.ceil(_cur_index / MAXIMUM_DISPLAY)}/${Math.ceil(_cur_df.count() / MAXIMUM_DISPLAY)}`;
+    document.getElementById("next_page_sms").innerText = `${display_index}/ ${_cur_df.count()} genes, page ${Math.ceil(_cur_index / MAXIMUM_DISPLAY)}/${Math.ceil(_cur_df.count() / MAXIMUM_DISPLAY)}`;
 }
 
 function exportTableToCSV(df, filename) {
@@ -1040,10 +1053,7 @@ function resize() {
 
     // // Update the tick marks
 
-    xAxis.ticks(2).tickFormat((_, i) => {
-        console.log("==============here inside xAxis");
-        return display_df.select("atID").toArray().flat()[i];
-    });
+
 
 
     svgCharts.selectAll(".y_label")

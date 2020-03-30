@@ -111,6 +111,11 @@ function updateTAbleWithColor() {
 
 
 function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
+    if (typeof _set_data_venn != "undefined"){
+        update_data_for_venn();
+        let sets_venn = create_sets_obj_for_venn();
+        draw_venn(sets_venn);
+    }
 
     //// circel stop1 gene
     let stop1_row = display_df.find(row => row.get('atID').replace(S1_TEXT, "") == STOP1);
@@ -139,14 +144,12 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
 
     }
 
-    if (typeof _set_data_venn != "undefined"){
-        update_data_for_venn();
-        let sets_venn = create_sets_obj_for_venn();
-        draw_venn(sets_venn);
-    }
 
     updateTAbleWithColor();
     add_events_for_dataTable();
+
+
+
 
 }
 function add_events_for_dataTable(){

@@ -50,7 +50,6 @@ async function read_data_for_venn() {
         id_set_data++;
 
 
-
         wt_filter_set = data.filter(row => row.get("wt_filter") == 1).select("atID").toArray().flat();
         // s1_filter_set = data.filter(row => row.get("s1_filter") == 1).select("atID").toArray().flat();
         // pairwise_filter_set = data.filter(row => row.get("pairwise_filter") == 1).select("atID").toArray().flat();
@@ -62,13 +61,13 @@ async function read_data_for_venn() {
         id_set_data++; // id -1; dont move this line  above. stay here.
 
 
-
     });
 
 
     set_data[id_set_data] = {};
     set_data[id_set_data]["data"] = _cur_df.select("atID").toArray().flat();
-    set_data[id_set_data]["name"] = "Data";
+    set_data[id_set_data]["name"] = _cur_df.count().toString();//"Data";
+    previous_cur_df_count = _cur_df.count().toString();
 
 
     console.log("time running = ", (new Date - tick) / 1000);
@@ -79,6 +78,7 @@ async function read_data_for_venn() {
 function update_data_for_venn() {
     if (typeof _set_data_venn != 'undefined') {
         _set_data_venn[id_set_data]["data"] = _cur_df.distinct("atID").toArray().flat();
+
         // _set_data_venn[id_set_data - 1]["data"] = _cur_filter_set;
 
     }
@@ -96,19 +96,19 @@ function calc_overlapping_number_for_venn(set_venn, sub_set_id, set_data) {
         res["data_list"] = _set_data_venn[sub_set_id[0]]["data"];
         return res;
     } else {
-        if (_cur_df.count() == _total_df.count() && sub_set_id.includes(id_set_data)){
-            tmp =  calc_overlapping_number_for_venn(set_venn, sub_set_id.filter(x => x!= id_set_data), set_data);
+        if (_cur_df.count() == _total_df.count() && sub_set_id.includes(id_set_data)) {
+            tmp = calc_overlapping_number_for_venn(set_venn, sub_set_id.filter(x => x != id_set_data), set_data);
             res["size"] = tmp["size"];
             res["data_list"] = tmp["data_list"];
         }
-        // else if (sub_set_id.includes(id_set_data-1) && sub_set_id.includes(id_set_data-2)){
-        //     tmp = calc_overlapping_number_for_venn(set_venn, sub_set_id.filter(x => x!= id_set_data-1), set_data);
-        //     res["size"] = tmp["size"];
-        //     res["data_list"] = tmp["data_list"];
+            // else if (sub_set_id.includes(id_set_data-1) && sub_set_id.includes(id_set_data-2)){
+            //     tmp = calc_overlapping_number_for_venn(set_venn, sub_set_id.filter(x => x!= id_set_data-1), set_data);
+            //     res["size"] = tmp["size"];
+            //     res["data_list"] = tmp["data_list"];
         // }
-        else{
+        else {
             let intersection = set_data[sub_set_id[sub_set_id.length - 1]]["data"];
-            let previous_res = set_venn.find(set => JSON.stringify(set["sets"]) == JSON.stringify(sub_set_id.slice(0, sub_set_id.length-1)));
+            let previous_res = set_venn.find(set => JSON.stringify(set["sets"]) == JSON.stringify(sub_set_id.slice(0, sub_set_id.length - 1)));
             intersection = intersection.filter(x => previous_res["data_list"].includes(x));
             res["size"] = intersection.length;
             res["data_list"] = intersection;
@@ -117,7 +117,6 @@ function calc_overlapping_number_for_venn(set_venn, sub_set_id, set_data) {
 
 
         return res;
-
 
 
     }
@@ -143,9 +142,16 @@ function create_sets_obj_for_venn() {
     return sets_venn;
 }
 
-function draw_venn(sets_venn) {
+function  draw_venn(sets_venn) {
 
+    console.log("sets_venn", sets_venn);
     _cur_venn_div.datum(sets_venn).call(_cur_venn_chart);
+
+    // _cur_venn_div.selectAll("g").select("text")
+    //     .text(function(d) { return "size " + d.size; })
+    //     .style("fill", "#666")
+    //     .style("font-size", "10px");
+
 
     var tooltip = d3.select("body").append("div")
         .attr("class", "venntooltip");
@@ -167,13 +173,11 @@ function draw_venn(sets_venn) {
             console.log("d.label", d.label);
 
 
-            if (d.label == "Data") {
+            if (d.label == previous_cur_df_count) {
                 tooltip.text(d.size + ` from ${_total_df.count()} genes`);
-            }
-            else if (d.sets.includes(0) ) { //include s1's set
+            } else if (d.sets.includes(0)) { //include s1's set
                 tooltip.text("STOP1");
-            }
-            else {
+            } else {
                 tooltip.text(d.size + " genes");
             }
 
@@ -202,7 +206,7 @@ function draw_venn(sets_venn) {
             console.log(d);
 
             // trivial code.
-            if (d.label == "Data" && d.size == _cur_df.count()) {
+            if (d.label == _cur_df.count().toString() && d.size == _cur_df.count()) {
                 console.log("it's the current Data => return, nothing change!")
                 return;
 
@@ -221,7 +225,35 @@ function draw_venn(sets_venn) {
         });
 
 
+
 }
 
 
+function update_label_for_data_venn(previous_count) {
+    console.log("-==-=-=-=-=-=-123456 123 123123 123 0 0 123456 123 123123 123 0 0 123456 123 123123 123 0 0");
+    if (typeof previous_count == "undefined"){
+        if(typeof previous_cur_df_count != "undefined"){
+            previous_count = previous_cur_df_count;
+        }
+        else{
+            previous_cur_df_count = _cur_df.count().toString();
+        }
+    }
+    console.log("previous_count", previous_count);
+    console.log("_cur_df", _cur_df.count());
 
+    let all_g = d3.select("#venn_wt").selectAll("g")[0];
+    let data_venn = all_g.find(x => x.textContent == previous_count);
+
+
+    console.log(data_venn);
+
+
+    d3.select(data_venn).select(".label").text( _cur_df.count().toString());
+
+    console.log(data_venn);
+
+    previous_cur_df_count = _cur_df.count().toString();
+    console.log("NEW previous_cur_df_count", previous_cur_df_count);
+
+}
