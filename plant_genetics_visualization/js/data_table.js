@@ -149,8 +149,6 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
     add_events_for_dataTable();
 
 
-
-
 }
 function add_events_for_dataTable(){
     $(document).ready(function () {

@@ -82,5 +82,3 @@ let show_raw_data=false;
 
 let id_set_data;
 
-let previous_cur_df_count;
-let _first_time=true;

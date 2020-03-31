@@ -681,7 +681,7 @@ function updateChartStateComparison(d, pairwise) {
 
     this.select(".x.axis")
         .call(xAxis);
-    console.log("xAxis", xAxis);
+    // console.log("xAxis", xAxis);
 
     this.select(".y.axis")
         .call(yAxis);

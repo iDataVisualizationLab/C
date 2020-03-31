@@ -67,7 +67,6 @@ async function read_data_for_venn() {
     set_data[id_set_data] = {};
     set_data[id_set_data]["data"] = _cur_df.select("atID").toArray().flat();
     set_data[id_set_data]["name"] = _cur_df.count().toString();//"Data";
-    previous_cur_df_count = _cur_df.count().toString();
 
 
     console.log("time running = ", (new Date - tick) / 1000);
@@ -78,8 +77,10 @@ async function read_data_for_venn() {
 function update_data_for_venn() {
     if (typeof _set_data_venn != 'undefined') {
         _set_data_venn[id_set_data]["data"] = _cur_df.distinct("atID").toArray().flat();
+        _set_data_venn[id_set_data]["name"] = _cur_df.count().toString();
 
         // _set_data_venn[id_set_data - 1]["data"] = _cur_filter_set;
+
 
     }
 };
@@ -144,13 +145,19 @@ function create_sets_obj_for_venn() {
 
 function  draw_venn(sets_venn) {
 
-    console.log("sets_venn", sets_venn);
+    console.log("sets_venn is", sets_venn);
+
+    let tmp=d3.select("#venn_wt");
+    if (typeof tmp != "undefined"){
+        d3.select("#venn_wt").selectAll("*").remove();
+        console.log("removed!");
+
+    }
+
     _cur_venn_div.datum(sets_venn).call(_cur_venn_chart);
 
-    // _cur_venn_div.selectAll("g").select("text")
-    //     .text(function(d) { return "size " + d.size; })
-    //     .style("fill", "#666")
-    //     .style("font-size", "10px");
+
+
 
 
     var tooltip = d3.select("body").append("div")
@@ -173,7 +180,7 @@ function  draw_venn(sets_venn) {
             console.log("d.label", d.label);
 
 
-            if (d.label == previous_cur_df_count) {
+            if (d.label == _cur_df.count().toString()) {
                 tooltip.text(d.size + ` from ${_total_df.count()} genes`);
             } else if (d.sets.includes(0)) { //include s1's set
                 tooltip.text("STOP1");
@@ -228,32 +235,3 @@ function  draw_venn(sets_venn) {
 
 }
 
-
-function update_label_for_data_venn(previous_count) {
-    console.log("-==-=-=-=-=-=-123456 123 123123 123 0 0 123456 123 123123 123 0 0 123456 123 123123 123 0 0");
-    if (typeof previous_count == "undefined"){
-        if(typeof previous_cur_df_count != "undefined"){
-            previous_count = previous_cur_df_count;
-        }
-        else{
-            previous_cur_df_count = _cur_df.count().toString();
-        }
-    }
-    console.log("previous_count", previous_count);
-    console.log("_cur_df", _cur_df.count());
-
-    let all_g = d3.select("#venn_wt").selectAll("g")[0];
-    let data_venn = all_g.find(x => x.textContent == previous_count);
-
-
-    console.log(data_venn);
-
-
-    d3.select(data_venn).select(".label").text( _cur_df.count().toString());
-
-    console.log(data_venn);
-
-    previous_cur_df_count = _cur_df.count().toString();
-    console.log("NEW previous_cur_df_count", previous_cur_df_count);
-
-}
