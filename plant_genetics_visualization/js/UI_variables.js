@@ -90,10 +90,12 @@ let xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(6).tickFormat((_,
 
 let yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
-let venn_div_wt = d3.select("#venn_wt");
 
-let venn_w = 262;
-let venn_h = 262;
+
+let venn_w = 275;
+let venn_h = 275;
+
+let venn_div_wt = d3.select("#venn_wt");
 let venn_chart_wt = venn.VennDiagram()
     .width(venn_w)
     .height(venn_h);
@@ -107,6 +109,7 @@ let venn_div_pairwise = d3.select("#venn_pairwise");
 let venn_chart_pairwise = venn.VennDiagram()
     .width(venn_w)
     .height(venn_h);
+
 
 
 let _cur_venn_chart, _cur_venn_div;

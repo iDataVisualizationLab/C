@@ -66,7 +66,7 @@ async function read_data_for_venn() {
 
     set_data[id_set_data] = {};
     set_data[id_set_data]["data"] = _cur_df.select("atID").toArray().flat();
-    set_data[id_set_data]["name"] = _cur_df.count().toString();//"Data";
+    set_data[id_set_data]["name"] = _cur_df.count().toString()+ " genes";//"Data";
 
 
     console.log("time running = ", (new Date - tick) / 1000);
@@ -77,7 +77,7 @@ async function read_data_for_venn() {
 function update_data_for_venn() {
     if (typeof _set_data_venn != 'undefined') {
         _set_data_venn[id_set_data]["data"] = _cur_df.distinct("atID").toArray().flat();
-        _set_data_venn[id_set_data]["name"] = _cur_df.count().toString();
+        _set_data_venn[id_set_data]["name"] = _cur_df.count().toString() + " genes";
 
         // _set_data_venn[id_set_data - 1]["data"] = _cur_filter_set;
 
@@ -147,9 +147,9 @@ function  draw_venn(sets_venn) {
 
     console.log("sets_venn is", sets_venn);
 
-    let tmp=d3.select("#venn_wt");
+    let tmp=d3.select("#venn_"+_cur_class);
     if (typeof tmp != "undefined"){
-        d3.select("#venn_wt").selectAll("*").remove();
+        d3.select("#venn_"+_cur_class).selectAll("*").remove();
         console.log("removed!");
 
     }
@@ -177,10 +177,9 @@ function  draw_venn(sets_venn) {
 
             // Display a tooltip with the current size
             tooltip.transition().duration(1).style("opacity", .9);
-            console.log("d.label", d.label);
 
 
-            if (d.label == _cur_df.count().toString()) {
+            if (d.label == _cur_df.count().toString() + " genes") {
                 tooltip.text(d.size + ` from ${_total_df.count()} genes`);
             } else if (d.sets.includes(0)) { //include s1's set
                 tooltip.text("STOP1");
@@ -213,7 +212,7 @@ function  draw_venn(sets_venn) {
             console.log(d);
 
             // trivial code.
-            if (d.label == _cur_df.count().toString() && d.size == _cur_df.count()) {
+            if (d.label == _cur_df.count().toString() + " genes" && d.size == _cur_df.count()) {
                 console.log("it's the current Data => return, nothing change!")
                 return;
 
