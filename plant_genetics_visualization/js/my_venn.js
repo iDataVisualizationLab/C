@@ -23,7 +23,7 @@ async function read_data_for_venn() {
     });
 
 
-    await DataFrame.fromCSV("data/STOP1_targets_EckerLab.csv").then(data => {
+    await DataFrame.fromCSV("data/STOP1_targets_EckerLab_filter.csv").then(data => {
         set_data[id_set_data] = {};
         set_data[id_set_data]["data"] = data.select("atID").toArray().flat().filter(x => x != "");
         set_data[id_set_data]["name"] = "Ecker";
