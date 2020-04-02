@@ -75,7 +75,7 @@ let comparison_radio = $(document.getElementsByName("comparison"));
 
 let padding = {top: 15, right: 0, bottom: 20, left: 25};
 let w = $("#unemploymentCharts").width() * 0.99 - padding.left - padding.right;
-let h = 200 - padding.bottom - padding.top;
+let h = 160 - padding.bottom - padding.top;
 let svgHeight = h + padding.top + padding.bottom;
 let svgWidth = w + padding.left + padding.right;
 
