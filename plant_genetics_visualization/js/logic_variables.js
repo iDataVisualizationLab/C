@@ -4,7 +4,7 @@ const MY_COLORS = {
     "gray": "rgb(232, 232, 232)",
     "default": "rgb(231, 231, 231)",
     "gradient": "linear-gradient(to right, rgb(145, 207, 96), rgb(252, 141, 89)",
-    "slider_default": '#c75f04',
+    "slider_default": 'black',
     "slider_master":  "black",//"mediumvioletred",
     "blue": "lightblue",
     "lightbluesky": "#BCD4EC"

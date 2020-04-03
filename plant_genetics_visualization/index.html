@@ -10,7 +10,6 @@
 </head>
 
 
-
 <body>
 
 <!-- Where the unemployment visualization svgs go -->
@@ -90,21 +89,29 @@
     </div>
 </div>
 
+<div id = next_btn_and_raw_checkbox>
+    <div class="next_and_previous_page_btn">
+        <a href="#" id="previous_page" class="previous round">&#8249;</a>
+        <a href="#" id="next_page" class="next round">&#8250;</a>
+        <p id="next_page_sms"></p>
+    </div>
 
-<div class="next_and_previous_page_btn">
-    <a href="#" id="previous_page" class="previous round">&#8249;</a>
-    <a href="#" id="next_page" class="next round">&#8250;</a>
-    <p id="next_page_sms"></p>
+    <form id="raw_data_form">
+        <input type="checkbox" id="raw_data" name="raw_data" value="raw_data">
+        <label for="raw_data">Raw data</label>
+    </form>
 </div>
 
 
-<form id="choose_data_form">
-    <input type="checkbox" id="choose_data" name="choose_data" value="choose_data">
-    <label for="choose_data">Raw data</label>
-</form>
 
 
-<a href="#" class="down_btn"  id ="export" ><i class="fa fa-download"></i> Export Table</a>
+<div id="upload_and_down_div">
+    <form enctype="multipart/form-data" action="/upload" method="post" id="upload">
+        <input id="file-input" type="file" />
+    </form>
+
+    <a href="#" class="down_btn" id="export"><i class="fa fa-download"></i> Export Table</a>
+</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>

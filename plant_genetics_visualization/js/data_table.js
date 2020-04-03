@@ -124,7 +124,7 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
     if (typeof stop1_row != "undefined"){
 
         let all_data = display_df.select("atID").toArray().flat();
-        let index = all_data.indexOf(STOP1);
+        let index = all_data.indexOf(STOP1)-1; //todo: fix
         let data_and_columnNames = zip([display_df.listColumns(), stop1_row.toArray()]);//can use toDict()-> easier+faster
         tmp.forEach(g => {
                 let focus = d3.select(g);

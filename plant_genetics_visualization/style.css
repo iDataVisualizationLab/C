@@ -286,7 +286,7 @@ tr:nth-child(even) {
 .dataTable_and_print{
     display: inline-block;
     width: 36%;
-    height: 340px;
+    height: 310px;
     margin-left: 0px;
 
 
@@ -294,7 +294,7 @@ tr:nth-child(even) {
 
 .dataTable{
     width: 100%;
-    height: 330px;
+    height: 300px;
     overflow-y: auto;
 
 }
@@ -433,19 +433,20 @@ tr.highlight {
 }
 #next_page_sms{
     margin-top: 12px;
+    display: inline-block;
 
 }
-#choose_data_form{
-    float:left;
-    display: inline-block;
+#raw_data_form{
+    float:right;
+    display: block;
     margin-left: 10px;
     margin-top: 6px;
-    margin-right: 10px;
+    margin-right: 15px;
 }
 
 .down_btn {
     margin-top: 4px;
-    margin-right: 20px;
+    margin-right: 15px;
     background-color: lightblue;
     border: none;
     color: black;
@@ -458,5 +459,28 @@ tr.highlight {
 /* Darker background on mouse-over */
 .down_btn:hover {
     background-color: deepskyblue;
+    display: inline-block;
+    float: right;
 }
 
+
+#upload{
+    display: inline-block;
+    float: left;
+    margin-top: 5px;
+}
+
+#upload_and_down_div{
+    width: 36%;
+    display: inline-block;
+    float:left;
+    margin-left: 5px;
+}
+
+#next_btn_and_raw_checkbox{
+    width: 36%;
+    display: inline-block;
+    float:left;
+    margin-left: 5px;
+
+}

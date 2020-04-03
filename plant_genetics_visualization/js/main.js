@@ -121,7 +121,7 @@ $("#option_form").on("change", () => {
 
 DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 
-    DataFrame.fromCSV("data/data_ALL_raw_sorted_by_wthp6Norm.csv").then(df=> {
+    DataFrame.fromCSV("data/data_ALL_raw_sorted_by_wthp6Norm.csv").then(df => {
         _total_data_RAW = df;
     })
     data = data.sortBy(wt_base);
@@ -345,7 +345,7 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 
     // todo: change name of the chart
     svgCharts.append("text")
-        .classed("chart_name_on_the_right",true )
+        .classed("chart_name_on_the_right", true)
         .datum(function (d) {
             return d.state;
         })
@@ -640,7 +640,9 @@ function updateChartNoComparison() {
         });
 
     this.select(".x.axis")
-        .call(xAxis);
+        .call(xAxis)
+        .selectAll(`text`)
+        .style(`text-anchor`, `end`);
 
     this.select(".y.axis")
         .call(yAxis);
@@ -680,7 +682,9 @@ function updateChartStateComparison(d, pairwise) {
 
 
     this.select(".x.axis")
-        .call(xAxis);
+        .call(xAxis)
+        .selectAll(`text`)
+        .style(`text-anchor`, `end`);
     // console.log("xAxis", xAxis);
 
     this.select(".y.axis")
@@ -794,7 +798,6 @@ async function filter(button_list, pairwise = false, slider_class) {
     updateCharts();
 
 
-
     return display_df;
 };
 
@@ -892,7 +895,7 @@ $(document.getElementById("previous_page")).on("click", () => {
     }
 
     if (_cur_index % MAXIMUM_DISPLAY == 0) {
-        display_df = _cur_df.slice(_cur_index - 2* MAXIMUM_DISPLAY, _cur_index-MAXIMUM_DISPLAY);
+        display_df = _cur_df.slice(_cur_index - 2 * MAXIMUM_DISPLAY, _cur_index - MAXIMUM_DISPLAY);
 
         _cur_index = _cur_index - MAXIMUM_DISPLAY;
         display_index = MAXIMUM_DISPLAY;
@@ -935,7 +938,7 @@ function exportTableToCSV(df, filename) {
         $(this)
             .attr({
                 'download': filename
-                ,'href': csvData
+                , 'href': csvData
                 //,'target' : '_blank' //if you want it to open in a new window
             });
     }
@@ -944,7 +947,7 @@ function exportTableToCSV(df, filename) {
 $("#export").click(function (event) {
     // var outputFile = 'export'
     var outputFile = window.prompt("File name: ") || 'export';
-    outputFile = outputFile.replace('.csv','') + '.csv'
+    outputFile = outputFile.replace('.csv', '') + '.csv'
 
     // CSV
     exportTableToCSV.apply(this, [_cur_df, outputFile]);
@@ -954,17 +957,15 @@ $("#export").click(function (event) {
 });
 
 
-$("#choose_data_form :checkbox").change( () => {
+$("#raw_data_form :checkbox").change(() => {
 
-    if (typeof _total_RAW_data == "undefined"){
+    if (typeof _total_RAW_data == "undefined") {
     }
 
-    if ($("#choose_data").is(':checked'))
-    {
-        show_raw_data=true;
-    }
-    else{
-        show_raw_data=false;
+    if ($("#raw_data").is(':checked')) {
+        show_raw_data = true;
+    } else {
+        show_raw_data = false;
     }
     updateTAbleWithColor();
     add_events_for_dataTable();
@@ -1023,14 +1024,16 @@ function set_global_varibles_by_CurActiveTab() {
 
 function resize() {
     console.log("resize...");
-    w =parseFloat(d3.select("#unemploymentCharts").style("width"))*0.99 - padding.left - padding.right;
+    w = parseFloat(d3.select("#unemploymentCharts").style("width")) * 0.99 - padding.left - padding.right;
 
     // Update the range of the scale with new width/height
     xScale.range([0, w]);
 
     // Update the axis and text with the new scale
     svgCharts.selectAll('.x.axis')
-        .call(xAxis);
+        .call(xAxis)
+        .selectAll(`text`)
+        .style(`text-anchor`, `end`);
 
 
     svgCharts.selectAll(".rect_class")
@@ -1046,22 +1049,16 @@ function resize() {
         .attr("height", h + padding.top);
 
 
-
-
     // Force D3 to recalculate and update the line
     updateCharts();
 
     // // Update the tick marks
 
 
-
-
     svgCharts.selectAll(".y_label")
         .attr("transform",
             "translate(" + (w) + " ," +
             (h) + ")")
-
-
 
 
     svgCharts.selectAll(".chart_name_on_the_right")
@@ -1083,9 +1080,50 @@ d3.select(window).on('resize', resize);
 
 // Call the resize function
 
+$(document.getElementById("file-input")).on("change", function f(ent) {
+    loadFileAsText();
+});
+
+function loadFileAsText(evt) {
+    if (!window.FileReader) {
+        alert('Your browser is not supported');
+        return false;
+    }
+    var input = $(document.getElementById("file-input")).get(0);
+
+    // Create a reader object
+    var reader = new FileReader();
+    if (input.files.length) {
+        var textFile = input.files[0];
+        // Read the file
+        reader.readAsText(textFile);
+        // When it's loaded, process it
+        $(reader).on('load', processFile);
+    } else {
+        // alert('Please upload a file before continuing')
+    }
 
 
+}
 
 
+function processFile(e) {
+    let file = e.target.result, lines;
+
+    lines = file.split("\n");
+    lines = lines.map(line => line.split(","));
+    let header = lines[0];
+    const df = new DataFrame(lines.slice(1), header);
+
+
+    _cur_df = df;
+    _total_df = df;
+    reset_DisplayIndex_and_DisplayDF();
+    updateDataForSVGCharts();
+    updateCharts();
+    updateTableAndVenn(); //todo: dont need to change venn
+    calc_and_show_stats_table();
+    print_paging_sms_for_chart();
+}
 
 
