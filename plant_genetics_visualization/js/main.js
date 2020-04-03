@@ -18,7 +18,7 @@ var valueLine = d3.svg.line()
         return xScale(d.index);
     })
     .y(function (d) {
-        return yScale(d.unemployment);
+        return yScale(d.gene_value);
     });
 
 var zeroLine = d3.svg.line()
@@ -34,7 +34,7 @@ var valueArea = d3.svg.area()
         return xScale(d.index);
     })
     .y1(function (d) {
-        return yScale(d.unemployment);
+        return yScale(d.gene_value);
     });
 
 var zeroArea = d3.svg.area()
@@ -156,7 +156,7 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
     let my_all_data = {};
     all_cols.forEach((gene_name) => {
         let df = display_df.select(_atID, gene_name);
-        df = df.rename(gene_name, names["value"]);
+        df = df.rename(gene_name, "gene_value");
         df = df.withColumn('index', (row, i) => i + 1)
             .withColumn('gene', () => gene_name);
         my_all_data[gene_name] = df.toCollection();
@@ -211,7 +211,7 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 
     // re-Scale the range of the data
     xScale.domain([1, display_index]);
-    // y.domain([0, d3.max(data, function(d) { return d.unemployment; })]);
+    // y.domain([0, d3.max(data, function(d) { return d.gene_value; })]);
 
     // Create the svgs for the charts.
     svgCharts = d3.select("#unemploymentCharts").selectAll("svg")
@@ -422,12 +422,12 @@ function show_circle_when_mouseover_chart(_this, d) {
         return;
     }
     let d_new = x0 - d0.index > d1.index - x0 ? d1 : d0;
-    focus.attr("transform", "translate(" + xScale(d_new.index) + "," + yScale(d_new.unemployment) + ")");
+    focus.attr("transform", "translate(" + xScale(d_new.index) + "," + yScale(d_new.gene_value) + ")");
 
-    adjust_tooltip_hover_chart(focus, d_new.index, d_new.unemployment);
+    adjust_tooltip_hover_chart(focus, d_new.index, d_new.gene_value);
 
     focus.select(".tooltip-atID").text(d_new[_atID].replace(S1_TEXT, ""));
-    focus.select(".tooltip-value").text(d_new.gene + ": " + parseFloat(d_new.unemployment).toFixed(2));
+    focus.select(".tooltip-value").text(d_new.gene + ": " + parseFloat(d_new.gene_value).toFixed(2));
     return d_new;
 }
 
@@ -445,10 +445,10 @@ function mousemove_chart(d, _this) {
             let focus = d3.select(g);
             let data = d.series[g.__data__.gene][d_new.index - 1];
 
-            focus.attr("transform", "translate(" + xScale(data.index) + "," + yScale(data.unemployment) + ")");
-            adjust_tooltip_hover_chart(focus, data.index, data.unemployment, true);
+            focus.attr("transform", "translate(" + xScale(data.index) + "," + yScale(data.gene_value) + ")");
+            adjust_tooltip_hover_chart(focus, data.index, data.gene_value, true);
             focus.select(".tooltip-atID").text("");
-            focus.select(".tooltip-value").text(g.__data__.gene + ": " + parseFloat(data.unemployment).toFixed(2));
+            focus.select(".tooltip-value").text(g.__data__.gene + ": " + parseFloat(data.gene_value).toFixed(2));
         }
     )
 
@@ -665,15 +665,15 @@ function updateChartgeneComparison(d, pairwise) {
         .attr("fill", MY_COLORS.green)
         .attr("d", function (d) {
             var y0 = function (a, i) {
-                return yScale(d3.min([d.series[comparedgene][i].unemployment, d.series[d.gene][i].unemployment]));
+                return yScale(d3.min([d.series[comparedgene][i].gene_value, d.series[d.gene][i].gene_value]));
             };
             return valueArea.y0(y0)(d.series[d.gene]);
         });
     this.select(".area.above")
         .attr("d", function (d) {
             var y0 = function (a, i) {
-                return yScale(d3.max([d.series[comparedgene][i].unemployment, d.series[d.gene][i].unemployment]));
-                //return y(d.series[comparedgene][i].unemployment);
+                return yScale(d3.max([d.series[comparedgene][i].gene_value, d.series[d.gene][i].gene_value]));
+                //return y(d.series[comparedgene][i].gene_value);
             };
             return valueArea.y0(y0)(d.series[d.gene]);
         });
@@ -757,7 +757,7 @@ function updateDataForSVGCharts() {
 
     all_cols.forEach((gene_name) => {
         let tmp_df = display_df.select(_atID, gene_name);
-        tmp_df = tmp_df.rename(gene_name, names["value"]);
+        tmp_df = tmp_df.rename(gene_name, "gene_value");
         tmp_df = tmp_df.withColumn('index', (row, i) => i + 1)
             .withColumn('gene', () => gene_name);
         my_all_data[gene_name] = tmp_df.toCollection();
