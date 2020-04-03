@@ -426,7 +426,7 @@ function show_circle_when_mouseover_chart(_this, d) {
 
     adjust_tooltip_hover_chart(focus, d_new.index, d_new.unemployment);
 
-    focus.select(".tooltip-atID").text(d_new._atID.replace(S1_TEXT, ""));
+    focus.select(".tooltip-atID").text(d_new[_atID].replace(S1_TEXT, ""));
     focus.select(".tooltip-value").text(d_new.gene + ": " + parseFloat(d_new.unemployment).toFixed(2));
     return d_new;
 }
@@ -456,7 +456,7 @@ function mousemove_chart(d, _this) {
     // change the view of the data table
     let rows = document.querySelectorAll("#ipdatacsvTbl tr");
     let cur_row = Array.from(rows).find((d, i) => {
-        return d.firstChild.textContent.replace(S1_TEXT, "") == d_new._atID;
+        return d.firstChild.textContent.replace(S1_TEXT, "") == d_new[_atID];
     });
 
     Array.from(rows).forEach((d, i) => {
