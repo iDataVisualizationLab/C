@@ -66,7 +66,7 @@ async function read_data_for_venn() {
 
     set_data[id_set_data] = {};
     set_data[id_set_data]["data"] = _cur_df.select("atID").toArray().flat();
-    set_data[id_set_data]["name"] = _cur_df.count().toString()+ " genes";//"Data";
+    set_data[id_set_data]["name"] = _cur_df.count().toString() + " genes";//"Data";
 
 
     console.log("time running = ", (new Date - tick) / 1000);
@@ -75,13 +75,19 @@ async function read_data_for_venn() {
 }
 
 function update_data_for_venn() {
+
+
+    if (_upload) {
+        _set_data_venn = [];
+        id_set_data = 0;
+        _set_data_venn[id_set_data] = {};
+    }
+
     if (typeof _set_data_venn != 'undefined') {
         _set_data_venn[id_set_data]["data"] = _cur_df.distinct("atID").toArray().flat();
         _set_data_venn[id_set_data]["name"] = _cur_df.count().toString() + " genes";
 
         // _set_data_venn[id_set_data - 1]["data"] = _cur_filter_set;
-
-
     }
 };
 
@@ -143,21 +149,18 @@ function create_sets_obj_for_venn() {
     return sets_venn;
 }
 
-function  draw_venn(sets_venn) {
+function draw_venn(sets_venn) {
 
     console.log("sets_venn is", sets_venn);
 
-    let tmp=d3.select("#venn_"+_cur_class);
-    if (typeof tmp != "undefined"){
-        d3.select("#venn_"+_cur_class).selectAll("*").remove();
+    let tmp = d3.select("#venn_" + _cur_class);
+    if (typeof tmp != "undefined") {
+        d3.select("#venn_" + _cur_class).selectAll("*").remove();
         console.log("removed!");
 
     }
 
     _cur_venn_div.datum(sets_venn).call(_cur_venn_chart);
-
-
-
 
 
     var tooltip = d3.select("body").append("div")
@@ -229,7 +232,6 @@ function  draw_venn(sets_venn) {
 
 
         });
-
 
 
 }

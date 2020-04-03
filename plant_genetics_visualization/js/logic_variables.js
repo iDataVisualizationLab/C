@@ -34,24 +34,21 @@ const tab_names = {
 
 // todo: replace this
 const names = {
-    "atID": "month",
-    "index": "year",
     "value": "unemployment",
-    "gene": "state"
 };
 
 const DataFrame = dfjs.DataFrame;
 
 // Todo: read the column names from the input file.
-const wt_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe'];
-const s1_cols = ['s1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];
-const all_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe', 's1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];
+let wt_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe'];
+let s1_cols = ['s1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];
+let all_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe', 's1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];
 
-const wt_base = wt_cols[0];
-const s1_base = s1_cols[0];
-const wt_condition_cols = wt_cols.slice(1);
-const s1_condition_cols = s1_cols.slice(1);
-const pairwise_condition_cols = s1_cols;
+let wt_base = wt_cols[0];
+let s1_base = s1_cols[0];
+let wt_condition_cols = wt_cols.slice(1);
+let s1_condition_cols = s1_cols.slice(1);
+let pairwise_condition_cols = s1_cols;
 
 let _cur_base, _cur_condition_cols, _cur_class;
 let _cur_master_slider, _cur_master_slider_value;
@@ -81,4 +78,6 @@ let S1_TEXT = " (STOP1)";
 let show_raw_data=false;
 
 let id_set_data;
+let _upload = false;
 
+let _atID;
