@@ -3,7 +3,7 @@ function row_to_cluster(row, base_col, thres, all_cluster) {
 
     for (let i = 0; i < _cur_condition_cols.length; i++) {
         if (_pairwise) {
-            base_col = _cur_condition_cols[i].replace(mutant_class, base_class);
+            base_col = _cur_condition_cols[i].replace(mutant_class, normal_class);
         }
 
         if (parseFloat(row.get(_cur_condition_cols[i])) - parseFloat(row.get(base_col)) > parseFloat(thres)) {
@@ -40,8 +40,13 @@ function calc_all_stats(df, base_col, master_slider) {
     return stats_results;
 }
 
-function create_stats_table(tbl, rows) {
-    // $(statsTable).empty();
+function create_stats_table(tbl, rows, upload=_upload) {
+    if (my_stats_table){
+        my_stats_table.destroy();
+        $(_cur_statsTable).empty();
+        console.log("removed in create_stats_table!!!!!")
+    }
+
 
     tbl.innerHTML = '';
     if (rows && rows.length > 0) {
@@ -129,7 +134,7 @@ function calc_and_show_stats_table() {
     create_stats_table(_cur_statsTable, df.toCollection());
 
     $(document).ready(function () {
-            let my_stats_table = $(_cur_statsTable).DataTable({
+            my_stats_table = $(_cur_statsTable).DataTable({
                 // Todo: show the sorting arrows
                 order: [[df.dim()[1] - 1, 'des']],
 
@@ -142,13 +147,13 @@ function calc_and_show_stats_table() {
                 hover: true
 
             });
-            $(`#${_cur_class + "_statsTable"} tbody`).on('click', 'tr', function () {
+            $(`#${_cur_state + "_statsTable"} tbody`).on('click', 'tr', function () {
                 let row_data = my_stats_table.row(this).data();
                 click_row_callback(row_data.slice(0, row_data.length - 1));
             });
 
 
-            $(`#${_cur_class + "_statsTable"} tbody`).on('mouseover', 'tr', function () {
+            $(`#${_cur_state + "_statsTable"} tbody`).on('mouseover', 'tr', function () {
                 // $(`#${_cur_class + "_statsTable"} tbody > tr`).removeClass('highlight');  //remove the class for all the cells
                 $(this).addClass('highlight');
 
@@ -156,7 +161,7 @@ function calc_and_show_stats_table() {
 
             });
 
-        $(`#${_cur_class + "_statsTable"} tbody`).on('mouseout', 'tr', function () {
+        $(`#${_cur_state + "_statsTable"} tbody`).on('mouseout', 'tr', function () {
             // $(`#${_cur_class + "_statsTable"} tbody > tr`).removeClass('highlight');
             $(this).removeClass('highlight');
 

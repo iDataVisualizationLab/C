@@ -20,8 +20,8 @@
 <div id="options">
     <div style="font-size: 17px">Control Panel</div>
     <div class="tab">
-        <button class="tablinks active" onclick="openTab(event, 'wt_comparison')">WT(s) Comparison</button>
-        <button class="tablinks" onclick="openTab(event, 's1_comparison')">S1(s) Comparison</button>
+        <button class="tablinks active" onclick="openTab(event, 'normal_comparison')">WT(s) Comparison</button>
+        <button class="tablinks" onclick="openTab(event, 'mutant_comparison')">S1(s) Comparison</button>
         <button class="tablinks" onclick="openTab(event, 'pairwise_comparison')">S1(s) vs. WT(s)</button>
         <button class="tablinks" onclick="openTab(event, 'custom_mode')">Custom Mode</button>
 
@@ -46,25 +46,25 @@
         </div>
     </div>
 
-    <div id="wt_comparison" class="tabcontent" style="display:block">
+    <div id="normal_comparison" class="tabcontent" style="display:block">
         <p>Compare each conditioned test with <b>wthp6</b></p>
         <div class="btn-group"></div>
         <div class="statTable_and_Venn_div">
             <div class="statsTable_and_MasterSlider">
                 <div class="master_slider_div"></div>
             </div>
-            <div id="venn_wt" class="venn_diagram"></div>
+            <div id="venn_normal" class="venn_diagram"></div>
         </div>
     </div>
 
-    <div id="s1_comparison" class="tabcontent">
+    <div id="mutant_comparison" class="tabcontent">
         <p>Compare each conditioned test s1 with <b>s1hp6</b></p>
         <div class="btn-group"></div>
         <div class="statTable_and_Venn_div">
             <div class="statsTable_and_MasterSlider">
                 <div class="master_slider_div"></div>
             </div>
-            <div id="venn_s1" class="venn_diagram"></div>
+            <div id="venn_mutant" class="venn_diagram"></div>
         </div>
     </div>
 

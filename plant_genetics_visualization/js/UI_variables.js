@@ -1,12 +1,12 @@
-function create_master_slider(cur_class) {
+function create_master_slider(cur_state) {
     let master_slider_div_id, master_input_class, master_slider_id, master_slider_value, master_slider_div_class,
         parent_element;
     master_slider_div_class = "master_slider_div";
-    master_slider_div_id = cur_class + "_master_slider_div";
-    master_input_class = cur_class + "_master_slider";
-    master_slider_id = cur_class + "_master_slider";
-    master_slider_value = cur_class + "_master_slider_value";
-    parent_element = "#" + cur_class + "_comparison";
+    master_slider_div_id = cur_state + "_master_slider_div";
+    master_input_class = cur_state + "_master_slider";
+    master_slider_id = cur_state + "_master_slider";
+    master_slider_value = cur_state + "_master_slider_value";
+    parent_element = "#" + cur_state + "_comparison";
 
     let slider_master = d3.select(parent_element)
         .select("." + master_slider_div_class)
@@ -33,44 +33,42 @@ function create_master_slider(cur_class) {
 }
 
 
-function create_statTable_obj(cur_class) {
-    parent_element = "#" + cur_class + "_comparison";
+function create_statTable_obj(cur_state) {
+    parent_element = "#" + cur_state + "_comparison";
 
     let table = d3.select(parent_element).select(".statsTable_and_masterSlider");
 
     table.append('div')
         .attr("class", "statsTableClass")
-        .attr("id", cur_class + "_statsTableDiv")
+        .attr("id", cur_state + "_statsTableDiv")
         .append("table")
-        .attr("id", cur_class + "_statsTable");
+        .attr("id", cur_state + "_statsTable");
 }
 
-create_master_slider(base_class);
-create_master_slider(mutant_class);
-create_master_slider(pairwise_class);
+create_master_slider("normal");
+create_master_slider("mutant");
+create_master_slider("pairwise");
 
-create_statTable_obj(base_class);
-create_statTable_obj(mutant_class);
-create_statTable_obj(pairwise_class);
+create_statTable_obj("normal");
+create_statTable_obj("mutant");
+create_statTable_obj("pairwise");
 
 
-const wt_master_slider = document.getElementById("wt_master_slider");
-const wt_master_slider_value = document.getElementById("wt_master_slider_value");
+const normal_master_slider = document.getElementById("normal_master_slider");
+const normal_master_slider_value = document.getElementById("normal_master_slider_value");
 
-const s1_master_slider = document.getElementById("s1_master_slider");
-const s1_master_slider_value = document.getElementById("s1_master_slider_value");
+const mutant_master_slider = document.getElementById("mutant_master_slider");
+const mutant_master_slider_value = document.getElementById("mutant_master_slider_value");
 
 const pairwise_master_slider = document.getElementById("pairwise_master_slider");
 const pairwise_master_slider_value = document.getElementById("pairwise_master_slider_value");
 
-let my_stats_table;
-
 let dataTable = document.getElementById('ipdatacsvTbl');
-let wt_statsTable = document.getElementById('wt_statsTable');
-let s1_statsTable = document.getElementById('s1_statsTable');
+let normal_statsTable = document.getElementById('normal_statsTable');
+let mutant_statsTable = document.getElementById('mutant_statsTable');
 let pairwise_statsTable = document.getElementById('pairwise_statsTable');
 
-let _cur_statsTable = wt_statsTable;
+let _cur_statsTable = normal_statsTable;
 let comparison_radio = $(document.getElementsByName("comparison"));
 
 let padding = {top: 15, right: 0, bottom: 20, left: 25};
@@ -86,7 +84,7 @@ let yScale = d3.scale.linear().domain([0, 1]).range([h, 0]);
 let xAxis = d3.svg.axis().scale(xScale).orient("bottom")
     .ticks(6).tickFormat((_, i) => {
     // console.log("==============here inside xAxis");
-    return display_df.select("atID").toArray().flat()[i];
+    return display_df.select(_atID).toArray().flat()[i];
 });
 
 let yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
@@ -96,13 +94,13 @@ let yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 let venn_w = 275;
 let venn_h = 275;
 
-let venn_div_wt = d3.select("#venn_wt");
-let venn_chart_wt = venn.VennDiagram()
+let venn_div_normal = d3.select("#venn_normal");
+let venn_chart_normal = venn.VennDiagram()
     .width(venn_w)
     .height(venn_h);
 
-let venn_div_s1 = d3.select("#venn_s1");
-let venn_chart_s1 = venn.VennDiagram()
+let venn_div_mutant = d3.select("#venn_mutant");
+let venn_chart_mutant = venn.VennDiagram()
     .width(venn_w)
     .height(venn_h);
 
@@ -117,5 +115,5 @@ let _cur_venn_chart, _cur_venn_div;
 let _focus, _focus_s1;
 
 let _cur_low_log2fold_set;
-let wt_low_log2fold_set;
-let s1_filter_set, pairwise_filter_set; // not used yet
+let normal_low_log2fold_set;
+let my_data_table, my_stats_table;

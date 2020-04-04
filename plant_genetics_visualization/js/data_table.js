@@ -18,7 +18,7 @@ function updateTable(tbl, rows) {
                 let cell = row.insertCell();
                 let text = rowDt[hd];
 
-                if (hd != "atID") {
+                if (hd != _atID) {
                     cell.innerHTML = parseFloat(text).toFixed(2);
 
                 } else {
@@ -36,6 +36,11 @@ function updateTable(tbl, rows) {
 
 
 function updateTAbleWithColor() {
+    if (my_data_table){
+        my_data_table.destroy();
+        $(dataTable).empty();
+        console.log("removed!!!!!")
+    }
 
     let tbl = dataTable;
     let rows;
@@ -43,11 +48,11 @@ function updateTAbleWithColor() {
 
     console.log("show_raw_data = ", show_raw_data);
     if (show_raw_data){
-        let all_id_list =  display_df.select("atID").toArray().flat();
-        display_df_RAW = _total_data_RAW.filter(row => all_id_list.includes(row.get("atID")) );
+        let all_id_list =  display_df.select(_atID).toArray().flat();
+        display_df_RAW = _total_data_RAW.filter(row => all_id_list.includes(row.get(_atID)) );
 
         /////// sort display raw according to display norm, but it's too slow.
-        // display_df_RAW = display_df_RAW.join(display_df.select("atID", wt_base).rename(wt_base, wt_base + "_norm"), "atID", "inner").sortBy(wt_base + "_norm");
+        // display_df_RAW = display_df_RAW.join(display_df.select(_atID, wt_base).rename(wt_base, wt_base + "_norm"), _atID, "inner").sortBy(wt_base + "_norm");
         // display_df_RAW = display_df_RAW.drop(wt_base + "_norm")
         rows = display_df_RAW.toCollection();
     }
@@ -90,7 +95,7 @@ function updateTAbleWithColor() {
                     }
                 }
 
-                if (hd != "atID") {
+                if (hd != _atID) {
                     cell.innerHTML = parseFloat(text).toFixed(2);
 
                 } else {
@@ -118,12 +123,12 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
     }
 
     //// circel stop1 gene
-    let stop1_row = display_df.find(row => row.get('atID').replace(S1_TEXT, "") == STOP1);
+    let stop1_row = display_df.find(row => row.get(_atID).replace(S1_TEXT, "") == STOP1);
     let tmp = _focus_s1[0].filter(g => _cur_condition_cols.includes(g.__data__.state));
 
     if (typeof stop1_row != "undefined"){
 
-        let all_data = display_df.select("atID").toArray().flat();
+        let all_data = display_df.select(_atID).toArray().flat();
         let index = all_data.indexOf(STOP1)-1; //todo: fix
         let data_and_columnNames = zip([display_df.listColumns(), stop1_row.toArray()]);//can use toDict()-> easier+faster
         tmp.forEach(g => {
@@ -152,7 +157,8 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
 }
 function add_events_for_dataTable(){
     $(document).ready(function () {
-            let my_data_table = $(dataTable).DataTable({
+
+            my_data_table = $(dataTable).DataTable({
                 ordering: false,
                 searching: false,
 
@@ -160,6 +166,7 @@ function add_events_for_dataTable(){
                 paging: false,
                 bInfo: false,
             });
+            // todo: the cirlce from table to the chart is not exactly point at the right position.
             $("#ipdatacsvTbl tbody").on('mouseover', 'tr', function () {
                 let row_data;
                 let headers = display_df.listColumns();
@@ -168,13 +175,13 @@ function add_events_for_dataTable(){
                 row_data =  my_data_table.row(this).data();
 
                 if (show_raw_data){
-                    row_data = display_df.find(row => row.get("atID").replace(S1_TEXT, "") == row_data[0]).toArray().flat();
+                    row_data = display_df.find(row => row.get(_atID).replace(S1_TEXT, "") == row_data[0]).toArray().flat();
                 }
 
 
                 data_and_columnNames = zip([headers, row_data])
 
-                let atID_list = display_df.select("atID").toArray().flat();
+                let atID_list = display_df.select(_atID).toArray().flat();
                 let index = atID_list.indexOf(row_data[0].replace(S1_TEXT, ""));
                 show_circle_when_mouseenter_the_dataTable(index, data_and_columnNames);
 
@@ -186,7 +193,7 @@ function add_events_for_dataTable(){
             $("#ipdatacsvTbl tbody").on('mouseout', 'tr', function () {
                 this.style.fontWeight = "normal";
                 let row_data = my_data_table.row(this).data();
-                let atID_list = display_df.select("atID").toArray().flat();
+                let atID_list = display_df.select(_atID).toArray().flat();
                 let index = atID_list.indexOf(row_data[0]);
                 this.style.backgroundColor = (index + 1) % 2 == 0 ? '#ececec' : '#ffffff';
 

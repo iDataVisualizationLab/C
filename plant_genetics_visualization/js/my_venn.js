@@ -25,7 +25,7 @@ async function read_data_for_venn() {
 
     await DataFrame.fromCSV("data/STOP1_targets_EckerLab_filter.csv").then(data => {
         set_data[id_set_data] = {};
-        set_data[id_set_data]["data"] = data.select("atID").toArray().flat().filter(x => x != "");
+        set_data[id_set_data]["data"] = data.select(_atID).toArray().flat().filter(x => x != "");
         set_data[id_set_data]["name"] = "Ecker";
         id_set_data++;
     });
@@ -43,16 +43,16 @@ async function read_data_for_venn() {
     });
 
     await DataFrame.fromCSV("data/filter_nonexpressed.csv").then(data => {
-        let filter_low_cpm = data.filter(row => row.get("filter_low_cpm") == 0).select("atID").toArray().flat();
+        let filter_low_cpm = data.filter(row => row.get("filter_low_cpm") == 0).select(_atID).toArray().flat();
         set_data[id_set_data] = {};
         set_data[id_set_data]["data"] = filter_low_cpm;
         set_data[id_set_data]["name"] = "LowCPM";
         id_set_data++;
 
 
-        wt_low_log2fold_set = data.filter(row => row.get("wt_low_log2fold") == 1).select("atID").toArray().flat();
-        // s1_filter_set = data.filter(row => row.get("s1_filter") == 1).select("atID").toArray().flat();
-        // pairwise_filter_set = data.filter(row => row.get("pairwise_filter") == 1).select("atID").toArray().flat();
+        wt_low_log2fold_set = data.filter(row => row.get("wt_low_log2fold") == 1).select(_atID).toArray().flat();
+        // s1_filter_set = data.filter(row => row.get("s1_filter") == 1).select(_atID).toArray().flat();
+        // pairwise_filter_set = data.filter(row => row.get("pairwise_filter") == 1).select(_atID).toArray().flat();
         _cur_low_log2fold_set = wt_low_log2fold_set;
 
         set_data[id_set_data] = {};
@@ -65,7 +65,7 @@ async function read_data_for_venn() {
 
 
     set_data[id_set_data] = {};
-    set_data[id_set_data]["data"] = _cur_df.select("atID").toArray().flat();
+    set_data[id_set_data]["data"] = _cur_df.select(_atID).toArray().flat();
     set_data[id_set_data]["name"] = _cur_df.count().toString() + " genes";//"Data";
 
 
@@ -84,7 +84,7 @@ function update_data_for_venn() {
     }
 
     if (typeof _set_data_venn != 'undefined') {
-        _set_data_venn[id_set_data]["data"] = _cur_df.distinct("atID").toArray().flat();
+        _set_data_venn[id_set_data]["data"] = _cur_df.distinct(_atID).toArray().flat();
         _set_data_venn[id_set_data]["name"] = _cur_df.count().toString() + " genes";
 
         // _set_data_venn[id_set_data - 1]["data"] = _cur_filter_set;
@@ -220,7 +220,7 @@ function draw_venn(sets_venn) {
                 return;
 
             }
-            let data = _total_df.filter(row => d.data_list.includes(row.get("atID")));
+            let data = _total_df.filter(row => d.data_list.includes(row.get(_atID)));
             _cur_df = data;
 
             reset_DisplayIndex_and_DisplayDF();
@@ -229,6 +229,7 @@ function draw_venn(sets_venn) {
             updateCharts();
 
             updateTAbleWithColor();
+            add_events_for_dataTable();
 
 
         });

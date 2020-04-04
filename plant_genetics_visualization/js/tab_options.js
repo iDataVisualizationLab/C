@@ -27,13 +27,13 @@ function openTab(evt, scenarioName) {
     }
     document.getElementById(scenarioName).style.display = "block";
 
-    if (scenarioName == tab_names["base_class"]) {
+    if (scenarioName == tab_names["normal_class"]) {
         wt_master_slider.value = 0;
         wt_master_slider_value.innerText = "0";
         change_color_slider_bar(wt_master_slider, 0, MY_COLORS.gray, MY_COLORS.slider_master);
 
         wt_ctrl_btn();
-        change_all_slider_values_to_the_master(0, wt_condition_cols);
+        change_all_slider_values_to_the_master(0, normal_condition_cols);
 
         // $('.statsTable_and_print').show();
 
@@ -47,7 +47,7 @@ function openTab(evt, scenarioName) {
 
 
         s1_ctrl_btn();
-        change_all_slider_values_to_the_master(0, s1_condition_cols);
+        change_all_slider_values_to_the_master(0, mutant_condition_cols);
 
         // $('.statsTable_and_print').show();
 
@@ -58,7 +58,7 @@ function openTab(evt, scenarioName) {
         change_color_slider_bar(pairwise_master_slider, 0, MY_COLORS.gray, MY_COLORS.slider_master);
 
 
-        change_all_slider_values_to_the_master(0, s1_cols);
+        change_all_slider_values_to_the_master(0, mutant_cols);
 
 
         pairwise_ctrl_btn();

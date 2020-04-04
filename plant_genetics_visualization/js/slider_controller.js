@@ -58,13 +58,13 @@ function update_text_when_sliders_change(sld, pairwise) {
     }
 }
 
-wt_condition_cols.forEach(wt => update_text_when_sliders_change(wt, false));
-s1_condition_cols.forEach(s1 => update_text_when_sliders_change(s1, false));
+normal_condition_cols.forEach(wt => update_text_when_sliders_change(wt, false));
+mutant_condition_cols.forEach(s1 => update_text_when_sliders_change(s1, false));
 pairwise_condition_cols.forEach(pairwise_col => update_text_when_sliders_change(pairwise_col, true));
 
 
-wt_master_slider.oninput = master_slider_oninput;
-s1_master_slider.oninput = master_slider_oninput;
+normal_master_slider.oninput = master_slider_oninput;
+mutant_master_slider.oninput = master_slider_oninput;
 pairwise_master_slider.oninput = master_slider_oninput;
 
 

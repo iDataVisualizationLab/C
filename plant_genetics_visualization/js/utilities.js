@@ -92,13 +92,13 @@ function permutator_base_3(res, results, n) {
 }
 
 
-function create_filter_btn_and_slider(col, test_class, base_col, pairwise, mutant_class, base_class) {
+function create_filter_btn_and_slider(col, test_class, base_col, pairwise, mutant, normal) {
     let btn_id, btn_text, slider_id, slider_value_id, parent_element, btn_filter_class, slider_class;
     if (pairwise) {
-        base_col = col.replace(mutant_class, base_class);
+        base_col = col.replace(MAP_CLASS[mutant], MAP_CLASS[normal]);
         btn_text = col + " vs. " + base_col;
 
-        col = col.replace(mutant_class, "pairwise_"); // after getting btn_text, change col
+        col = col.replace(MAP_CLASS[mutant], "pairwise_"); // after getting btn_text, change col
     } else {
         btn_text = col + " vs. " + base_col;
 
