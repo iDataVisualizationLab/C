@@ -963,11 +963,19 @@ $("#export").click(function (event) {
     // CSV
     exportTableToCSV.apply(this, [_cur_df, outputFile]);
     //
-    // if ($("#raw_data").is(':checked')) {
-    //     exportTableToCSV.apply(this, [display_df_RAW, outputFile]); /// todo: down all raw data
-    // } else {
-    //     exportTableToCSV.apply(this, [_cur_df, outputFile]);
-    // }
+    if ($("#raw_data").is(':checked')) {
+        if (_cur_df.count() == display_index){
+            exportTableToCSV.apply(this, [display_df_RAW, outputFile]); 
+        }
+        else{
+            let all_id_list = _cur_df.select(_atID).toArray().flat();
+            let cur_df_raw = _total_df_RAW.filter(row => all_id_list.includes(row.get(_atID)));
+            exportTableToCSV.apply(this, [cur_df_raw, outputFile]);
+
+        }
+    } else {
+        exportTableToCSV.apply(this, [_cur_df, outputFile]);
+    }
 
 
     // IF CSV, don't do event.preventDefault() or return false
