@@ -1,51 +1,49 @@
-// draw filter btns
-wt_condition_cols.forEach(wt => {
-    create_filter_btn_and_slider(wt, base_class, wt_base, false);
+// draw filter btns and their sliders
+normal_condition_cols.forEach(wt => {
+    create_filter_btn_and_slider(wt, "normal", base_col_of_normal, false);
 });
 
-
-s1_condition_cols.forEach(s1 => {
-    create_filter_btn_and_slider(s1, mutant_class, s1_base, false);
+mutant_condition_cols.forEach(s1 => {
+    create_filter_btn_and_slider(s1, "mutant", base_col_of_mutant, false);
 });
 pairwise_condition_cols.forEach(p => {
-    create_filter_btn_and_slider(p, pairwise_class, "", true, mutant_class, base_class);
+    create_filter_btn_and_slider(p, "pairwise", "", true, "mutant", "normal");
 });
-
 
 // Define the line.
 var valueLine = d3.svg.line()
     .x(function (d) {
-        return xScale(d.year);
+        return xScale(d.index);
     })
     .y(function (d) {
-        return yScale(d.unemployment);
+        return yScale(d.gene_value);
     });
 
 var zeroLine = d3.svg.line()
     .x(function (d) {
-        // console.log('yyy',x(d.year));
-        return xScale(d.year);
+        // console.log('yyy',x(d.index));
+        return xScale(d.index);
     })
     .y(yScale(0));
 
 // Define the area.
 var valueArea = d3.svg.area()
     .x(function (d) {
-        return xScale(d.year);
+        return xScale(d.index);
     })
     .y1(function (d) {
-        return yScale(d.unemployment);
+        return yScale(d.gene_value);
     });
 
 var zeroArea = d3.svg.area()
     .x(function (d) {
-        return xScale(d.year);
+        return xScale(d.index);
     })
     .y0(yScale(0))
     .y1(yScale(0));
 
 var bisect = d3.bisector(function (d) {
-    return d.year;
+    return d.index;
 }).left;
 
 function change_btn_color_when_click(_this, color) {
@@ -71,9 +69,9 @@ function change_btn_color_when_click(_this, color) {
 
 function auto_filter() {
 
-    $("#stateComparisonListdown").val(_cur_base);
-    let button_list = d3.selectAll(`.${_cur_class}_filter_btn`)[0];
-    filter(button_list, _pairwise, `.${_cur_class}_slider`).then(df => {
+    $("#geneComparisonListdown").val(_cur_base);
+    let button_list = d3.selectAll(`.${_cur_state}_filter_btn`)[0];
+    filter(button_list, _pairwise, `.${_cur_state}_slider`).then(df => {
         updateTableAndVenn(dataTable, df.toCollection());
     });
 
@@ -83,7 +81,7 @@ function auto_filter() {
     //     console.log("123 123 123 123 123 123 123 123 123 123 123 123; display_df.count()", display_df.count()-1);
     //     xAxis.ticks(display_df.count()).tickFormat((_, i) => {
     //         console.log("==============123");
-    //         return display_df.select("atID").toArray().flat()[i];
+    //         return display_df.select(_atID).toArray().flat()[i];
     //     });
     // }
 
@@ -100,16 +98,16 @@ function filter_btn_click_func() {
 
 }
 
-$('.wt_filter_btn').click(filter_btn_click_func);
-$('.s1_filter_btn').click(filter_btn_click_func);
+$('.normal_filter_btn').click(filter_btn_click_func);
+$('.mutant_filter_btn').click(filter_btn_click_func);
 $('.pairwise_filter_btn').click(filter_btn_click_func);
 comparison_radio.on("click", function () {
     let _this = this;
 
-    if (_this.value == "state") {
-        $("#stateComparisonListdown").attr("disabled", false);
+    if (_this.value == "gene") {
+        $("#geneComparisonListdown").attr("disabled", false);
     } else {
-        $("#stateComparisonListdown").attr("disabled", true);
+        $("#geneComparisonListdown").attr("disabled", true);
     }
 });
 
@@ -119,12 +117,13 @@ $("#option_form").on("change", () => {
     updateCharts();
 });
 
-DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 
+DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
+    _atID = data.listColumns()[0];
     DataFrame.fromCSV("data/data_ALL_raw_sorted_by_wthp6Norm.csv").then(df => {
-        _total_data_RAW = df;
+        _total_df_RAW = df;
     })
-    data = data.sortBy(wt_base);
+    data = data.sortBy(base_col_of_normal);
     set_global_varibles_by_CurActiveTab();
     console.log("here, DataFrame.fromCSV");
 
@@ -152,79 +151,79 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 
     let my_all_data = {};
     all_cols.forEach((gene_name) => {
-        let df = display_df.select('atID', gene_name);
-        df = df.rename("atID", names["atID"]).rename(gene_name, names["value"]);
-        df = df.withColumn(names['index'], (row, i) => i + 1)
-            .withColumn(names['gene'], () => gene_name);
+        let df = display_df.select(_atID, gene_name);
+        df = df.rename(gene_name, "gene_value");
+        df = df.withColumn('index', (row, i) => i)
+            .withColumn('gene', () => gene_name);
         my_all_data[gene_name] = df.toCollection();
 
     });
 
 
-    let stateChartData = [];
-    for (let state in my_all_data) {
+    let geneChartData = [];
+    for (let gene in my_all_data) {
         let d = {};
-        d.state = state;
+        d.gene = gene;
         d.series = my_all_data;
-        stateChartData.push(d);
+        geneChartData.push(d);
     }
 
-    var stateOptions = d3.select("#stateOptions");
-    var stateComparisons = d3.select("#stateComparisonListdown");
+    var geneOptions = d3.select("#geneOptions");
+    var geneComparisons = d3.select("#geneComparisonListdown");
 
 
     let tick_ = new Date;
     console.log(".... Inside CHART + READ CSV");
-    stateChartData.forEach(function (d) {
+    geneChartData.forEach(function (d) {
 
         //option checkbox
-        var option = stateOptions
+        var option = geneOptions
             .append("label")
-            .datum(d.state);
+            .datum(d.gene);
 
 
         //check for base col
         option.append("input")
             .attr("type", "checkbox")
             .property("checked", function (d) {
-                return (d == wt_base)
+                return (d == base_col_of_normal)
             })
-            .attr("name", "stateSelection")
+            .attr("name", "geneSelection")
             .attr("id", removeWhitespace)
             .on("click", changeChartDisplay);
 
         option.append("text")
-            .text(d.state);
+            .text(d.gene);
 
         option.append("br");
 
         //dropdown boxes
-        var comparison = stateComparisons.append("option")
-            .datum(d.state)
-            .attr("value", d.state)
-            .text(d.state);
+        var comparison = geneComparisons.append("option")
+            .datum(d.gene)
+            .attr("value", d.gene)
+            .text(d.gene);
 
     });
 
     // re-Scale the range of the data
-    xScale.domain([1, display_index]);
-    // y.domain([0, d3.max(data, function(d) { return d.unemployment; })]);
+    xScale.domain([0, display_index-1]);
+    // y.domain([0, d3.max(data, function(d) { return d.gene_value; })]);
 
     // Create the svgs for the charts.
     svgCharts = d3.select("#unemploymentCharts").selectAll("svg")
-        .data(stateChartData, d => d.state)
+        .data(geneChartData, d => d.gene)
         .enter()
         .append("svg")
         .style("display", "block")
         .attr("id", function (d) {
-            return removeWhitespace(d.state);
+            return removeWhitespace(d.gene);
         })
         .classed("chartActive", function (d) {
-            return d.state == wt_base;
+            return d.gene == base_col_of_normal;
         })
         .attr("width", svgWidth)
         .attr("height", function (d) {
-            if (d.state == wt_base) {
+            if (d.gene == base_col_of_normal) {
                 return svgHeight;
             } else {
                 return 0;
@@ -256,7 +255,7 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
         .attr("clip-path", "url(#sideClip)")
         .attr("class", "baseline")
         .attr("d", (d) => {
-            return zeroLine(d.series[d.state]);
+            return zeroLine(d.series[d.gene]);
         });
 
     // Add the areas.
@@ -265,7 +264,7 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
         .attr("class", "area below")
         .attr("fill", "steelblue")
         .attr("d", function (d) {
-            return zeroArea(d.series[d.state]);
+            return zeroArea(d.series[d.gene]);
         });
 
     svgCharts.append("path")
@@ -274,7 +273,7 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
         .attr("d",
             d => {
                 // console.log(d);
-                zeroArea(d.series[d.state]);
+                zeroArea(d.series[d.gene]);
             }
         );
 
@@ -306,6 +305,20 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
         .attr("transform", "rotate(-90)")
         .text("Expressed (norm)");
 
+    // todo: change name of the chart
+    svgCharts.append("text")
+        .classed("chart_name_on_the_right", true)
+        .datum(function (d) {
+            return d.gene;
+        })
+        .attr("x", w)
+        .attr("y", 0)
+        .attr("text-anchor", "end")
+        .style("font", "15px Arial")
+        .attr("fill", "#888")
+        .text(function (d) {
+            return d;
+        });
 
     _focus_s1 = svgCharts.append("g")
         .attr("class", "s1_focus")
@@ -342,21 +355,12 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
         .attr("x", 18)
         .attr("y", 4);
 
+    let new_height_for_dataTable = this.innerHeight - parseFloat(d3.select("#options").style("height")) -
+        parseFloat(d3.select("#export").style("height"))
+        - parseFloat(d3.select("#next_btn_and_raw_checkbox").style("height")) - 40;
 
-    // todo: change name of the chart
-    svgCharts.append("text")
-        .classed("chart_name_on_the_right", true)
-        .datum(function (d) {
-            return d.state;
-        })
-        .attr("x", w)
-        .attr("y", 0)
-        .attr("text-anchor", "end")
-        .style("font", "15px Arial")
-        .attr("fill", "#888")
-        .text(function (d) {
-            return d;
-        });
+    d3.select("#ipdatacsvDiv")
+        .style("height", new_height_for_dataTable);
 
     console.log(`..... END of read+svg ${(new Date - tick_) / 100}s`);
 
@@ -364,9 +368,9 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
 // Register mouse handlers.
     d3.select("#unemploymentCharts").selectAll("svg")
         .on("mouseover", function (d) {
-            // var focus = d3.select(this).select(".focus");
-            _focus.style("display", null);
-        })
+                _focus.style("display", null);
+
+    })
         .on("mouseout", function (d) {
             let rows = document.querySelectorAll("#ipdatacsvTbl tr");
             Array.from(rows).forEach((d, i) => {
@@ -378,32 +382,33 @@ DataFrame.fromCSV("data/data_ALL_norm.csv").then(data => {
         })
         .on("mousemove", function (d) {
 
+
             let _this = this;
             mousemove_chart(d, _this)
         })
         .on("dblclick", function (d) {
-            changeChartDisplay(d.state);
+            changeChartDisplay(d.gene);
         });
 
 
-    wt_ctrl_btn();
+    normal_ctrl_btn();
 });
 
 
 function show_circle_when_mouseenter_the_dataTable(index, data_and_columnNames) {
-    let tmp = _focus[0].filter(g => _cur_condition_cols.includes(g.__data__.state));
+    let tmp = _focus[0].filter(g => _cur_condition_cols.includes(g.__data__.gene));
 
     tmp.forEach(g => {
 
             let focus = d3.select(g);
-            let data = data_and_columnNames.filter((col) => col[0] == g.__data__.state);
+            let data = data_and_columnNames.filter((col) => col[0] == g.__data__.gene);
             data = data[0];
             focus.style("display", null);
 
             focus.attr("transform", "translate(" + xScale(index) + "," + yScale(data[1]) + ")");
             adjust_tooltip_hover_chart(focus, index, data[1], false);
             focus.select(".tooltip-atID").text(data_and_columnNames[0][1].replace(S1_TEXT, ""));
-            focus.select(".tooltip-value").text(g.__data__.state + ": " + parseFloat(data[1]).toFixed(2));
+            focus.select(".tooltip-value").text(g.__data__.gene + ": " + parseFloat(data[1]).toFixed(2));
         }
     )
 }
@@ -411,20 +416,20 @@ function show_circle_when_mouseenter_the_dataTable(index, data_and_columnNames) 
 function show_circle_when_mouseover_chart(_this, d) {
     let focus = d3.select(_this).select(".focus");
     let x0 = xScale.invert(d3.mouse(_this)[0] - padding.left + 1);
-    let i = bisect(d.series[d.state], x0, 1);
-    let d0 = d.series[d.state][i - 1];
-    let d1 = d.series[d.state][i];
+    let i = bisect(d.series[d.gene], x0, 1);
+    let d0 = d.series[d.gene][i - 1];
+    let d1 = d.series[d.gene][i];
 
     if ((typeof d1 == 'undefined') || (typeof d0 == 'undefined')) {
         return;
     }
-    let d_new = x0 - d0.year > d1.year - x0 ? d1 : d0;
-    focus.attr("transform", "translate(" + xScale(d_new.year) + "," + yScale(d_new.unemployment) + ")");
+    let d_new = x0 - d0.index > d1.index - x0 ? d1 : d0;
+    focus.attr("transform", "translate(" + xScale(d_new.index) + "," + yScale(d_new.gene_value) + ")");
 
-    adjust_tooltip_hover_chart(focus, d_new.year, d_new.unemployment);
+    adjust_tooltip_hover_chart(focus, d_new.index, d_new.gene_value);
 
-    focus.select(".tooltip-atID").text(d_new.month.replace(S1_TEXT, ""));
-    focus.select(".tooltip-value").text(d_new.state + ": " + parseFloat(d_new.unemployment).toFixed(2));
+    focus.select(".tooltip-atID").text(d_new[_atID].replace(S1_TEXT, ""));
+    focus.select(".tooltip-value").text(d_new.gene + ": " + parseFloat(d_new.gene_value).toFixed(2));
     return d_new;
 }
 
@@ -435,17 +440,17 @@ function mousemove_chart(d, _this) {
         return;
     }
 
-    let tmp = _focus[0].filter(g => _cur_condition_cols.includes(g.__data__.state) && g.__data__.state != _this.__data__.state);
+    let tmp = _focus[0].filter(g => _cur_condition_cols.includes(g.__data__.gene) && g.__data__.gene != _this.__data__.gene);
 
     tmp.forEach(g => {
 
             let focus = d3.select(g);
-            let data = d.series[g.__data__.state][d_new.year - 1];
+            let data = d.series[g.__data__.gene][d_new.index];
 
-            focus.attr("transform", "translate(" + xScale(data.year) + "," + yScale(data.unemployment) + ")");
-            adjust_tooltip_hover_chart(focus, data.year, data.unemployment, true);
+            focus.attr("transform", "translate(" + xScale(data.index) + "," + yScale(data.gene_value) + ")");
+            adjust_tooltip_hover_chart(focus, data.index, data.gene_value, true);
             focus.select(".tooltip-atID").text("");
-            focus.select(".tooltip-value").text(g.__data__.state + ": " + parseFloat(data.unemployment).toFixed(2));
+            focus.select(".tooltip-value").text(g.__data__.gene + ": " + parseFloat(data.gene_value).toFixed(2));
         }
     )
 
@@ -453,7 +458,7 @@ function mousemove_chart(d, _this) {
     // change the view of the data table
     let rows = document.querySelectorAll("#ipdatacsvTbl tr");
     let cur_row = Array.from(rows).find((d, i) => {
-        return d.firstChild.textContent.replace(S1_TEXT, "") == d_new.month;
+        return d.firstChild.textContent.replace(S1_TEXT, "") == d_new[_atID];
     });
 
     Array.from(rows).forEach((d, i) => {
@@ -468,22 +473,22 @@ function mousemove_chart(d, _this) {
     });
 }
 
-d3.select("#stateComparisonListdown").on("change", () => {
+d3.select("#geneComparisonListdown").on("change", () => {
     updateCharts();
 
 });
 
-function wt_ctrl_btn() {
+function normal_ctrl_btn(update_venn=true) {
     calc_and_show_stats_table();
 
-    // Tick all wt_cols, except the first one\
-    let checkboxes = document.getElementsByName("stateSelection");
+    // Tick all normal_cols, except the first one\
+    let checkboxes = document.getElementsByName("geneSelection");
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         if (checkboxes[i].id == "all") {
             document.getElementById("all").checked = false;
             // console.log("Skip");
         } else {
-            if (wt_cols.slice(1).includes(checkboxes[i].id)) {
+            if (normal_cols.slice(1).includes(checkboxes[i].id)) {
                 if (!checkboxes[i].checked) {
                     changeChartDisplay(checkboxes[i].id);
                 }
@@ -495,27 +500,27 @@ function wt_ctrl_btn() {
         }
 
     }
-    updateTableAndVenn(dataTable, display_df.toCollection());
+    updateTableAndVenn(dataTable, display_df.toCollection(), update_venn);
 
     // mark comparison
     comparison_radio.prop("checked", true).trigger("click");
-    $("#stateComparisonListdown").attr("disabled", false);
-    $("#stateComparisonListdown").val("wthp6");
+    $("#geneComparisonListdown").attr("disabled", false);
+    $("#geneComparisonListdown").val(_cur_base);
     updateCharts()
 
 }
 
-function s1_ctrl_btn() {
+function mutant_ctrl_btn(update_venn=true) {
 
     calc_and_show_stats_table();
 
-    // Tick all s1_cols, except the first one\
-    let checkboxes = document.getElementsByName("stateSelection");
+    // Tick all mutant_cols, except the first one\
+    let checkboxes = document.getElementsByName("geneSelection");
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         if (checkboxes[i].id == "all") {
             document.getElementById("all").checked = false;
         } else {
-            if (s1_cols.slice(1).includes(checkboxes[i].id)) {
+            if (mutant_cols.slice(1).includes(checkboxes[i].id)) {
                 if (!checkboxes[i].checked) {
                     changeChartDisplay(checkboxes[i].id);
                 }
@@ -528,26 +533,25 @@ function s1_ctrl_btn() {
 
     }
 
-    updateTableAndVenn(dataTable, display_df.toCollection());
-
+    updateTableAndVenn(dataTable, display_df.toCollection(), update_venn)
     // mark comparison
     comparison_radio.prop("checked", true).trigger("click");
-    $("#stateComparisonListdown").attr("disabled", false);
-    $("#stateComparisonListdown").val("s1hp6");
+    $("#geneComparisonListdown").attr("disabled", false);
+    $("#geneComparisonListdown").val(_cur_base);
     updateCharts();
 }
 
-function pairwise_ctrl_btn() {
+function pairwise_ctrl_btn(update_venn=true) {
     calc_and_show_stats_table();
 
-    // Tick all wt_cols, except the first one
-    let checkboxes = document.getElementsByName("stateSelection");
+    // Tick all normal_cols, except the first one
+    let checkboxes = document.getElementsByName("geneSelection");
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         if (checkboxes[i].id == "all") {
             document.getElementById("all").checked = false;
             // console.log("Skip");
         } else {
-            if (s1_cols.includes(checkboxes[i].id)) {
+            if (mutant_cols.includes(checkboxes[i].id)) {
                 if (!checkboxes[i].checked) {
                     changeChartDisplay(checkboxes[i].id);
                 }
@@ -559,18 +563,17 @@ function pairwise_ctrl_btn() {
         }
     }
 
-    updateTableAndVenn(dataTable, display_df.toCollection());
-
+    updateTableAndVenn(dataTable, display_df.toCollection(), update_venn)
     // mark comparison for s1
     comparison_radio.prop("checked", true);
-    $("#stateComparisonListdown").attr("disabled", true);
+    $("#geneComparisonListdown").attr("disabled", true);
     updateCharts(); //todo check here
 }
 
 function custom_ctrl_btn() {
 
     // untick all, except the first one\
-    let checkboxes = document.getElementsByName("stateSelection");
+    let checkboxes = document.getElementsByName("geneSelection");
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         if (checkboxes[i].id == "all") {
             document.getElementById("all").checked = false;
@@ -589,72 +592,72 @@ function custom_ctrl_btn() {
     updateDataForSVGCharts();
     updateTable(dataTable, display_df.toCollection());
 
-    $("#stateComparisonListdown").attr("disabled", false);
-    $("#stateComparisonListdown").val("wthp6");
+    $("#geneComparisonListdown").attr("disabled", false);
+    $("#geneComparisonListdown").val("wthp6");
     $('#noComparison').prop('checked', true)
     comparison_radio.trigger("change");
 }
 
 function changeChartDisplay(d) {
     var id = d.replace(/\s+/g, '');
-    var stateChart = d3.select("#unemploymentCharts")
+    var geneChart = d3.select("#unemploymentCharts")
         .select("#" + id);
 
 
-    var stateCheckBox = d3.select("#stateOptions").select("#" + id);
-    var active = stateChart.classed("chartActive");
+    var geneCheckBox = d3.select("#geneOptions").select("#" + id);
+    var active = geneChart.classed("chartActive");
 
     if (!active) {
         // console.log("changeChartDisplay: inactive -> active");
-        stateCheckBox.property("checked", true);
-        stateChart
+        geneCheckBox.property("checked", true);
+        geneChart
             .attr("height", svgHeight)
             .attr("opacity", 1);
 
     } else {
         // console.log("changeChartDisplay:  active -> inactive");
 
-        stateCheckBox.property("checked", false);
-        stateChart
+        geneCheckBox.property("checked", false);
+        geneChart
             .attr("height", 0)
             .attr("opacity", 0);
     }
-    stateChart.classed("chartActive", !active);
+    geneChart.classed("chartActive", !active);
 }
 
 function updateChartNoComparison() {
     this.select(".area.below")
         .attr("fill", "steelblue")
         .attr("d", function (d) {
-            return valueArea.y0(yScale(0))(d.series[d.state]);
+            return valueArea.y0(yScale(0))(d.series[d.gene]);
         });
 
     this.select(".area.above")
         .attr("d", function (d) {
-            return zeroArea.y0(yScale(0))(d.series[d.state]);
+            return zeroArea.y0(yScale(0))(d.series[d.gene]);
         });
 
     this.select(".baseline")
         .attr("d", function (d) {
-            return valueLine(d.series[d.state]);
+            return valueLine(d.series[d.gene]);
         });
 
     this.select(".x.axis")
         .call(xAxis)
         .selectAll(`text`)
-        .style(`text-anchor`, `end`);
+        .style(`text-anchor`, `middle`);
 
     this.select(".y.axis")
         .call(yAxis);
 }
 
-function updateChartStateComparison(d, pairwise) {
-    let comparedState;
+function updateChartgeneComparison(d, pairwise) {
+    let comparedgene;
     //Todo: need a better way to get the data
     if (pairwise) {
-        comparedState = get_responding_wt_from_s1(d["0"]["0"].__data__.state)//document.getElementById("stateComparisonListdown").value;
+        comparedgene = get_responding_normal_from_mutant(d["0"]["0"].__data__.gene)
     } else {
-        comparedState = document.getElementById("stateComparisonListdown").value;
+        comparedgene =   _cur_base;
     }
 
     // Update areas.
@@ -662,29 +665,29 @@ function updateChartStateComparison(d, pairwise) {
         .attr("fill", MY_COLORS.green)
         .attr("d", function (d) {
             var y0 = function (a, i) {
-                return yScale(d3.min([d.series[comparedState][i].unemployment, d.series[d.state][i].unemployment]));
+                return yScale(d3.min([d.series[comparedgene][i].gene_value, d.series[d.gene][i].gene_value]));
             };
-            return valueArea.y0(y0)(d.series[d.state]);
+            return valueArea.y0(y0)(d.series[d.gene]);
         });
     this.select(".area.above")
         .attr("d", function (d) {
             var y0 = function (a, i) {
-                return yScale(d3.max([d.series[comparedState][i].unemployment, d.series[d.state][i].unemployment]));
-                //return y(d.series[comparedState][i].unemployment);
+                return yScale(d3.max([d.series[comparedgene][i].gene_value, d.series[d.gene][i].gene_value]));
+                //return y(d.series[comparedgene][i].gene_value);
             };
-            return valueArea.y0(y0)(d.series[d.state]);
+            return valueArea.y0(y0)(d.series[d.gene]);
         });
 
     this.select(".baseline")
         .attr("d", function (d) {
-            return valueLine(d.series[d.state]);
+            return valueLine(d.series[d.gene]);
         });
 
 
     this.select(".x.axis")
         .call(xAxis)
         .selectAll(`text`)
-        .style(`text-anchor`, `end`);
+        .style(`text-anchor`, `middle`);
     // console.log("xAxis", xAxis);
 
     this.select(".y.axis")
@@ -693,7 +696,17 @@ function updateChartStateComparison(d, pairwise) {
 
 function updateCharts(pairwise = _pairwise) {
 
-    xScale.domain([1, display_index]);
+    xScale.domain([0, display_index-1]);
+    if (display_index<10){
+        xAxis.tickValues([...Array(display_index).keys()]
+        ).tickFormat((i) => {
+            return display_df.select(_atID).toArray().flat()[i];
+        });
+    }
+    else{
+        xAxis.ticks(10).tickValues(null);
+
+    }
 
     // Update the charts.
     var activeCharts = d3.select("#unemploymentCharts").selectAll(".chartActive");
@@ -702,7 +715,7 @@ function updateCharts(pairwise = _pairwise) {
     // console.log("activeCharts", activeCharts);
     var inactiveCharts = allCharts.filter(function (obj) {
         return !activeCharts[0].some(function (obj2) {
-            return removeWhitespace(obj.state) == obj2.id;
+            return removeWhitespace(obj.gene) == obj2.id;
         });
     });
 
@@ -725,24 +738,24 @@ function updateCharts(pairwise = _pairwise) {
                     .call(updateChartNoComparison);
             }
         });
-    } else if (document.getElementById("stateComparison").checked) {
-        // State comparisons selected.
+    } else if (document.getElementById("geneComparison").checked) {
+        // gene comparisons selected.
         activeCharts[0].forEach(function (d, i, array) {
             // If the chart is active, transition.  Otherwise, don't.
             if (array[i].id == array[array.length - 1].id) {
                 d3.select(d)
-                    .call(updateChartStateComparison, pairwise)
+                    .call(updateChartgeneComparison, pairwise)
                     .transition().duration(1)
                     .each("end", function (a) {
                         inactiveCharts[0].forEach(function (d) {
                             d = d3.select(d);
-                            d.call(updateChartStateComparison, pairwise);
+                            d.call(updateChartgeneComparison, pairwise);
                         });
                     });
 
             } else {
                 d3.select(d)
-                    .call(updateChartStateComparison, pairwise);
+                    .call(updateChartgeneComparison, pairwise);
             }
         });
     }
@@ -753,22 +766,22 @@ function updateDataForSVGCharts() {
     let my_all_data = {};
 
     all_cols.forEach((gene_name) => {
-        let tmp_df = display_df.select('atID', gene_name);
-        tmp_df = tmp_df.rename("atID", names["atID"]).rename(gene_name, names["value"]);
-        tmp_df = tmp_df.withColumn(names['index'], (row, i) => i + 1)
-            .withColumn(names['gene'], () => gene_name);
+        let tmp_df = display_df.select(_atID, gene_name);
+        tmp_df = tmp_df.rename(gene_name, "gene_value");
+        tmp_df = tmp_df.withColumn('index', (row, i) => i)
+            .withColumn('gene', () => gene_name);
         my_all_data[gene_name] = tmp_df.toCollection();
     })
 
 
-    let stateChartData = [];
-    for (let state in my_all_data) {
+    let geneChartData = [];
+    for (let gene in my_all_data) {
         let d = {};
-        d.state = state;
+        d.gene = gene;
         d.series = my_all_data;
-        stateChartData.push(d);
+        geneChartData.push(d);
     }
-    d3.select("#unemploymentCharts").selectAll("svg").data(stateChartData, d => d.state);
+    d3.select("#unemploymentCharts").selectAll("svg").data(geneChartData, d => d.gene);
 }
 
 
@@ -808,7 +821,7 @@ function filter_data(button_list, pairwise, df, slider_class) {
     let filteredDf = df;
     let cur_base_condition;
     if (!pairwise) {
-        cur_base_condition = document.getElementById("stateComparisonListdown").value;
+        cur_base_condition = document.getElementById("geneComparisonListdown").value;
         for (let i = 0, n = button_list.length; i < n; i++) {
             let bt = d3.select(button_list[i]);
             let col = bt.text().split(" ")[0];
@@ -835,7 +848,7 @@ function filter_data(button_list, pairwise, df, slider_class) {
 
             let bt = d3.select(button_list[i]);
             let col = bt.text().split(" ")[0];
-            cur_base_condition = get_responding_wt_from_s1(col);
+            cur_base_condition = get_responding_normal_from_mutant(col);
             let slider = slider_ctrl_list.find((slider => slider.id.split("_")[1] == col.replace("s1", "")));
 
 
@@ -881,7 +894,7 @@ $(document.getElementById("next_page")).on("click", () => {
 
     updateDataForSVGCharts();
     updateCharts();
-    updateTableAndVenn(); //todo: dont need to change venn
+    updateTableAndVenn( dataTable, display_df.toCollection(), false); //todo: dont need to change venn
     print_paging_sms_for_chart();
 
 
@@ -912,7 +925,6 @@ $(document.getElementById("previous_page")).on("click", () => {
     updateDataForSVGCharts();
     updateCharts();
 
-    // todo: fix pairwise (have a func to auto pick mode) + class for color
     updateTableAndVenn();
 
     print_paging_sms_for_chart();
@@ -951,6 +963,21 @@ $("#export").click(function (event) {
 
     // CSV
     exportTableToCSV.apply(this, [_cur_df, outputFile]);
+    //
+    if ($("#raw_data").is(':checked')) {
+        if (_cur_df.count() == display_index){
+            exportTableToCSV.apply(this, [display_df_RAW, outputFile]);
+        }
+        else{
+            let all_id_list = _cur_df.select(_atID).toArray().flat();
+            let cur_df_raw = _total_df_RAW.filter(row => all_id_list.includes(row.get(_atID)));
+            exportTableToCSV.apply(this, [cur_df_raw, outputFile]);
+
+        }
+    } else {
+        exportTableToCSV.apply(this, [_cur_df, outputFile]);
+    }
+
 
     // IF CSV, don't do event.preventDefault() or return false
     // We actually need this to be a typical hyperlink
@@ -958,9 +985,6 @@ $("#export").click(function (event) {
 
 
 $("#raw_data_form :checkbox").change(() => {
-
-    if (typeof _total_RAW_data == "undefined") {
-    }
 
     if ($("#raw_data").is(':checked')) {
         show_raw_data = true;
@@ -973,36 +997,41 @@ $("#raw_data_form :checkbox").change(() => {
 
 function set_global_varibles_by_CurActiveTab() {
     console.log("cur_active_tab ====", cur_active_tab);
-    if (cur_active_tab == tab_names["base_class"]) {
+    if (cur_active_tab == tab_names["normal_class"]) {
         _pairwise = false;
-        _cur_base = wt_base;
-        _cur_condition_cols = wt_condition_cols;
-        _cur_class = base_class;
+        _cur_base = base_col_of_normal;
+        _cur_condition_cols = normal_condition_cols;
+        _cur_class = normal_class;
 
-        _cur_master_slider = wt_master_slider;
-        _cur_master_slider_value = wt_master_slider_value;
+        _cur_master_slider = normal_master_slider;
+        _cur_master_slider_value = normal_master_slider_value;
 
-        _cur_venn_chart = venn_chart_wt;
-        _cur_venn_div = venn_div_wt;
+        _cur_venn_chart = venn_chart_normal;
+        _cur_venn_div = venn_div_normal;
 
-        _cur_statsTable = wt_statsTable;
+        _cur_statsTable = normal_statsTable;
 
-        // _cur_filter_set = wt_filter_set;
+        _cur_state = "normal"
+
+        // _cur_filter_set = normal_filter_set;
 
     } else if (cur_active_tab == tab_names["mutant_class"]) {
         _pairwise = false;
-        _cur_base = s1_base;
-        _cur_condition_cols = s1_condition_cols;
+        _cur_base = base_col_of_mutant;
+        _cur_condition_cols = mutant_condition_cols;
         _cur_class = mutant_class;
 
-        _cur_master_slider = s1_master_slider;
-        _cur_master_slider_value = s1_master_slider_value;
+        _cur_master_slider = mutant_master_slider;
+        _cur_master_slider_value = mutant_master_slider_value;
 
-        _cur_venn_chart = venn_chart_s1;
-        _cur_venn_div = venn_div_s1;
+        _cur_venn_chart = venn_chart_mutant;
+        _cur_venn_div = venn_div_mutant;
 
-        _cur_statsTable = s1_statsTable;
-        // _cur_filter_set = s1_filter_set;
+        _cur_statsTable = mutant_statsTable;
+        // _cur_filter_set = mutant_filter_set;
+
+        _cur_state = "mutant";
+
 
     } else if (cur_active_tab == tab_names["pairwise_class"]) {
         _pairwise = true;
@@ -1018,6 +1047,8 @@ function set_global_varibles_by_CurActiveTab() {
 
         _cur_statsTable = pairwise_statsTable;
         // _cur_filter_set = pairwise_filter_set;
+
+        _cur_state = "pairwise";
     }
 }
 
@@ -1033,7 +1064,7 @@ function resize() {
     svgCharts.selectAll('.x.axis')
         .call(xAxis)
         .selectAll(`text`)
-        .style(`text-anchor`, `end`);
+        .style(`text-anchor`, `middle`);
 
 
     svgCharts.selectAll(".rect_class")
@@ -1068,19 +1099,24 @@ function resize() {
     svgWidth = w + padding.left + padding.right;
 
     d3.select("#unemploymentCharts").selectAll("svg")
-        .attr("width", svgWidth)
+        .attr("width", svgWidth);
 
-    // xAxis.ticks(Math.max(width/75, 2));
-    // yAxis.ticks(Math.max(h/50, 2));
 
+    let new_height_for_dataTable = this.innerHeight - parseFloat(d3.select("#options").style("height")) -
+        parseFloat(d3.select("#export").style("height"))
+    - parseFloat(d3.select("#next_btn_and_raw_checkbox").style("height")) - 40;
+
+    d3.select("#ipdatacsvDiv")
+        .style("height", new_height_for_dataTable);
 };
 
 // Call the resize function whenever a resize event occurs
 d3.select(window).on('resize', resize);
 
-// Call the resize function
 
 $(document.getElementById("file-input")).on("change", function f(ent) {
+    document.getElementById("loader").style.display = "block";
+
     loadFileAsText();
 });
 
@@ -1108,22 +1144,377 @@ function loadFileAsText(evt) {
 
 
 function processFile(e) {
-    let file = e.target.result, lines;
 
-    lines = file.split("\n");
+    let file = e.target.result, lines;
+    _upload_file=true;
+
+    lines = file.trim().split("\n");
     lines = lines.map(line => line.split(","));
     let header = lines[0];
-    const df = new DataFrame(lines.slice(1), header);
+
+    _atID = header[0];
+
+    let sort_by_col = header[1]+"_norm";
+    let raw_and_norm_data = lines.slice(1).map(norm_row);
+    let raw_and_norm_df = new DataFrame(raw_and_norm_data, [...header, ...header.slice(1).map(col => col+"_norm")]);
+    raw_and_norm_df = raw_and_norm_df.sortBy(sort_by_col);
 
 
-    _cur_df = df;
-    _total_df = df;
+
+
+    _total_df_RAW = raw_and_norm_df.select(...header);
+    let columns = _total_df_RAW.listColumns();
+
+
+    _total_df = raw_and_norm_df.select(_atID,...header.slice(1).map(col => col+"_norm")).renameAll(columns);
+    _cur_df = _total_df;
+
+    raw_and_norm_df.show();
+
+    normal_cols = columns.slice(1, Math.floor(columns.length / 2) + 1);
+    mutant_cols = columns.slice(Math.floor(columns.length / 2) + 1);
+    all_cols = columns.slice(1);
+
+
+
+    let low_cpm  = lines.slice(1).map(get_row_low_cpm).filter(function(n){return n; });
+    let low_log2fold  = lines.slice(1).map(row => get_row_low_log2fold(row.slice(0, normal_cols.length+1))).filter(function(n){return n; });
+
+    console.log("low_cpm", low_cpm);
+    console.log("low_log2fold", low_log2fold);
+
+
+
+    _set_data_venn = read_data_for_venn_with_upload_file(low_cpm, low_log2fold);
+    let sets_venn = create_sets_obj_for_venn();
+    draw_venn(sets_venn);
+
+    base_col_of_normal = normal_cols[0];
+    base_col_of_mutant = mutant_cols[0];
+    normal_condition_cols = normal_cols.slice(1);
+    mutant_condition_cols = mutant_cols.slice(1);
+
+    pairwise_condition_cols = mutant_cols;
+
+
+    normal_class = get_class_type(normal_cols);
+    mutant_class = get_class_type(mutant_cols);
+    pairwise_class = "pairwise";
+
+    MAP_CLASS["normal"] = normal_class;
+    MAP_CLASS["mutant"] = mutant_class;
+
     reset_DisplayIndex_and_DisplayDF();
-    updateDataForSVGCharts();
-    updateCharts();
-    updateTableAndVenn(); //todo: dont need to change venn
-    calc_and_show_stats_table();
+
+
+    document.getElementById("p_normal_intro").innerHTML = `Compare each <b>${normal_class}</b> conditioned test with <b>${base_col_of_normal}</b>`;
+    document.getElementById("p_mutant_intro").innerHTML = `Compare each <b>${mutant_class}</b> conditioned test with <b>${base_col_of_mutant}</b>`;
+    document.getElementById("p_pairwise_intro").innerHTML = `Pairwise comparison: <b>${mutant_class}</b> vs. <b>${normal_class}</b>`;
+
+
+
+    document.getElementById("normal_tab").innerHTML = `${normal_class.toUpperCase()}(s) Comparision`;
+    document.getElementById("mutant_tab").innerHTML = `${mutant_class.toUpperCase()}(s) Comparision`;
+    document.getElementById("pairwise_tab").innerHTML = `${pairwise_class.toUpperCase()} Comparision`;
+
+    my_all_data = {};
+    all_cols.forEach((gene_name) => {
+        let df = display_df.select(_atID, gene_name);
+        df = df.rename(gene_name, "gene_value");
+        df = df.withColumn('index', (row, i) => i)
+            .withColumn('gene', () => gene_name);
+        my_all_data[gene_name] = df.toCollection();
+
+    });
+    let geneChartData = [];
+    for (let gene in my_all_data) {
+        let d = {};
+        d.gene = gene;
+        d.series = my_all_data;
+        geneChartData.push(d);
+    }
+
+    var geneOptions = d3.select("#geneOptions");
+    var geneComparisons = d3.select("#geneComparisonListdown");
+
+    d3.select("#geneOptions").selectAll("label").remove();
+
+    d3.select("#geneComparisonListdown").selectAll("option").remove();
+    geneChartData.forEach(function (d) {
+
+        //option checkbox
+        var option = geneOptions
+            .append("label")
+            .datum(d.gene);
+
+
+        //check for base col
+        option.append("input")
+            .attr("type", "checkbox")
+            .property("checked", function (d) {
+                return (d == base_col_of_normal)
+            })
+            .attr("name", "geneSelection")
+            .attr("id", removeWhitespace)
+            .on("click", changeChartDisplay);
+
+        option.append("text")
+            .text(d.gene);
+
+        option.append("br");
+
+        //dropdown boxes
+        var comparison = geneComparisons.append("option")
+            .datum(d.gene)
+            .attr("value", d.gene)
+            .text(d.gene);
+
+    });
+
+    d3.select("#unemploymentCharts").selectAll("svg").remove();
+    svgCharts = d3.select("#unemploymentCharts").selectAll("svg")
+        .data(geneChartData, d => d.gene)
+        .enter()
+        .append("svg")
+        .style("display", "block")
+        .attr("id", function (d) {
+            return removeWhitespace(d.gene);
+        })
+        .classed("chartActive", function (d) {
+            return d.gene == base_col_of_normal;
+        })
+        .attr("width", svgWidth)
+        .attr("height", function (d) {
+            if (d.gene == base_col_of_normal) {
+                return svgHeight;
+            } else {
+                return 0;
+            }
+        })
+        .append("g")
+        .attr("transform", "translate(" + padding.left + "," + padding.top + ")");
+
+    var defs = svgCharts.append("defs");
+
+    // Add background.
+    svgCharts.append("rect")
+        .classed("rect_class", true)
+        .attr("transform", "translate(0,-" + padding.top + ")")
+        .attr("width", w)
+        .attr("height", h + padding.top + padding.bottom)
+        .attr("fill", "white");
+
+    // Side clip-path.
+    defs.append("clipPath")
+        .attr("id", "sideClip")
+        .append("rect")
+        .attr("transform", "translate(0,-" + padding.top + ")")
+        .attr("width", w)
+        .attr("height", h + padding.top);
+
+    // Add the baseline.
+    svgCharts.append("path")
+        .attr("clip-path", "url(#sideClip)")
+        .attr("class", "baseline")
+        .attr("d", (d) => {
+            return zeroLine(d.series[d.gene]);
+        });
+
+    // Add the areas.
+    svgCharts.append("path")
+        .attr("clip-path", "url(#sideClip)")
+        .attr("class", "area below")
+        .attr("fill", "steelblue")
+        .attr("d", function (d) {
+            return zeroArea(d.series[d.gene]);
+        });
+
+    svgCharts.append("path")
+        .attr("clip-path", "url(#sideClip)")
+        .attr("class", "area above")
+        .attr("d",
+            d => {
+                // console.log(d);
+                zeroArea(d.series[d.gene]);
+            }
+        );
+
+// Area gets drawn in updateCharts()
+// Draw the axes.
+    svgCharts.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + h + ")")
+
+
+// text label for the x axis
+    svgCharts.append("text")
+        .classed("y_label", true)
+        .attr("transform",
+            "translate(" + (w) + " ," +
+            (h) + ")")
+        .style("text-anchor", "end")
+        .text("Gene Name");
+
+
+    svgCharts.append("g")
+        .attr("class", "y axis");
+
+// Add y-axis label.
+    svgCharts.append("text")
+        .attr("text-anchor", "end")
+        .attr("y", 6)
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90)")
+        .text("Expressed (norm)");
+
+
+    svgCharts.append("text")
+        .classed("chart_name_on_the_right", true)
+        .datum(function (d) {
+            return d.gene;
+        })
+        .attr("x", w)
+        .attr("y", 0)
+        .attr("text-anchor", "end")
+        .style("font", "15px Arial")
+        .attr("fill", "#888")
+        .text(function (d) {
+            return d;
+        });
+
+
+
+    // focus - circle when point on the chart
+    _focus = svgCharts.append("g")
+        .attr("class", "focus")
+        .style("display", "None");
+
+    _focus.append("circle")
+        .attr("r", 4);
+
+    _focus.append("rect")
+        .attr("class", "tooltip")
+        .attr("width", 78)
+        .attr("height", 35)
+        .attr("x", 10)
+        .attr("y", -22)
+        .attr("rx", 4)
+        .attr("ry", 4);
+
+    _focus.append("text")
+        .attr("class", "tooltip-atID")
+        .attr("x", 18)
+        .attr("y", -12);
+
+    _focus.append("text")
+        .attr("class", "tooltip-value")
+        .attr("x", 18)
+        .attr("y", 4);
+
+
+// Register mouse handlers.
+    d3.select("#unemploymentCharts").selectAll("svg")
+        .on("mouseover", function (d) {
+            _focus.style("display", null);
+
+        })
+        .on("mouseout", function (d) {
+            let rows = document.querySelectorAll("#ipdatacsvTbl tr");
+            Array.from(rows).forEach((d, i) => {
+                d.style.fontWeight = "normal";
+                d.style.backgroundColor = i % 2 == 0 ? '#ececec' : '#ffffff'
+            });
+
+            _focus.style("display", "none");
+        })
+        .on("mousemove", function (d) {
+
+            let _this = this;
+            mousemove_chart(d, _this)
+        })
+        .on("dblclick", function (d) {
+            changeChartDisplay(d.gene);
+        });
+
+    d3.select("#mutant_comparison").selectAll(".btn-group").selectAll("*").remove();
+    d3.select("#normal_comparison").selectAll(".btn-group").selectAll("*").remove();
+    d3.select("#pairwise_comparison").selectAll(".btn-group").selectAll("*").remove();
+
+    normal_condition_cols.forEach(wt => {
+        create_filter_btn_and_slider(wt, "normal", base_col_of_normal, false);
+    });
+
+    mutant_condition_cols.forEach(s1 => {
+        create_filter_btn_and_slider(s1, "mutant", base_col_of_mutant, false);
+    });
+    pairwise_condition_cols.forEach(p => {
+        create_filter_btn_and_slider(p, "pairwise", "", true, "mutant", "normal");
+    });
+
+
+
+    $('.normal_filter_btn').click(filter_btn_click_func);
+    $('.mutant_filter_btn').click(filter_btn_click_func);
+    $('.pairwise_filter_btn').click(filter_btn_click_func);
+    comparison_radio.on("click", function () {
+        let _this = this;
+
+        if (_this.value == "gene") {
+            $("#geneComparisonListdown").attr("disabled", false);
+        } else {
+            $("#geneComparisonListdown").attr("disabled", true);
+        }
+    });
+
+    $("#all").on("click", selectAllCheckboxes);
+
+    $("#option_form").on("change", () => {
+        updateCharts();
+    });
+
+
+    normal_condition_cols.forEach(wt => update_text_when_sliders_change(wt, false));
+    mutant_condition_cols.forEach(s1 => update_text_when_sliders_change(s1, false));
+    pairwise_condition_cols.forEach(pairwise_col => update_text_when_sliders_change(pairwise_col, true));
+
+    normal_master_slider.oninput = master_slider_oninput;
+    mutant_master_slider.oninput = master_slider_oninput;
+    pairwise_master_slider.oninput = master_slider_oninput;
+
+
+    set_global_varibles_by_CurActiveTab();
     print_paging_sms_for_chart();
+
+
+
+    if (cur_active_tab == tab_names["normal_class"]) {
+        normal_ctrl_btn();
+
+
+    } else if (cur_active_tab == tab_names["mutant_class"]) {
+        mutant_ctrl_btn();
+
+
+
+    } else if (cur_active_tab == tab_names["pairwise_class"]) {
+        pairwise_ctrl_btn();
+
+    }
+    document.getElementById("loader").style.display = "none";
+
+}
+
+function get_class_type(arr) {
+    let len_arr = arr.map(x => x.length);
+    let min_len = Math.min(...len_arr);
+    for (let i = min_len - 1; i >= 0; i--) {
+        let sub_arr = arr.map(x => x.slice(0, i));
+        let unique_sub_arr = sub_arr.filter((v, i, a) => a.indexOf(v) === i);
+        if (unique_sub_arr.length == 1) {
+            return unique_sub_arr[0]
+        }
+    }
+    return "Unknown";
 }
 
 

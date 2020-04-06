@@ -16,14 +16,18 @@
 <div id="unemploymentCharts">
 </div>
 
-<!-- All the options for the visualization (states, years, etc.) -->
+<!-- All the options for the visualization -->
+<form enctype="multipart/form-data" action="/upload" method="post" id="upload">
+    <input id="file-input" type="file" />
+</form>
+
 <div id="options">
     <div style="font-size: 17px">Control Panel</div>
     <div class="tab">
-        <button class="tablinks active" onclick="openTab(event, 'wt_comparison')">WT(s) Comparison</button>
-        <button class="tablinks" onclick="openTab(event, 's1_comparison')">S1(s) Comparison</button>
-        <button class="tablinks" onclick="openTab(event, 'pairwise_comparison')">S1(s) vs. WT(s)</button>
-        <button class="tablinks" onclick="openTab(event, 'custom_mode')">Custom Mode</button>
+        <button id="normal_tab" class="tablinks active" onclick="openTab(event, 'normal_comparison')">WT(s) Comparison</button>
+        <button id="mutant_tab" class="tablinks" onclick="openTab(event, 'mutant_comparison')">S1(s) Comparison</button>
+        <button id="pairwise_tab" class="tablinks" onclick="openTab(event, 'pairwise_comparison')">S1(s) vs. WT(s)</button>
+        <button id="custom_tab" class="tablinks" onclick="openTab(event, 'custom_mode')">Custom Mode</button>
 
     </div>
 
@@ -32,44 +36,44 @@
             <h4>Compare To</h4>
             <form id="option_form">
                 <input type="radio" name="comparison" id="noComparison" value="none" checked> No Comparison<br>
-                <input type="radio" name="comparison" id="stateComparison" value="state" display="inline"> Base
+                <input type="radio" name="comparison" id="geneComparison" value="gene" display="inline"> Base
                 Condition
             </form>
-            <select id="stateComparisonListdown" name="states" disabled>
+            <select id="geneComparisonListdown" name="genes" disabled>
             </select>
             <br>
             <br>
             <br>
         </div>
-        <div id="stateOptions">
-            <input type="checkbox" id="all" name="stateSelection"> Select All<br>
+        <div id="geneOptions">
+            <input type="checkbox" id="all" name="geneSelection"> Select All<br>
         </div>
     </div>
 
-    <div id="wt_comparison" class="tabcontent" style="display:block">
-        <p>Compare each conditioned test with <b>wthp6</b></p>
+    <div id="normal_comparison" class="tabcontent" style="display:block">
+        <p id="p_normal_intro">Compare each conditioned test with <b>wthp6</b></p>
         <div class="btn-group"></div>
         <div class="statTable_and_Venn_div">
             <div class="statsTable_and_MasterSlider">
                 <div class="master_slider_div"></div>
             </div>
-            <div id="venn_wt" class="venn_diagram"></div>
+            <div id="venn_normal" class="venn_diagram"></div>
         </div>
     </div>
 
-    <div id="s1_comparison" class="tabcontent">
-        <p>Compare each conditioned test s1 with <b>s1hp6</b></p>
+    <div id="mutant_comparison" class="tabcontent">
+        <p id="p_mutant_intro">Compare each conditioned test s1 with <b>s1hp6</b></p>
         <div class="btn-group"></div>
         <div class="statTable_and_Venn_div">
             <div class="statsTable_and_MasterSlider">
                 <div class="master_slider_div"></div>
             </div>
-            <div id="venn_s1" class="venn_diagram"></div>
+            <div id="venn_mutant" class="venn_diagram"></div>
         </div>
     </div>
 
     <div id="pairwise_comparison" class="tabcontent">
-        <p>Compare each conditioned <b>s1</b> with its responding <b>wt</b> (e.g., <i>s1hp6 vs. wthp6</i>)</p>
+        <p id="p_pairwise_intro">Compare each conditioned <b>s1</b> with its responding <b>wt</b> (e.g., <i>s1hp6 vs. wthp6</i>)</p>
         <div class="btn-group"></div>
         <div class="statTable_and_Venn_div">
             <div class="statsTable_and_MasterSlider">
@@ -82,11 +86,8 @@
 </div>
 
 
-<div class="dataTable_and_print">
-    <!--    <h3 class="printNumber" id="printNumGenes"></h3>-->
-    <div class="dataTable" id="ipdatacsvDiv">
-        <table id="ipdatacsvTbl"></table>
-    </div>
+<div class="dataTable" id="ipdatacsvDiv">
+    <table id="ipdatacsvTbl"></table>
 </div>
 
 <div id = next_btn_and_raw_checkbox>
@@ -100,18 +101,13 @@
         <input type="checkbox" id="raw_data" name="raw_data" value="raw_data">
         <label for="raw_data">Raw data</label>
     </form>
-</div>
-
-
-
-
-<div id="upload_and_down_div">
-    <form enctype="multipart/form-data" action="/upload" method="post" id="upload">
-        <input id="file-input" type="file" />
-    </form>
 
     <a href="#" class="down_btn" id="export"><i class="fa fa-download"></i> Export Table</a>
+
 </div>
+
+<div id="loader" style="display:none"></div>
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>

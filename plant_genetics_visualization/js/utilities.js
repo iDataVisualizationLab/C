@@ -19,8 +19,8 @@ function reset_color(button_list) {
 
 }
 
-function get_responding_wt_from_s1(wt_name) {
-    return wt_name.replace("s1", "wt");
+function get_responding_normal_from_mutant(wt_name) {
+    return wt_name.replace(mutant_class, normal_class);
 }
 
 function change_color_slider_bar(btn, val, left_color, right_color, gradient = false) {
@@ -92,13 +92,13 @@ function permutator_base_3(res, results, n) {
 }
 
 
-function create_filter_btn_and_slider(col, test_class, base_col, pairwise, mutant_class, base_class) {
+function create_filter_btn_and_slider(col, test_class, base_col, pairwise, mutant, normal) {
     let btn_id, btn_text, slider_id, slider_value_id, parent_element, btn_filter_class, slider_class;
     if (pairwise) {
-        base_col = col.replace(mutant_class, base_class);
+        base_col = col.replace(MAP_CLASS[mutant], MAP_CLASS[normal]);
         btn_text = col + " vs. " + base_col;
 
-        col = col.replace(mutant_class, "pairwise_"); // after getting btn_text, change col
+        col = col.replace(MAP_CLASS[mutant], "pairwise_"); // after getting btn_text, change col
     } else {
         btn_text = col + " vs. " + base_col;
 
@@ -110,6 +110,7 @@ function create_filter_btn_and_slider(col, test_class, base_col, pairwise, mutan
     slider_class = test_class + "_slider";
 
     parent_element = "#" + test_class + "_comparison";
+
 
     let btn_and_slider = d3.select(parent_element)
         .select('.btn-group')
@@ -209,4 +210,42 @@ function adjust_tooltip_hover_chart(focus, x_index, y_value, turn_off_atID = fal
     }
 
 
+}
+
+
+function norm_row(row){
+    let max_value = Math.max(...row.slice(1).map(Number) );
+    if (Math.abs(max_value - 0) < 0.000001){
+        return [row[0], ...row.slice(1).map(Number),...row.slice(1).map(Number)];
+    }
+    else
+        return [row[0], ...row.slice(1).map(Number),...row.slice(1).map(x => parseFloat(x)/max_value)];
+
+}
+
+function get_row_low_log2fold(row_of_norm_class, thres=0.5) {
+    let data = row_of_norm_class.slice(1).map(Number);
+
+    for (let i = 1; i < data.length; i++){
+        if (Math.abs(Math.log2(data[i]/ (data[0] + 0.00001))) > thres) {
+            return;
+        }
+    }
+    return row_of_norm_class[0];
+}
+
+function get_row_low_cpm(row) {
+    let count = 0;
+    let data = row.slice(1);
+    for (let i = 0; i < data.length; i++){
+        if (data[i] < 1){
+            count++;
+        }
+    }
+    if (count >= data.length - 1){
+        return row[0];
+    }
+    else{
+        return ;
+    }
 }
