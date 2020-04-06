@@ -78,8 +78,6 @@ let S1_TEXT = " (STOP1)";
 let show_raw_data=false;
 
 let id_set_data;
-let _upload = false;
-
 let _atID;
 
 let MAP_CLASS = {

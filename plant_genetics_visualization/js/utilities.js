@@ -19,8 +19,8 @@ function reset_color(button_list) {
 
 }
 
-function get_responding_wt_from_s1(wt_name) {
-    return wt_name.replace("s1", "wt");
+function get_responding_normal_from_mutant(wt_name) {
+    return wt_name.replace(mutant_class, normal_class);
 }
 
 function change_color_slider_bar(btn, val, left_color, right_color, gradient = false) {
@@ -110,6 +110,7 @@ function create_filter_btn_and_slider(col, test_class, base_col, pairwise, mutan
     slider_class = test_class + "_slider";
 
     parent_element = "#" + test_class + "_comparison";
+
 
     let btn_and_slider = d3.select(parent_element)
         .select('.btn-group')

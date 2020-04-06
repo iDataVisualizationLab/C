@@ -40,8 +40,8 @@ function calc_all_stats(df, base_col, master_slider) {
     return stats_results;
 }
 
-function create_stats_table(tbl, rows, upload=_upload) {
-    if (my_stats_table){
+function create_stats_table(tbl, rows) {
+    if (my_stats_table && display_df.count()>0){ // if no data, the table will be deleted => quick fix
         my_stats_table.destroy();
         $(_cur_statsTable).empty();
         console.log("removed in create_stats_table!!!!!")
@@ -94,8 +94,7 @@ function click_row_callback(row_data) {
 
     master_val = parseInt(_cur_master_slider.value);
     _cur_master_slider_value.innerHTML = master_val / 100;
-    change_all_slider_values_to_the_master(master_val, _cur_condition_cols);
-    button_list = document.getElementsByClassName(_cur_class + "_filter_btn");
+    button_list = document.getElementsByClassName(_cur_state + "_filter_btn");
 
     color_list = row_data.map(x => ENCODE_COLOR[x]);
 

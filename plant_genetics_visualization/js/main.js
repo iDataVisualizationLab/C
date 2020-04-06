@@ -10,7 +10,6 @@ pairwise_condition_cols.forEach(p => {
     create_filter_btn_and_slider(p, "pairwise", "", true, "mutant", "normal");
 });
 
-
 // Define the line.
 var valueLine = d3.svg.line()
     .x(function (d) {
@@ -71,8 +70,8 @@ function change_btn_color_when_click(_this, color) {
 function auto_filter() {
 
     $("#geneComparisonListdown").val(_cur_base);
-    let button_list = d3.selectAll(`.${_cur_class}_filter_btn`)[0];
-    filter(button_list, _pairwise, `.${_cur_class}_slider`).then(df => {
+    let button_list = d3.selectAll(`.${_cur_state}_filter_btn`)[0];
+    filter(button_list, _pairwise, `.${_cur_state}_slider`).then(df => {
         updateTableAndVenn(dataTable, df.toCollection());
     });
 
@@ -306,13 +305,27 @@ DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
         .attr("transform", "rotate(-90)")
         .text("Expressed (norm)");
 
+    // todo: change name of the chart
+    svgCharts.append("text")
+        .classed("chart_name_on_the_right", true)
+        .datum(function (d) {
+            return d.gene;
+        })
+        .attr("x", w)
+        .attr("y", 0)
+        .attr("text-anchor", "end")
+        .style("font", "15px Arial")
+        .attr("fill", "#888")
+        .text(function (d) {
+            return d;
+        });
 
     _focus_s1 = svgCharts.append("g")
-        .attr("class", "mutant_focus")
+        .attr("class", "s1_focus")
         .style("display", "none");
 
     _focus_s1.append("circle")
-        .classed("mutant_cirle", true)
+        .classed("s1_cirle", true)
         .attr("r", 4);
 
     // focus - circle when point on the chart
@@ -342,21 +355,6 @@ DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
         .attr("x", 18)
         .attr("y", 4);
 
-
-    // todo: change name of the chart
-    svgCharts.append("text")
-        .classed("chart_name_on_the_right", true)
-        .datum(function (d) {
-            return d.gene;
-        })
-        .attr("x", w)
-        .attr("y", 0)
-        .attr("text-anchor", "end")
-        .style("font", "15px Arial")
-        .attr("fill", "#888")
-        .text(function (d) {
-            return d;
-        });
 
     console.log(`..... END of read+svg ${(new Date - tick_) / 100}s`);
 
@@ -500,7 +498,7 @@ function normal_ctrl_btn() {
     // mark comparison
     comparison_radio.prop("checked", true).trigger("click");
     $("#geneComparisonListdown").attr("disabled", false);
-    $("#geneComparisonListdown").val("wthp6");
+    $("#geneComparisonListdown").val(_cur_base);
     updateCharts()
 
 }
@@ -533,7 +531,7 @@ function mutant_ctrl_btn() {
     // mark comparison
     comparison_radio.prop("checked", true).trigger("click");
     $("#geneComparisonListdown").attr("disabled", false);
-    $("#geneComparisonListdown").val("s1hp6");
+    $("#geneComparisonListdown").val(_cur_base);
     updateCharts();
 }
 
@@ -642,7 +640,7 @@ function updateChartNoComparison() {
     this.select(".x.axis")
         .call(xAxis)
         .selectAll(`text`)
-        .style(`text-anchor`, `end`);
+        .style(`text-anchor`, `middle`);
 
     this.select(".y.axis")
         .call(yAxis);
@@ -652,9 +650,9 @@ function updateChartgeneComparison(d, pairwise) {
     let comparedgene;
     //Todo: need a better way to get the data
     if (pairwise) {
-        comparedgene = get_responding_normal_from_s1(d["0"]["0"].__data__.gene)//document.getElementById("geneComparisonListdown").value;
+        comparedgene = get_responding_normal_from_mutant(d["0"]["0"].__data__.gene)
     } else {
-        comparedgene = document.getElementById("geneComparisonListdown").value;
+        comparedgene =   _cur_base;
     }
 
     // Update areas.
@@ -684,7 +682,7 @@ function updateChartgeneComparison(d, pairwise) {
     this.select(".x.axis")
         .call(xAxis)
         .selectAll(`text`)
-        .style(`text-anchor`, `end`);
+        .style(`text-anchor`, `middle`);
     // console.log("xAxis", xAxis);
 
     this.select(".y.axis")
@@ -835,7 +833,7 @@ function filter_data(button_list, pairwise, df, slider_class) {
 
             let bt = d3.select(button_list[i]);
             let col = bt.text().split(" ")[0];
-            cur_base_condition = get_responding_normal_from_s1(col);
+            cur_base_condition = get_responding_normal_from_mutant(col);
             let slider = slider_ctrl_list.find((slider => slider.id.split("_")[1] == col.replace("s1", "")));
 
 
@@ -912,7 +910,6 @@ $(document.getElementById("previous_page")).on("click", () => {
     updateDataForSVGCharts();
     updateCharts();
 
-    // todo: fix pairwise (have a func to auto pick mode) + class for color
     updateTableAndVenn();
 
     print_paging_sms_for_chart();
@@ -1040,7 +1037,7 @@ function resize() {
     svgCharts.selectAll('.x.axis')
         .call(xAxis)
         .selectAll(`text`)
-        .style(`text-anchor`, `end`);
+        .style(`text-anchor`, `middle`);
 
 
     svgCharts.selectAll(".rect_class")
@@ -1127,9 +1124,6 @@ function processFile(e) {
     _cur_df = data;
     _total_df = data;
 
-    _upload = true;
-
-
 
     let columns = data.listColumns();
     _atID = columns[0];
@@ -1153,17 +1147,307 @@ function processFile(e) {
     MAP_CLASS["normal"] = normal_class;
     MAP_CLASS["mutant"] = mutant_class;
 
+    reset_DisplayIndex_and_DisplayDF();
+
+    my_all_data = {};
+    all_cols.forEach((gene_name) => {
+        let df = display_df.select(_atID, gene_name);
+        df = df.rename(gene_name, "gene_value");
+        df = df.withColumn('index', (row, i) => i + 1)
+            .withColumn('gene', () => gene_name);
+        my_all_data[gene_name] = df.toCollection();
+
+    });
+    let geneChartData = [];
+    for (let gene in my_all_data) {
+        let d = {};
+        d.gene = gene;
+        d.series = my_all_data;
+        geneChartData.push(d);
+    }
+
+    var geneOptions = d3.select("#geneOptions");
+    var geneComparisons = d3.select("#geneComparisonListdown");
+
+    d3.select("#geneOptions").selectAll("label").remove();
+
+    d3.select("#geneComparisonListdown").selectAll("option").remove();
+    geneChartData.forEach(function (d) {
+
+        //option checkbox
+        var option = geneOptions
+            .append("label")
+            .datum(d.gene);
+
+
+        //check for base col
+        option.append("input")
+            .attr("type", "checkbox")
+            .property("checked", function (d) {
+                return (d == base_col_of_normal)
+            })
+            .attr("name", "geneSelection")
+            .attr("id", removeWhitespace)
+            .on("click", changeChartDisplay);
+
+        option.append("text")
+            .text(d.gene);
+
+        option.append("br");
+
+        //dropdown boxes
+        var comparison = geneComparisons.append("option")
+            .datum(d.gene)
+            .attr("value", d.gene)
+            .text(d.gene);
+
+    });
+
+    d3.select("#unemploymentCharts").selectAll("svg").remove();
+    svgCharts = d3.select("#unemploymentCharts").selectAll("svg")
+        .data(geneChartData, d => d.gene)
+        .enter()
+        .append("svg")
+        .style("display", "block")
+        .attr("id", function (d) {
+            return removeWhitespace(d.gene);
+        })
+        .classed("chartActive", function (d) {
+            return d.gene == base_col_of_normal;
+        })
+        .attr("width", svgWidth)
+        .attr("height", function (d) {
+            if (d.gene == base_col_of_normal) {
+                return svgHeight;
+            } else {
+                return 0;
+            }
+        })
+        .append("g")
+        .attr("transform", "translate(" + padding.left + "," + padding.top + ")");
+
+    var defs = svgCharts.append("defs");
+
+    // Add background.
+    svgCharts.append("rect")
+        .classed("rect_class", true)
+        .attr("transform", "translate(0,-" + padding.top + ")")
+        .attr("width", w)
+        .attr("height", h + padding.top + padding.bottom)
+        .attr("fill", "white");
+
+    // Side clip-path.
+    defs.append("clipPath")
+        .attr("id", "sideClip")
+        .append("rect")
+        .attr("transform", "translate(0,-" + padding.top + ")")
+        .attr("width", w)
+        .attr("height", h + padding.top);
+
+    // Add the baseline.
+    svgCharts.append("path")
+        .attr("clip-path", "url(#sideClip)")
+        .attr("class", "baseline")
+        .attr("d", (d) => {
+            return zeroLine(d.series[d.gene]);
+        });
+
+    // Add the areas.
+    svgCharts.append("path")
+        .attr("clip-path", "url(#sideClip)")
+        .attr("class", "area below")
+        .attr("fill", "steelblue")
+        .attr("d", function (d) {
+            return zeroArea(d.series[d.gene]);
+        });
+
+    svgCharts.append("path")
+        .attr("clip-path", "url(#sideClip)")
+        .attr("class", "area above")
+        .attr("d",
+            d => {
+                // console.log(d);
+                zeroArea(d.series[d.gene]);
+            }
+        );
+
+// Area gets drawn in updateCharts()
+// Draw the axes.
+    svgCharts.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + h + ")")
+
+
+// text label for the x axis
+    svgCharts.append("text")
+        .classed("y_label", true)
+        .attr("transform",
+            "translate(" + (w) + " ," +
+            (h) + ")")
+        .style("text-anchor", "end")
+        .text("Gene Name");
+
+
+    svgCharts.append("g")
+        .attr("class", "y axis");
+
+// Add y-axis label.
+    svgCharts.append("text")
+        .attr("text-anchor", "end")
+        .attr("y", 6)
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90)")
+        .text("Expressed (norm)");
+
+
+    svgCharts.append("text")
+        .classed("chart_name_on_the_right", true)
+        .datum(function (d) {
+            return d.gene;
+        })
+        .attr("x", w)
+        .attr("y", 0)
+        .attr("text-anchor", "end")
+        .style("font", "15px Arial")
+        .attr("fill", "#888")
+        .text(function (d) {
+            return d;
+        });
+
+
+
+    _focus_s1 = svgCharts.append("g")
+        .attr("class", "s1_focus")
+        .style("display", "none");
+
+    _focus_s1.append("circle")
+        .classed("s1_cirle", true)
+        .attr("r", 4);
+
+    // focus - circle when point on the chart
+    _focus = svgCharts.append("g")
+        .attr("class", "focus")
+        .style("display", "none");
+
+    _focus.append("circle")
+        .attr("r", 4);
+
+    _focus.append("rect")
+        .attr("class", "tooltip")
+        .attr("width", 78)
+        .attr("height", 35)
+        .attr("x", 10)
+        .attr("y", -22)
+        .attr("rx", 4)
+        .attr("ry", 4);
+
+    _focus.append("text")
+        .attr("class", "tooltip-atID")
+        .attr("x", 18)
+        .attr("y", -12);
+
+    _focus.append("text")
+        .attr("class", "tooltip-value")
+        .attr("x", 18)
+        .attr("y", 4);
+
+
+// Register mouse handlers.
+    d3.select("#unemploymentCharts").selectAll("svg")
+        .on("mouseover", function (d) {
+            // var focus = d3.select(this).select(".focus");
+            _focus.style("display", null);
+        })
+        .on("mouseout", function (d) {
+            let rows = document.querySelectorAll("#ipdatacsvTbl tr");
+            Array.from(rows).forEach((d, i) => {
+                d.style.fontWeight = "normal";
+                d.style.backgroundColor = i % 2 == 0 ? '#ececec' : '#ffffff'
+            });
+
+            _focus.style("display", "none");
+        })
+        .on("mousemove", function (d) {
+
+            let _this = this;
+            mousemove_chart(d, _this)
+        })
+        .on("dblclick", function (d) {
+            changeChartDisplay(d.gene);
+        });
+
+    d3.select("#mutant_comparison").selectAll(".btn-group").selectAll("*").remove();
+    d3.select("#normal_comparison").selectAll(".btn-group").selectAll("*").remove();
+    d3.select("#pairwise_comparison").selectAll(".btn-group").selectAll("*").remove();
+
+    normal_condition_cols.forEach(wt => {
+        create_filter_btn_and_slider(wt, "normal", base_col_of_normal, false);
+    });
+
+    mutant_condition_cols.forEach(s1 => {
+        create_filter_btn_and_slider(s1, "mutant", base_col_of_mutant, false);
+    });
+    pairwise_condition_cols.forEach(p => {
+        create_filter_btn_and_slider(p, "pairwise", "", true, "mutant", "normal");
+    });
+
+
+
+    $('.normal_filter_btn').click(filter_btn_click_func);
+    $('.mutant_filter_btn').click(filter_btn_click_func);
+    $('.pairwise_filter_btn').click(filter_btn_click_func);
+    comparison_radio.on("click", function () {
+        let _this = this;
+
+        if (_this.value == "gene") {
+            $("#geneComparisonListdown").attr("disabled", false);
+        } else {
+            $("#geneComparisonListdown").attr("disabled", true);
+        }
+    });
+
+    $("#all").on("click", selectAllCheckboxes);
+
+    $("#option_form").on("change", () => {
+        updateCharts();
+    });
+
+
+    normal_condition_cols.forEach(wt => update_text_when_sliders_change(wt, false));
+    mutant_condition_cols.forEach(s1 => update_text_when_sliders_change(s1, false));
+    pairwise_condition_cols.forEach(pairwise_col => update_text_when_sliders_change(pairwise_col, true));
+
+    normal_master_slider.oninput = master_slider_oninput;
+    mutant_master_slider.oninput = master_slider_oninput;
+    pairwise_master_slider.oninput = master_slider_oninput;
+
+    read_data_for_venn().then(set_data_venn => {
+        _set_data_venn = set_data_venn;
+        let sets_venn = create_sets_obj_for_venn();
+        draw_venn(sets_venn);
+    })
 
     set_global_varibles_by_CurActiveTab();
-
-    reset_DisplayIndex_and_DisplayDF();
-    updateDataForSVGCharts();
-    updateCharts();
-    updateTableAndVenn();
-    calc_and_show_stats_table();
     print_paging_sms_for_chart();
-}
 
+
+
+    if (cur_active_tab == tab_names["normal_class"]) {
+        normal_ctrl_btn();
+
+
+    } else if (cur_active_tab == tab_names["mutant_class"]) {
+        mutant_ctrl_btn();
+
+
+
+    } else if (cur_active_tab == tab_names["pairwise_class"]) {
+        pairwise_ctrl_btn();
+
+    }
+
+    _focus.style("display", "none");
+}
 
 function get_class_type(arr) {
     let len_arr = arr.map(x => x.length);

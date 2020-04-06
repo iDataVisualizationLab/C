@@ -36,7 +36,7 @@ function updateTable(tbl, rows) {
 
 
 function updateTAbleWithColor() {
-    if (my_data_table){
+    if (my_data_table && display_df.count()>0){ // dont want to delete the table when no data
         my_data_table.destroy();
         $(dataTable).empty();
         console.log("removed!!!!!")
@@ -84,7 +84,7 @@ function updateTAbleWithColor() {
                 /// Color:
                 if (_cur_condition_cols.includes(hd)) {
                     if (_pairwise) {
-                        responding_base = get_responding_wt_from_s1(hd)
+                        responding_base = get_responding_normal_from_mutant(hd)
                     } else {
                         responding_base = _cur_base;
                     }
@@ -124,7 +124,7 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
 
     //// circel stop1 gene
     let stop1_row = display_df.find(row => row.get(_atID).replace(S1_TEXT, "") == STOP1);
-    let tmp = _focus_s1[0].filter(g => _cur_condition_cols.includes(g.__data__.state));
+    let tmp = _focus_s1[0].filter(g => _cur_condition_cols.includes(g.__data__.gene));
 
     if (typeof stop1_row != "undefined"){
 
@@ -133,7 +133,7 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
         let data_and_columnNames = zip([display_df.listColumns(), stop1_row.toArray()]);//can use toDict()-> easier+faster
         tmp.forEach(g => {
                 let focus = d3.select(g);
-                let data = data_and_columnNames.filter((col) => col[0] == g.__data__.state);
+                let data = data_and_columnNames.filter((col) => col[0] == g.__data__.gene);
                 data = data[0];
                 focus.style("display", null);
                 focus.attr("transform", "translate(" + xScale(index) + "," + yScale(data[1]) + ")");
@@ -157,7 +157,6 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
 }
 function add_events_for_dataTable(){
     $(document).ready(function () {
-
             my_data_table = $(dataTable).DataTable({
                 ordering: false,
                 searching: false,

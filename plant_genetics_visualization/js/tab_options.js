@@ -28,11 +28,11 @@ function openTab(evt, scenarioName) {
     document.getElementById(scenarioName).style.display = "block";
 
     if (scenarioName == tab_names["normal_class"]) {
-        wt_master_slider.value = 0;
-        wt_master_slider_value.innerText = "0";
-        change_color_slider_bar(wt_master_slider, 0, MY_COLORS.gray, MY_COLORS.slider_master);
+        normal_master_slider.value = 0;
+        normal_master_slider_value.innerText = "0";
+        change_color_slider_bar(normal_master_slider, 0, MY_COLORS.gray, MY_COLORS.slider_master);
 
-        wt_ctrl_btn();
+        normal_ctrl_btn();
         change_all_slider_values_to_the_master(0, normal_condition_cols);
 
         // $('.statsTable_and_print').show();
@@ -41,13 +41,15 @@ function openTab(evt, scenarioName) {
 
     } else if (scenarioName == tab_names["mutant_class"]) {
 
-        s1_master_slider.value = 0;
-        s1_master_slider_value.innerText = "0";
-        change_color_slider_bar(s1_master_slider, 0, MY_COLORS.gray, MY_COLORS.slider_master);
+        mutant_master_slider.value = 0;
+        mutant_master_slider_value.innerText = "0";
+        change_color_slider_bar(mutant_master_slider, 0, MY_COLORS.gray, MY_COLORS.slider_master);
 
 
-        s1_ctrl_btn();
+        mutant_ctrl_btn();
         change_all_slider_values_to_the_master(0, mutant_condition_cols);
+
+        console.log("mutant_tab");
 
         // $('.statsTable_and_print').show();
 
@@ -73,8 +75,8 @@ function openTab(evt, scenarioName) {
 
     }
 
-    btns1 = d3.selectAll('.wt_filter_btn')[0];
-    btns2 = d3.selectAll('.s1_filter_btn')[0];
+    btns1 = d3.selectAll('.normal_filter_btn')[0];
+    btns2 = d3.selectAll('.mutant_filter_btn')[0];
     btns3= d3.selectAll('.pairwise_filter_btn')[0];
     btns_list.push(btns1);
     btns_list.push(btns2);
