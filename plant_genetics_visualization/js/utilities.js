@@ -211,3 +211,41 @@ function adjust_tooltip_hover_chart(focus, x_index, y_value, turn_off_atID = fal
 
 
 }
+
+
+function norm_row(row){
+    let max_value = Math.max(...row.slice(1).map(Number) );
+    if (Math.abs(max_value - 0) < 0.000001){
+        return [row[0], ...row.slice(1).map(Number),...row.slice(1).map(Number)];
+    }
+    else
+        return [row[0], ...row.slice(1).map(Number),...row.slice(1).map(x => parseFloat(x)/max_value)];
+
+}
+
+function get_row_low_log2fold(row_of_norm_class, thres=0.5) {
+    let data = row_of_norm_class.slice(1).map(Number);
+
+    for (let i = 1; i < data.length; i++){
+        if (Math.abs(Math.log2(data[i]/ (data[0] + 0.00001))) > thres) {
+            return;
+        }
+    }
+    return row_of_norm_class[0];
+}
+
+function get_row_low_cpm(row) {
+    let count = 0;
+    let data = row.slice(1);
+    for (let i = 0; i < data.length; i++){
+        if (data[i] < 1){
+            count++;
+        }
+    }
+    if (count >= data.length - 1){
+        return row[0];
+    }
+    else{
+        return ;
+    }
+}

@@ -49,7 +49,7 @@ function updateTAbleWithColor() {
     console.log("show_raw_data = ", show_raw_data);
     if (show_raw_data){
         let all_id_list =  display_df.select(_atID).toArray().flat();
-        display_df_RAW = _total_data_RAW.filter(row => all_id_list.includes(row.get(_atID)) );
+        display_df_RAW = _total_df_RAW.filter(row => all_id_list.includes(row.get(_atID)) );
 
         /////// sort display raw according to display norm, but it's too slow.
         // display_df_RAW = display_df_RAW.join(display_df.select(_atID, wt_base).rename(wt_base, wt_base + "_norm"), _atID, "inner").sortBy(wt_base + "_norm");
@@ -113,14 +113,15 @@ function updateTAbleWithColor() {
 
 }
 
-
-
-function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection()) {
-    if (typeof _set_data_venn != "undefined"){
-        update_data_for_venn();
-        let sets_venn = create_sets_obj_for_venn();
-        draw_venn(sets_venn);
+function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection(), update_venn=true) {
+    if (update_venn){
+        if (typeof _set_data_venn != "undefined"){
+            update_data_for_venn();
+            let sets_venn = create_sets_obj_for_venn();
+            draw_venn(sets_venn);
+        }
     }
+
 
     //// circel stop1 gene
     let stop1_row = display_df.find(row => row.get(_atID).replace(S1_TEXT, "") == STOP1);

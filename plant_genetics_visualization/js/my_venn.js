@@ -74,32 +74,29 @@ async function read_data_for_venn() {
 
 }
 
-function read_data_for_venn_with_upload_file() {
+
+
+
+
+function read_data_for_venn_with_upload_file(low_cpm, low_log2fold) {
     let set_data = {};
     id_set_data = 0;
 
-    let filter_low_cpm = data.filter(row => row.get("filter_low_cpm") == 0).select(_atID).toArray().flat();
     set_data[id_set_data] = {};
-    set_data[id_set_data]["data"] = filter_low_cpm;
+    set_data[id_set_data]["data"] = low_cpm;
     set_data[id_set_data]["name"] = "LowCPM";
     id_set_data++;
 
 
-    wt_low_log2fold_set = data.filter(row => row.get("wt_low_log2fold") == 1).select(_atID).toArray().flat();
-    // s1_filter_set = data.filter(row => row.get("s1_filter") == 1).select(_atID).toArray().flat();
-    // pairwise_filter_set = data.filter(row => row.get("pairwise_filter") == 1).select(_atID).toArray().flat();
-    _cur_low_log2fold_set = wt_low_log2fold_set;
     set_data[id_set_data] = {};
-    set_data[id_set_data]["data"] = _cur_low_log2fold_set;
+    set_data[id_set_data]["data"] = low_log2fold;
     set_data[id_set_data]["name"] = "LowLog2Fold";
-    id_set_data++; // id -1; dont move this line  above. stay here.
+    id_set_data++;
 
     set_data[id_set_data] = {};
     set_data[id_set_data]["data"] = _cur_df.select(_atID).toArray().flat();
     set_data[id_set_data]["name"] = _cur_df.count().toString() + " genes";//"Data";
 
-
-    console.log("time running = ", (new Date - tick) / 1000);
     return set_data;
 
 }
@@ -142,13 +139,8 @@ function calc_overlapping_number_for_venn(set_venn, sub_set_id, set_data) {
             intersection = intersection.filter(x => previous_res["data_list"].includes(x));
             res["size"] = intersection.length;
             res["data_list"] = intersection;
-
         }
-
-
         return res;
-
-
     }
 
 }
@@ -176,10 +168,10 @@ function draw_venn(sets_venn) {
 
     console.log("sets_venn is", sets_venn);
 
-    let tmp = d3.select("#venn_" + _cur_class);
+    let tmp = d3.select("#venn_" + _cur_state);
     if (typeof tmp != "undefined") {
-        d3.select("#venn_" + _cur_class).selectAll("*").remove();
-        console.log("removed!");
+        d3.select("#venn_" + _cur_state).selectAll("*").remove();
+        console.log("removed venn");
 
     }
 
@@ -207,8 +199,9 @@ function draw_venn(sets_venn) {
 
             if (d.label == _cur_df.count().toString() + " genes") {
                 tooltip.text(d.size + ` from ${_total_df.count()} genes`);
-            } else if (d.sets.includes(0)) { //include s1's set
+            } else if (d.sets.includes(0) && _set_data_venn[0]["name"] == "STOP1") { //include s1's set
                 tooltip.text("STOP1");
+                console.log("STOP1 STOP1 STOP1");
             } else {
                 tooltip.text(d.size + " genes");
             }

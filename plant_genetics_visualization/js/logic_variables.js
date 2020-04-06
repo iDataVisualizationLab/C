@@ -62,7 +62,7 @@ let display_df;
 let color_arr = [MY_COLORS.default, MY_COLORS.green, MY_COLORS.orange, MY_COLORS.gray];
 let _total_df;
 let _cur_df;
-let _total_data_RAW, display_df_RAW;
+let _total_df_RAW, display_df_RAW;
 let cur_active_tab = tab_names["normal_class"];
 let MAXIMUM_DISPLAY = 500;
 let normal_class = "wt";

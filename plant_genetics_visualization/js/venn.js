@@ -1341,7 +1341,7 @@
                     .style("fill", function(d) { return colours(label(d)); })
                     .style("fill-opacity", function (d){
                         console.log("d.sets.includes(0)? \"1\":\".25\"", d.sets.includes(0)? "1":".25");
-                        return d.sets.includes(0)? "1":".25";
+                        return (d.sets.includes(0) && _set_data_venn[0]["name"] == "STOP1") ? "1":".25";
                     });
 
 

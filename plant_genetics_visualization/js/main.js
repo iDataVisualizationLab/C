@@ -121,7 +121,7 @@ $("#option_form").on("change", () => {
 DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
     _atID = data.listColumns()[0];
     DataFrame.fromCSV("data/data_ALL_raw_sorted_by_wthp6Norm.csv").then(df => {
-        _total_data_RAW = df;
+        _total_df_RAW = df;
     })
     data = data.sortBy(base_col_of_normal);
     set_global_varibles_by_CurActiveTab();
@@ -471,7 +471,7 @@ d3.select("#geneComparisonListdown").on("change", () => {
 
 });
 
-function normal_ctrl_btn() {
+function normal_ctrl_btn(update_venn=true) {
     calc_and_show_stats_table();
 
     // Tick all normal_cols, except the first one\
@@ -493,7 +493,7 @@ function normal_ctrl_btn() {
         }
 
     }
-    updateTableAndVenn(dataTable, display_df.toCollection());
+    updateTableAndVenn(dataTable, display_df.toCollection(), update_venn);
 
     // mark comparison
     comparison_radio.prop("checked", true).trigger("click");
@@ -503,7 +503,7 @@ function normal_ctrl_btn() {
 
 }
 
-function mutant_ctrl_btn() {
+function mutant_ctrl_btn(update_venn=true) {
 
     calc_and_show_stats_table();
 
@@ -526,8 +526,7 @@ function mutant_ctrl_btn() {
 
     }
 
-    updateTableAndVenn(dataTable, display_df.toCollection());
-
+    updateTableAndVenn(dataTable, display_df.toCollection(), update_venn)
     // mark comparison
     comparison_radio.prop("checked", true).trigger("click");
     $("#geneComparisonListdown").attr("disabled", false);
@@ -535,7 +534,7 @@ function mutant_ctrl_btn() {
     updateCharts();
 }
 
-function pairwise_ctrl_btn() {
+function pairwise_ctrl_btn(update_venn=true) {
     calc_and_show_stats_table();
 
     // Tick all normal_cols, except the first one
@@ -557,8 +556,7 @@ function pairwise_ctrl_btn() {
         }
     }
 
-    updateTableAndVenn(dataTable, display_df.toCollection());
-
+    updateTableAndVenn(dataTable, display_df.toCollection(), update_venn)
     // mark comparison for s1
     comparison_radio.prop("checked", true);
     $("#geneComparisonListdown").attr("disabled", true);
@@ -879,7 +877,7 @@ $(document.getElementById("next_page")).on("click", () => {
 
     updateDataForSVGCharts();
     updateCharts();
-    updateTableAndVenn(); //todo: dont need to change venn
+    updateTableAndVenn( dataTable, display_df.toCollection(), false); //todo: dont need to change venn
     print_paging_sms_for_chart();
 
 
@@ -948,6 +946,13 @@ $("#export").click(function (event) {
 
     // CSV
     exportTableToCSV.apply(this, [_cur_df, outputFile]);
+    //
+    // if ($("#raw_data").is(':checked')) {
+    //     exportTableToCSV.apply(this, [display_df_RAW, outputFile]); /// todo: down all raw data
+    // } else {
+    //     exportTableToCSV.apply(this, [_cur_df, outputFile]);
+    // }
+
 
     // IF CSV, don't do event.preventDefault() or return false
     // We actually need this to be a typical hyperlink
@@ -955,9 +960,6 @@ $("#export").click(function (event) {
 
 
 $("#raw_data_form :checkbox").change(() => {
-
-    if (typeof _total_RAW_data == "undefined") {
-    }
 
     if ($("#raw_data").is(':checked')) {
         show_raw_data = true;
@@ -1115,22 +1117,44 @@ function loadFileAsText(evt) {
 function processFile(e) {
     let file = e.target.result, lines;
 
-    lines = file.split("\n");
+    lines = file.trim().split("\n");
     lines = lines.map(line => line.split(","));
     let header = lines[0];
-    const data = new DataFrame(lines.slice(1), header);
+
+    _atID = header[0];
+
+    let sort_by_col = header[1]+"_norm";
+    let raw_and_norm_data = lines.slice(1).map(norm_row);
+    let raw_and_norm_df = new DataFrame(raw_and_norm_data, [...header, ...header.slice(1).map(col => col+"_norm")]);
+    raw_and_norm_df = raw_and_norm_df.sortBy(sort_by_col);
 
 
-    _cur_df = data;
-    _total_df = data;
 
 
-    let columns = data.listColumns();
-    _atID = columns[0];
+    _total_df_RAW = raw_and_norm_df.select(...header);
+    let columns = _total_df_RAW.listColumns();
+
+
+    _total_df = raw_and_norm_df.select(_atID,...header.slice(1).map(col => col+"_norm")).renameAll(columns);
+    _cur_df = _total_df;
+
+    raw_and_norm_df.show();
 
     normal_cols = columns.slice(1, Math.floor(columns.length / 2) + 1);
     mutant_cols = columns.slice(Math.floor(columns.length / 2) + 1);
     all_cols = columns.slice(1);
+
+
+
+    let low_cpm  = lines.slice(1).map(get_row_low_cpm).filter(function(n){return n; });
+    let low_log2fold  = lines.slice(1).map(row => get_row_low_log2fold(row.slice(0, normal_cols.length+1))).filter(function(n){return n; });
+
+    console.log("low_cpm", low_cpm);
+    console.log("low_log2fold", low_log2fold);
+
+    _set_data_venn = read_data_for_venn_with_upload_file(low_cpm, low_log2fold);
+    let sets_venn = create_sets_obj_for_venn();
+    draw_venn(sets_venn);
 
     base_col_of_normal = normal_cols[0];
     base_col_of_mutant = mutant_cols[0];
@@ -1421,11 +1445,6 @@ function processFile(e) {
     mutant_master_slider.oninput = master_slider_oninput;
     pairwise_master_slider.oninput = master_slider_oninput;
 
-    read_data_for_venn().then(set_data_venn => {
-        _set_data_venn = set_data_venn;
-        let sets_venn = create_sets_obj_for_venn();
-        draw_venn(sets_venn);
-    })
 
     set_global_varibles_by_CurActiveTab();
     print_paging_sms_for_chart();
@@ -1446,7 +1465,7 @@ function processFile(e) {
 
     }
 
-    _focus.style("display", "none");
+    // _focus.style("display", "none");
 }
 
 function get_class_type(arr) {
