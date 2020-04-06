@@ -153,7 +153,7 @@ DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
     all_cols.forEach((gene_name) => {
         let df = display_df.select(_atID, gene_name);
         df = df.rename(gene_name, "gene_value");
-        df = df.withColumn('index', (row, i) => i + 1)
+        df = df.withColumn('index', (row, i) => i)
             .withColumn('gene', () => gene_name);
         my_all_data[gene_name] = df.toCollection();
 
@@ -206,7 +206,7 @@ DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
     });
 
     // re-Scale the range of the data
-    xScale.domain([1, display_index]);
+    xScale.domain([0, display_index-1]);
     // y.domain([0, d3.max(data, function(d) { return d.gene_value; })]);
 
     // Create the svgs for the charts.
@@ -689,7 +689,17 @@ function updateChartgeneComparison(d, pairwise) {
 
 function updateCharts(pairwise = _pairwise) {
 
-    xScale.domain([1, display_index]);
+    xScale.domain([0, display_index-1]);
+    if (display_index<10){
+        xAxis.tickValues([...Array(display_index).keys()]
+        ).tickFormat((i) => {
+            return display_df.select(_atID).toArray().flat()[i];
+        });
+    }
+    else{
+        xAxis.ticks(10).tickValues(null);
+
+    }
 
     // Update the charts.
     var activeCharts = d3.select("#unemploymentCharts").selectAll(".chartActive");
@@ -751,7 +761,7 @@ function updateDataForSVGCharts() {
     all_cols.forEach((gene_name) => {
         let tmp_df = display_df.select(_atID, gene_name);
         tmp_df = tmp_df.rename(gene_name, "gene_value");
-        tmp_df = tmp_df.withColumn('index', (row, i) => i + 1)
+        tmp_df = tmp_df.withColumn('index', (row, i) => i)
             .withColumn('gene', () => gene_name);
         my_all_data[gene_name] = tmp_df.toCollection();
     })
@@ -1116,6 +1126,7 @@ function loadFileAsText(evt) {
 
 function processFile(e) {
     let file = e.target.result, lines;
+    _upload_file=true;
 
     lines = file.trim().split("\n");
     lines = lines.map(line => line.split(","));
@@ -1177,7 +1188,7 @@ function processFile(e) {
     all_cols.forEach((gene_name) => {
         let df = display_df.select(_atID, gene_name);
         df = df.rename(gene_name, "gene_value");
-        df = df.withColumn('index', (row, i) => i + 1)
+        df = df.withColumn('index', (row, i) => i)
             .withColumn('gene', () => gene_name);
         my_all_data[gene_name] = df.toCollection();
 
@@ -1339,14 +1350,6 @@ function processFile(e) {
         });
 
 
-
-    _focus_s1 = svgCharts.append("g")
-        .attr("class", "s1_focus")
-        .style("display", "none");
-
-    _focus_s1.append("circle")
-        .classed("s1_cirle", true)
-        .attr("r", 4);
 
     // focus - circle when point on the chart
     _focus = svgCharts.append("g")

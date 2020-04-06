@@ -71,6 +71,7 @@ let pairwise_class = "pairwise";
 
 
 let _set_data_venn;
+let _upload_file = false;
 
 let STOP1 = "AT1G34370";
 let S1_TEXT = " (STOP1)";

@@ -1,4 +1,3 @@
-
 function updateTable(tbl, rows) {
     tbl.innerHTML = '';
     if (rows && rows.length > 0) {
@@ -22,10 +21,9 @@ function updateTable(tbl, rows) {
                     cell.innerHTML = parseFloat(text).toFixed(2);
 
                 } else {
-                    if (hd != STOP1){
+                    if (hd != STOP1) {
                         cell.innerHTML = text;
-                    }
-                    else{
+                    } else {
                         cell.innerHTML = text + S1_TEXT;
                     }
                 }
@@ -36,7 +34,7 @@ function updateTable(tbl, rows) {
 
 
 function updateTAbleWithColor() {
-    if (my_data_table && display_df.count()>0){ // dont want to delete the table when no data
+    if (my_data_table && display_df.count() > 0) { // dont want to delete the table when no data
         my_data_table.destroy();
         $(dataTable).empty();
         console.log("removed!!!!!")
@@ -47,16 +45,15 @@ function updateTAbleWithColor() {
     let tick = new Date;
 
     console.log("show_raw_data = ", show_raw_data);
-    if (show_raw_data){
-        let all_id_list =  display_df.select(_atID).toArray().flat();
-        display_df_RAW = _total_df_RAW.filter(row => all_id_list.includes(row.get(_atID)) );
+    if (show_raw_data) {
+        let all_id_list = display_df.select(_atID).toArray().flat();
+        display_df_RAW = _total_df_RAW.filter(row => all_id_list.includes(row.get(_atID)));
 
         /////// sort display raw according to display norm, but it's too slow.
         // display_df_RAW = display_df_RAW.join(display_df.select(_atID, wt_base).rename(wt_base, wt_base + "_norm"), _atID, "inner").sortBy(wt_base + "_norm");
         // display_df_RAW = display_df_RAW.drop(wt_base + "_norm")
         rows = display_df_RAW.toCollection();
-    }
-    else{
+    } else {
         rows = display_df.toCollection();
     }
     console.log(`.....---- FINISH  filter ${(new Date - tick) / 1000}s`);
@@ -99,10 +96,9 @@ function updateTAbleWithColor() {
                     cell.innerHTML = parseFloat(text).toFixed(2);
 
                 } else {
-                    if (text != STOP1){
+                    if (text != STOP1) {
                         cell.innerHTML = text;
-                    }
-                    else{
+                    } else {
                         cell.innerHTML = text + S1_TEXT;
                     }
                 }
@@ -113,9 +109,9 @@ function updateTAbleWithColor() {
 
 }
 
-function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection(), update_venn=true) {
-    if (update_venn){
-        if (typeof _set_data_venn != "undefined"){
+function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection(), update_venn = true) {
+    if (update_venn) {
+        if (typeof _set_data_venn != "undefined") {
             update_data_for_venn();
             let sets_venn = create_sets_obj_for_venn();
             draw_venn(sets_venn);
@@ -124,30 +120,31 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection(), u
 
 
     //// circel stop1 gene
-    let stop1_row = display_df.find(row => row.get(_atID).replace(S1_TEXT, "") == STOP1);
-    let tmp = _focus_s1[0].filter(g => _cur_condition_cols.includes(g.__data__.gene));
+    if (!_upload_file) {
+        let stop1_row = display_df.find(row => row.get(_atID).replace(S1_TEXT, "") == STOP1);
+        let tmp = _focus_s1[0].filter(g => _cur_condition_cols.includes(g.__data__.gene));
 
-    if (typeof stop1_row != "undefined"){
+        if (typeof stop1_row != "undefined") {
 
-        let all_data = display_df.select(_atID).toArray().flat();
-        let index = all_data.indexOf(STOP1)-1; //todo: fix
-        let data_and_columnNames = zip([display_df.listColumns(), stop1_row.toArray()]);//can use toDict()-> easier+faster
-        tmp.forEach(g => {
-                let focus = d3.select(g);
-                let data = data_and_columnNames.filter((col) => col[0] == g.__data__.gene);
-                data = data[0];
-                focus.style("display", null);
-                focus.attr("transform", "translate(" + xScale(index) + "," + yScale(data[1]) + ")");
-            }
-        )
-    }
-    else{
-        tmp.forEach(g => {
-                let focus = d3.select(g);
-                focus.style("display", "none");
-            }
-        )
+            let all_data = display_df.select(_atID).toArray().flat();
+            let index = all_data.indexOf(STOP1) - 1; //todo: fix
+            let data_and_columnNames = zip([display_df.listColumns(), stop1_row.toArray()]);//can use toDict()-> easier+faster
+            tmp.forEach(g => {
+                    let focus = d3.select(g);
+                    let data = data_and_columnNames.filter((col) => col[0] == g.__data__.gene);
+                    data = data[0];
+                    focus.style("display", null);
+                    focus.attr("transform", "translate(" + xScale(index) + "," + yScale(data[1]) + ")");
+                }
+            )
+        } else {
+            tmp.forEach(g => {
+                    let focus = d3.select(g);
+                    focus.style("display", "none");
+                }
+            )
 
+        }
     }
 
 
@@ -156,7 +153,8 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection(), u
 
 
 }
-function add_events_for_dataTable(){
+
+function add_events_for_dataTable() {
     $(document).ready(function () {
             my_data_table = $(dataTable).DataTable({
                 ordering: false,
@@ -172,9 +170,9 @@ function add_events_for_dataTable(){
                 let headers = display_df.listColumns();
                 let data_and_columnNames;
 
-                row_data =  my_data_table.row(this).data();
+                row_data = my_data_table.row(this).data();
 
-                if (show_raw_data){
+                if (show_raw_data) {
                     row_data = display_df.find(row => row.get(_atID).replace(S1_TEXT, "") == row_data[0]).toArray().flat();
                 }
 

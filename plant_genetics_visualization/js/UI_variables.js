@@ -82,8 +82,7 @@ let yScale = d3.scale.linear().domain([0, 1]).range([h, 0]);
 
 // todo: auto update num ticks when having a few datum.
 let xAxis = d3.svg.axis().scale(xScale).orient("bottom")
-    .ticks(6).tickFormat((_, i) => {
-    // console.log("==============here inside xAxis");
+    .ticks(10).tickFormat((_, i) => {
     return display_df.select(_atID).toArray().flat()[i];
 });
 
