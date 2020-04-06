@@ -24,10 +24,10 @@
 <div id="options">
     <div style="font-size: 17px">Control Panel</div>
     <div class="tab">
-        <button class="tablinks active" onclick="openTab(event, 'normal_comparison')">WT(s) Comparison</button>
-        <button class="tablinks" onclick="openTab(event, 'mutant_comparison')">S1(s) Comparison</button>
-        <button class="tablinks" onclick="openTab(event, 'pairwise_comparison')">S1(s) vs. WT(s)</button>
-        <button class="tablinks" onclick="openTab(event, 'custom_mode')">Custom Mode</button>
+        <button id="normal_tab" class="tablinks active" onclick="openTab(event, 'normal_comparison')">WT(s) Comparison</button>
+        <button id="mutant_tab" class="tablinks" onclick="openTab(event, 'mutant_comparison')">S1(s) Comparison</button>
+        <button id="pairwise_tab" class="tablinks" onclick="openTab(event, 'pairwise_comparison')">S1(s) vs. WT(s)</button>
+        <button id="custom_tab" class="tablinks" onclick="openTab(event, 'custom_mode')">Custom Mode</button>
 
     </div>
 
@@ -51,7 +51,7 @@
     </div>
 
     <div id="normal_comparison" class="tabcontent" style="display:block">
-        <p>Compare each conditioned test with <b>wthp6</b></p>
+        <p id="p_normal_intro">Compare each conditioned test with <b>wthp6</b></p>
         <div class="btn-group"></div>
         <div class="statTable_and_Venn_div">
             <div class="statsTable_and_MasterSlider">
@@ -62,7 +62,7 @@
     </div>
 
     <div id="mutant_comparison" class="tabcontent">
-        <p>Compare each conditioned test s1 with <b>s1hp6</b></p>
+        <p id="p_mutant_intro">Compare each conditioned test s1 with <b>s1hp6</b></p>
         <div class="btn-group"></div>
         <div class="statTable_and_Venn_div">
             <div class="statsTable_and_MasterSlider">
@@ -73,7 +73,7 @@
     </div>
 
     <div id="pairwise_comparison" class="tabcontent">
-        <p>Compare each conditioned <b>s1</b> with its responding <b>wt</b> (e.g., <i>s1hp6 vs. wthp6</i>)</p>
+        <p id="p_pairwise_intro">Compare each conditioned <b>s1</b> with its responding <b>wt</b> (e.g., <i>s1hp6 vs. wthp6</i>)</p>
         <div class="btn-group"></div>
         <div class="statTable_and_Venn_div">
             <div class="statsTable_and_MasterSlider">

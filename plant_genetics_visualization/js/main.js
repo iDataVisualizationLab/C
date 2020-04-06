@@ -368,9 +368,9 @@ DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
 // Register mouse handlers.
     d3.select("#unemploymentCharts").selectAll("svg")
         .on("mouseover", function (d) {
-            // var focus = d3.select(this).select(".focus");
-            _focus.style("display", null);
-        })
+                _focus.style("display", null);
+
+    })
         .on("mouseout", function (d) {
             let rows = document.querySelectorAll("#ipdatacsvTbl tr");
             Array.from(rows).forEach((d, i) => {
@@ -381,6 +381,7 @@ DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
             _focus.style("display", "none");
         })
         .on("mousemove", function (d) {
+
 
             let _this = this;
             mousemove_chart(d, _this)
@@ -1182,6 +1183,8 @@ function processFile(e) {
     console.log("low_cpm", low_cpm);
     console.log("low_log2fold", low_log2fold);
 
+
+
     _set_data_venn = read_data_for_venn_with_upload_file(low_cpm, low_log2fold);
     let sets_venn = create_sets_obj_for_venn();
     draw_venn(sets_venn);
@@ -1202,6 +1205,17 @@ function processFile(e) {
     MAP_CLASS["mutant"] = mutant_class;
 
     reset_DisplayIndex_and_DisplayDF();
+
+
+    document.getElementById("p_normal_intro").innerHTML = `Compare each <b>${normal_class}</b> conditioned test with <b>${base_col_of_normal}</b>`;
+    document.getElementById("p_mutant_intro").innerHTML = `Compare each <b>${mutant_class}</b> conditioned test with <b>${base_col_of_mutant}</b>`;
+    document.getElementById("p_pairwise_intro").innerHTML = `Pairwise comparison: <b>${mutant_class}</b> vs. <b>${normal_class}</b>`;
+
+
+
+    document.getElementById("normal_tab").innerHTML = `${normal_class.toUpperCase()}(s) Comparision`;
+    document.getElementById("mutant_tab").innerHTML = `${mutant_class.toUpperCase()}(s) Comparision`;
+    document.getElementById("pairwise_tab").innerHTML = `${pairwise_class.toUpperCase()} Comparision`;
 
     my_all_data = {};
     all_cols.forEach((gene_name) => {
@@ -1401,8 +1415,8 @@ function processFile(e) {
 // Register mouse handlers.
     d3.select("#unemploymentCharts").selectAll("svg")
         .on("mouseover", function (d) {
-            // var focus = d3.select(this).select(".focus");
             _focus.style("display", null);
+
         })
         .on("mouseout", function (d) {
             let rows = document.querySelectorAll("#ipdatacsvTbl tr");
