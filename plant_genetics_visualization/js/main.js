@@ -355,6 +355,12 @@ DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
         .attr("x", 18)
         .attr("y", 4);
 
+    let new_height_for_dataTable = this.innerHeight - parseFloat(d3.select("#options").style("height")) -
+        parseFloat(d3.select("#export").style("height"))
+        - parseFloat(d3.select("#next_btn_and_raw_checkbox").style("height")) - 40;
+
+    d3.select("#ipdatacsvDiv")
+        .style("height", new_height_for_dataTable);
 
     console.log(`..... END of read+svg ${(new Date - tick_) / 100}s`);
 
@@ -438,7 +444,7 @@ function mousemove_chart(d, _this) {
     tmp.forEach(g => {
 
             let focus = d3.select(g);
-            let data = d.series[g.__data__.gene][d_new.index - 1];
+            let data = d.series[g.__data__.gene][d_new.index];
 
             focus.attr("transform", "translate(" + xScale(data.index) + "," + yScale(data.gene_value) + ")");
             adjust_tooltip_hover_chart(focus, data.index, data.gene_value, true);
@@ -1084,17 +1090,19 @@ function resize() {
     svgWidth = w + padding.left + padding.right;
 
     d3.select("#unemploymentCharts").selectAll("svg")
-        .attr("width", svgWidth)
+        .attr("width", svgWidth);
 
-    // xAxis.ticks(Math.max(width/75, 2));
-    // yAxis.ticks(Math.max(h/50, 2));
 
+    let new_height_for_dataTable = this.innerHeight - parseFloat(d3.select("#options").style("height")) -
+        parseFloat(d3.select("#export").style("height"))
+    - parseFloat(d3.select("#next_btn_and_raw_checkbox").style("height")) - 40;
+
+    d3.select("#ipdatacsvDiv")
+        .style("height", new_height_for_dataTable);
 };
 
 // Call the resize function whenever a resize event occurs
 d3.select(window).on('resize', resize);
-
-// Call the resize function
 
 
 $(document.getElementById("file-input")).on("change", function f(ent) {

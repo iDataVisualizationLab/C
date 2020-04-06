@@ -90,8 +90,8 @@ let yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
 
 
-let venn_w = 275;
-let venn_h = 275;
+let venn_w = 300;
+let venn_h = 300;
 
 let venn_div_normal = d3.select("#venn_normal");
 let venn_chart_normal = venn.VennDiagram()
@@ -114,5 +114,4 @@ let _cur_venn_chart, _cur_venn_div;
 let _focus, _focus_s1;
 
 let _cur_low_log2fold_set;
-let normal_low_log2fold_set;
 let my_data_table, my_stats_table;

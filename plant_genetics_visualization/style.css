@@ -128,7 +128,7 @@ p {
 
 #options {
     float: left;
-    width: 36%;
+    width: 37%;
     height: 435px;
     /*min-height: 350px;*/
     /*max-height: 400px;*/
@@ -283,19 +283,12 @@ tr:nth-child(even) {
 }
 
 
-.dataTable_and_print{
-    display: inline-block;
-    width: 36%;
-    height: 310px;
-    margin-left: 0px;
-
-
-}
-
 .dataTable{
-    width: 100%;
+    width: 37%;
     height: 300px;
     overflow-y: auto;
+    display: inline-block;
+
 
 }
 .statTable_and_Venn_div{
@@ -310,7 +303,7 @@ tr:nth-child(even) {
     width: 37%;
     max-width: 185px;
 
-    height: 255px;
+    height: 300px;
     float: left;
 
     margin-left: 0px;
@@ -321,7 +314,7 @@ tr:nth-child(even) {
 .statsTableClass {
     display:block;
     width: 100%;
-    height: 245px;
+    height: 290px;
     overflow-y: scroll;
     /*overflow-x: hidden;*/
     padding-right: 15px;
@@ -437,10 +430,10 @@ tr.highlight {
 
 }
 #raw_data_form{
-    float:right;
+    margin-left: 20px;
+    float:left;
     display: block;
-    margin-left: 10px;
-    margin-top: 6px;
+    margin-top: 10px;
     margin-right: 15px;
 }
 
@@ -468,13 +461,7 @@ tr.highlight {
     display: inline-block;
     float: left;
     margin-top: 5px;
-}
-
-#upload_and_down_div{
-    width: 36%;
-    display: inline-block;
-    float:left;
-    margin-left: 5px;
+    margin-left: 2px;
 }
 
 #next_btn_and_raw_checkbox{
@@ -484,3 +471,4 @@ tr.highlight {
     margin-left: 5px;
 
 }
+
