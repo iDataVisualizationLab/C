@@ -965,7 +965,7 @@ $("#export").click(function (event) {
     //
     if ($("#raw_data").is(':checked')) {
         if (_cur_df.count() == display_index){
-            exportTableToCSV.apply(this, [display_df_RAW, outputFile]); 
+            exportTableToCSV.apply(this, [display_df_RAW, outputFile]);
         }
         else{
             let all_id_list = _cur_df.select(_atID).toArray().flat();
@@ -1114,6 +1114,8 @@ d3.select(window).on('resize', resize);
 
 
 $(document.getElementById("file-input")).on("change", function f(ent) {
+    document.getElementById("loader").style.display = "block";
+
     loadFileAsText();
 });
 
@@ -1141,6 +1143,7 @@ function loadFileAsText(evt) {
 
 
 function processFile(e) {
+
     let file = e.target.result, lines;
     _upload_file=true;
 
@@ -1370,7 +1373,7 @@ function processFile(e) {
     // focus - circle when point on the chart
     _focus = svgCharts.append("g")
         .attr("class", "focus")
-        .style("display", "none");
+        .style("display", "None");
 
     _focus.append("circle")
         .attr("r", 4);
@@ -1483,8 +1486,8 @@ function processFile(e) {
         pairwise_ctrl_btn();
 
     }
+    document.getElementById("loader").style.display = "none";
 
-    // _focus.style("display", "none");
 }
 
 function get_class_type(arr) {
