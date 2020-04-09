@@ -51,7 +51,7 @@ function update_text_when_sliders_change(sld, pairwise) {
 
 
     slider_value.innerHTML = slider.value;
-    slider.oninput = function () {
+    slider.onchange = function () {
         slider_value.innerHTML = this.value / 100;
         auto_filter();
         change_color_ctrl_slider_bar_auto_choose_color(col_btn, slider, slider.value);

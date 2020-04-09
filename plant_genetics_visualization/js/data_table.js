@@ -34,10 +34,10 @@ function updateTable(tbl, rows) {
 
 
 function updateTAbleWithColor() {
-    if (my_data_table && display_df.count() > 0) { // dont want to delete the table when no data
+    if (my_data_table && _just_upload_file["dataTable"]) {
         my_data_table.destroy();
         $(dataTable).empty();
-        console.log("removed!!!!!")
+        _just_upload_file["dataTable"] = false;
     }
 
     let tbl = dataTable;

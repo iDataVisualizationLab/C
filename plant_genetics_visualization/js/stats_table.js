@@ -41,10 +41,10 @@ function calc_all_stats(df, base_col, master_slider) {
 }
 
 function create_stats_table(tbl, rows) {
-    if (my_stats_table && display_df.count()>0){ // if no data, the table will be deleted => quick fix
+    if (my_stats_table && _just_upload_file["statsTable"]){
         my_stats_table.destroy();
         $(_cur_statsTable).empty();
-        console.log("removed in create_stats_table!!!!!")
+        _just_upload_file["statsTable"]=false
     }
 
 

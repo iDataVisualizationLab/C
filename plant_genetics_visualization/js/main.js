@@ -1147,6 +1147,8 @@ function processFile(e) {
 
     let file = e.target.result, lines;
     _upload_file=true;
+    _just_upload_file["statsTable"] = true;
+    _just_upload_file["dataTable"]=true;
 
     lines = file.trim().split("\n");
     lines = lines.map(line => line.split(","));
@@ -1477,9 +1479,9 @@ function processFile(e) {
     mutant_condition_cols.forEach(s1 => update_text_when_sliders_change(s1, false));
     pairwise_condition_cols.forEach(pairwise_col => update_text_when_sliders_change(pairwise_col, true));
 
-    normal_master_slider.oninput = master_slider_oninput;
-    mutant_master_slider.oninput = master_slider_oninput;
-    pairwise_master_slider.oninput = master_slider_oninput;
+    normal_master_slider.onchange = master_slider_oninput;
+    mutant_master_slider.onchange = master_slider_oninput;
+    pairwise_master_slider.onchange = master_slider_oninput;
 
 
     set_global_varibles_by_CurActiveTab();
