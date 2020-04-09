@@ -285,6 +285,7 @@ tr:nth-child(even) {
 
 .dataTable{
     width: 37%;
+    min-width: 100px;
     height: 300px;
     overflow-y: auto;
     display: inline-block;

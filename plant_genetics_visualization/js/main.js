@@ -436,6 +436,7 @@ function show_circle_when_mouseover_chart(_this, d) {
 function mousemove_chart(d, _this) {
 
     let d_new = show_circle_when_mouseover_chart(_this, d);
+
     if (typeof d_new == "undefined") {
         return;
     }
@@ -849,7 +850,7 @@ function filter_data(button_list, pairwise, df, slider_class) {
             let bt = d3.select(button_list[i]);
             let col = bt.text().split(" ")[0];
             cur_base_condition = get_responding_normal_from_mutant(col);
-            let slider = slider_ctrl_list.find((slider => slider.id.split("_")[1] == col.replace("s1", "")));
+            let slider = slider_ctrl_list.find((slider => slider.id.split("_")[1] == col.replace(mutant_class, "")));
 
 
             if (bt.style("background-color").toString() == color_arr[0]) {
@@ -1155,6 +1156,10 @@ function processFile(e) {
     let header = lines[0];
 
     _atID = header[0];
+    if (_atID == "gene"){
+        _atID = "geneID";
+        header[0] = "geneID";
+    }
 
     let sort_by_col = header[1]+"_norm";
     let raw_and_norm_data = lines.slice(1).map(norm_row);
@@ -1487,6 +1492,11 @@ function processFile(e) {
     set_global_varibles_by_CurActiveTab();
     print_paging_sms_for_chart();
 
+
+    change_color_slider_bar(_cur_master_slider, 0, MY_COLORS.gray, MY_COLORS.slider_master);
+    _cur_master_slider.value = 0;
+    change_all_slider_values_to_the_master(0, _cur_condition_cols);
+    _cur_master_slider_value.innerHTML = 0;
 
 
     if (cur_active_tab == tab_names["normal_class"]) {
