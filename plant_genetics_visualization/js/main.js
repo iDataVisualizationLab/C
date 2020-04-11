@@ -1122,6 +1122,7 @@ $(document.getElementById("file-input")).on("change", function f(ent) {
 });
 
 function loadFileAsText(evt) {
+    var textFile;
     if (!window.FileReader) {
         alert('Your browser is not supported');
         return false;
@@ -1131,7 +1132,7 @@ function loadFileAsText(evt) {
     // Create a reader object
     var reader = new FileReader();
     if (input.files.length) {
-        var textFile = input.files[0];
+        textFile = input.files[0];
         // Read the file
         reader.readAsText(textFile);
         // When it's loaded, process it
@@ -1140,7 +1141,16 @@ function loadFileAsText(evt) {
         // alert('Please upload a file before continuing')
     }
 
-
+    var a = document.getElementById('file-input');
+    if(a.value == "")
+    {
+        fileLabel.innerHTML = "Choose file";
+    }
+    else
+    {
+        var theSplit = a.value.split('\\');
+        fileLabel.innerHTML = theSplit[theSplit.length-1];
+    }
 }
 
 

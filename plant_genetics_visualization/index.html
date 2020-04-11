@@ -18,8 +18,13 @@
 
 <!-- All the options for the visualization -->
 <form enctype="multipart/form-data" action="/upload" method="post" id="upload">
-    <input id="file-input" type="file" />
+<!--    <input id="file-input"  title=" " type="file" style="color:transparent;" onchange="this.style.color = 'black';"/>-->
+
+    <div><input type='file' id="file-input" title="Choose a file"><label id="fileLabel">transcriptome_cpm_all_expressed_genes.csv</label></div>
+
 </form>
+
+
 
 <div id="options">
     <div style="font-size: 17px">Control Panel</div>
