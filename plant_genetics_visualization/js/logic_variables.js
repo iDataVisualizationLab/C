@@ -32,14 +32,8 @@ const tab_names = {
     "custom": "custom_mode"
 };
 
-// todo: replace this
-const names = {
-    "value": "unemployment",
-};
 
 const DataFrame = dfjs.DataFrame;
-
-// Todo: read the column names from the input file.
 let normal_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe'];
 let mutant_cols = ['s1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];
 let all_cols = ['wthp6', 'wtlp6', 'wthp5', 'wtlp5', 'wtal', 'wtfe', 's1hp6', 's1lp6', 's1hp5', 's1lp5', 's1al', 's1fe'];

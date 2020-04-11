@@ -1220,10 +1220,19 @@ function processFile(e) {
 
     normal_class = get_class_type(normal_cols);
     mutant_class = get_class_type(mutant_cols);
-    pairwise_class = "pairwise";
 
+    if (normal_class == "" && mutant_class == ""){
+        let common_name = get_class_type([normal_cols[0], mutant_cols[0]]);
+        normal_class = normal_cols[0].replace(common_name, "")
+        mutant_class = mutant_cols[0].replace(common_name, "");
+        console.log("common_name", common_name);
+    }
     MAP_CLASS["normal"] = normal_class;
     MAP_CLASS["mutant"] = mutant_class;
+
+
+
+    pairwise_class = "pairwise";
 
     reset_DisplayIndex_and_DisplayDF();
 
