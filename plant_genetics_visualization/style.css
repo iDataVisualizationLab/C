@@ -65,19 +65,18 @@ p {
 }
 
 
-
 .master_slider::-webkit-slider-thumb {
     background: black !important;
 
 }
 
-.master_slider{
+.master_slider {
     width: 200px !important;
 
 
 }
 
-.master_slider_div{
+.master_slider_div {
     display: inline-block;
     display: inline-block;
     margin-left: 0px;
@@ -110,8 +109,6 @@ p {
     background: black;
     cursor: pointer;
 }
-
-
 
 
 #unemploymentCharts {
@@ -209,7 +206,6 @@ h1 {
 }
 
 
-
 .filter_btn {
     background-color: rgb(231, 231, 231);
     border: none;
@@ -227,8 +223,8 @@ h1 {
     background-image: linear-gradient(to right, rgb(145, 207, 96), rgb(252, 141, 89)); /* Standard syntax (must be last) */
 }
 
-.filter_btn:hover{
-    box-shadow: 0 1px 1px rgba(0,0,0,0.19), 0 1px 1px rgba(0,0,0,0.23);
+.filter_btn:hover {
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.19), 0 1px 1px rgba(0, 0, 0, 0.23);
     margin: 1px 1px 1px 1px;
 }
 
@@ -274,7 +270,7 @@ tr:nth-child(even) {
 }
 
 
-.btn_and_slide_container{
+.btn_and_slide_container {
     width: 90px;
     height: 50px;
     display: inline-block;
@@ -283,7 +279,7 @@ tr:nth-child(even) {
 }
 
 
-.dataTable{
+.dataTable {
     width: 37%;
     min-width: 100px;
     height: 300px;
@@ -292,13 +288,15 @@ tr:nth-child(even) {
 
 
 }
-.statTable_and_Venn_div{
+
+.statTable_and_Venn_div {
     margin-top: 5px;
     display: inline-block;
     width: 100%;
     height: 200px;
 }
-.statsTable_and_masterSlider{
+
+.statsTable_and_masterSlider {
     margin-top: 0px;
     display: inline-block;
     width: 37%;
@@ -313,7 +311,7 @@ tr:nth-child(even) {
 }
 
 .statsTableClass {
-    display:block;
+    display: block;
     width: 100%;
     height: 290px;
     overflow-y: scroll;
@@ -322,7 +320,7 @@ tr:nth-child(even) {
     padding-left: 0px;
 }
 
-.statsTableClass thead td, .statsTableClass tbody td , .dataTable tbody td {
+.statsTableClass thead td, .statsTableClass tbody td, .dataTable tbody td {
     padding: 2px;
     font-size: 10px;
     text-align: right;
@@ -336,6 +334,11 @@ tr:nth-child(even) {
     margin-right: 10px;
     display: block;
     float: left;
+}
+
+#document {
+    display: inline-block;
+    float: right;
 }
 
 a {
@@ -395,7 +398,7 @@ a:hover {
     opacity: 0;
 }
 
-.venn_diagram{
+.venn_diagram {
     display: inline-block;
     float: right;
 }
@@ -419,20 +422,22 @@ tr.highlight {
     border: 2px solid black
 }
 
-.next_and_previous_page_btn{
-    float:left;
+.next_and_previous_page_btn {
+    float: left;
     display: inline-block;
 
 
 }
-#next_page_sms{
+
+#next_page_sms {
     margin-top: 12px;
     display: inline-block;
 
 }
-#raw_data_form{
+
+#raw_data_form {
     margin-left: 20px;
-    float:left;
+    float: left;
     display: block;
     margin-top: 10px;
     margin-right: 15px;
@@ -458,21 +463,20 @@ tr.highlight {
 }
 
 
-#upload{
+#upload {
     display: inline-block;
     float: left;
     margin-top: 5px;
     margin-left: 2px;
 }
 
-#next_btn_and_raw_checkbox{
+#next_btn_and_raw_checkbox {
     width: 36%;
     display: inline-block;
-    float:left;
+    float: left;
     margin-left: 5px;
 
 }
-
 
 
 #loader {
@@ -493,16 +497,24 @@ tr.highlight {
 }
 
 @-webkit-keyframes spin {
-    0% { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
-input[type=file]{
-    width:90px;
-    color:transparent;
+input[type=file] {
+    width: 90px;
+    color: transparent;
 }

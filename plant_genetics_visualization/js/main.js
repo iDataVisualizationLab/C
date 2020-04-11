@@ -632,7 +632,7 @@ function changeChartDisplay(d) {
 
 function updateChartNoComparison() {
     this.select(".area.below")
-        .attr("fill", "steelblue")
+        .attr("fill", "white")
         .attr("d", function (d) {
             return valueArea.y0(yScale(0))(d.series[d.gene]);
         });
