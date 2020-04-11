@@ -86,3 +86,4 @@ let MAP_CLASS = {
     "normal": "wt",
     "mutant":"s1"
 }
+

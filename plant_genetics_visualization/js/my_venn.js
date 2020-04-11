@@ -164,9 +164,9 @@ function create_sets_obj_for_venn() {
     return sets_venn;
 }
 
+
 function draw_venn(sets_venn) {
 
-    console.log("sets_venn is", sets_venn);
 
     let tmp = d3.select("#venn_" + _cur_state);
     if (typeof tmp != "undefined") {
@@ -249,6 +249,8 @@ function draw_venn(sets_venn) {
 
 
         });
+
+
 
 
 }

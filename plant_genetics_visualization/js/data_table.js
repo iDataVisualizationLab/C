@@ -115,8 +115,10 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection(), u
             update_data_for_venn();
             let sets_venn = create_sets_obj_for_venn();
             draw_venn(sets_venn);
+
         }
     }
+
 
 
     //// circel stop1 gene

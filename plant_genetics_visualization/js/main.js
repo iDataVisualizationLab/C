@@ -1,3 +1,7 @@
+// loading bar
+document.getElementById("loader").style.display = "block";
+
+
 // draw filter btns and their sliders
 normal_condition_cols.forEach(wt => {
     create_filter_btn_and_slider(wt, "normal", base_col_of_normal, false);
@@ -145,8 +149,8 @@ DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
     read_data_for_venn().then(set_data_venn => {
         _set_data_venn = set_data_venn;
         let sets_venn = create_sets_obj_for_venn();
-        draw_venn(sets_venn);
-    })
+       draw_venn(sets_venn);
+    }).then( (x) => document.getElementById("loader").style.display = "none");
 
 
     let my_all_data = {};
@@ -392,6 +396,7 @@ DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
 
 
     normal_ctrl_btn();
+
 });
 
 
@@ -499,7 +504,6 @@ function normal_ctrl_btn(update_venn=true) {
                 }
             }
         }
-
     }
     updateTableAndVenn(dataTable, display_df.toCollection(), update_venn);
 
@@ -507,7 +511,7 @@ function normal_ctrl_btn(update_venn=true) {
     comparison_radio.prop("checked", true).trigger("click");
     $("#geneComparisonListdown").attr("disabled", false);
     $("#geneComparisonListdown").val(_cur_base);
-    updateCharts()
+    updateCharts();
 
 }
 
