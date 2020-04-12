@@ -149,8 +149,8 @@ DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
     read_data_for_venn().then(set_data_venn => {
         _set_data_venn = set_data_venn;
         let sets_venn = create_sets_obj_for_venn();
-       draw_venn(sets_venn);
-    }).then( (x) => document.getElementById("loader").style.display = "none");
+        draw_venn(sets_venn);
+    }).then((x) => document.getElementById("loader").style.display = "none");
 
 
     let my_all_data = {};
@@ -210,7 +210,7 @@ DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
     });
 
     // re-Scale the range of the data
-    xScale.domain([0, display_index-1]);
+    xScale.domain([0, display_index - 1]);
     // y.domain([0, d3.max(data, function(d) { return d.gene_value; })]);
 
     // Create the svgs for the charts.
@@ -372,9 +372,9 @@ DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
 // Register mouse handlers.
     d3.select("#unemploymentCharts").selectAll("svg")
         .on("mouseover", function (d) {
-                _focus.style("display", null);
+            _focus.style("display", null);
 
-    })
+        })
         .on("mouseout", function (d) {
             let rows = document.querySelectorAll("#ipdatacsvTbl tr");
             Array.from(rows).forEach((d, i) => {
@@ -484,7 +484,7 @@ d3.select("#geneComparisonListdown").on("change", () => {
 
 });
 
-function normal_ctrl_btn(update_venn=true) {
+function normal_ctrl_btn(update_venn = true) {
     calc_and_show_stats_table();
 
     // Tick all normal_cols, except the first one\
@@ -515,7 +515,7 @@ function normal_ctrl_btn(update_venn=true) {
 
 }
 
-function mutant_ctrl_btn(update_venn=true) {
+function mutant_ctrl_btn(update_venn = true) {
 
     calc_and_show_stats_table();
 
@@ -546,7 +546,7 @@ function mutant_ctrl_btn(update_venn=true) {
     updateCharts();
 }
 
-function pairwise_ctrl_btn(update_venn=true) {
+function pairwise_ctrl_btn(update_venn = true) {
     calc_and_show_stats_table();
 
     // Tick all normal_cols, except the first one
@@ -662,7 +662,7 @@ function updateChartgeneComparison(d, pairwise) {
     if (pairwise) {
         comparedgene = get_responding_normal_from_mutant(d["0"]["0"].__data__.gene)
     } else {
-        comparedgene =   _cur_base;
+        comparedgene = _cur_base;
     }
 
     // Update areas.
@@ -701,14 +701,13 @@ function updateChartgeneComparison(d, pairwise) {
 
 function updateCharts(pairwise = _pairwise) {
 
-    xScale.domain([0, display_index-1]);
-    if (display_index<10){
+    xScale.domain([0, display_index - 1]);
+    if (display_index < 10) {
         xAxis.tickValues([...Array(display_index).keys()]
         ).tickFormat((i) => {
             return display_df.select(_atID).toArray().flat()[i];
         });
-    }
-    else{
+    } else {
         xAxis.ticks(10).tickValues(null);
 
     }
@@ -854,7 +853,8 @@ function filter_data(button_list, pairwise, df, slider_class) {
             let bt = d3.select(button_list[i]);
             let col = bt.text().split(" ")[0];
             cur_base_condition = get_responding_normal_from_mutant(col);
-            let slider = slider_ctrl_list.find((slider => slider.id.split("_")[1] == col.replace(mutant_class, "")));
+            let slider = slider_ctrl_list.find((slider => (slider.id.split("_")[1] == col.replace(mutant_class, "")
+                || (slider.id.split("pairwise")[0] == col.replace(mutant_class, "")) ) ) );
 
 
             if (bt.style("background-color").toString() == color_arr[0]) {
@@ -899,7 +899,7 @@ $(document.getElementById("next_page")).on("click", () => {
 
     updateDataForSVGCharts();
     updateCharts();
-    updateTableAndVenn( dataTable, display_df.toCollection(), false); //todo: dont need to change venn
+    updateTableAndVenn(dataTable, display_df.toCollection(), false); //todo: dont need to change venn
     print_paging_sms_for_chart();
 
 
@@ -970,10 +970,9 @@ $("#export").click(function (event) {
     exportTableToCSV.apply(this, [_cur_df, outputFile]);
     //
     if ($("#raw_data").is(':checked')) {
-        if (_cur_df.count() == display_index){
+        if (_cur_df.count() == display_index) {
             exportTableToCSV.apply(this, [display_df_RAW, outputFile]);
-        }
-        else{
+        } else {
             let all_id_list = _cur_df.select(_atID).toArray().flat();
             let cur_df_raw = _total_df_RAW.filter(row => all_id_list.includes(row.get(_atID)));
             exportTableToCSV.apply(this, [cur_df_raw, outputFile]);
@@ -1109,7 +1108,7 @@ function resize() {
 
     let new_height_for_dataTable = this.innerHeight - parseFloat(d3.select("#options").style("height")) -
         parseFloat(d3.select("#export").style("height"))
-    - parseFloat(d3.select("#next_btn_and_raw_checkbox").style("height")) - 40;
+        - parseFloat(d3.select("#next_btn_and_raw_checkbox").style("height")) - 40;
 
     d3.select("#ipdatacsvDiv")
         .style("height", new_height_for_dataTable);
@@ -1146,14 +1145,11 @@ function loadFileAsText(evt) {
     }
 
     var a = document.getElementById('file-input');
-    if(a.value == "")
-    {
+    if (a.value == "") {
         fileLabel.innerHTML = "Choose file";
-    }
-    else
-    {
+    } else {
         var theSplit = a.value.split('\\');
-        fileLabel.innerHTML = theSplit[theSplit.length-1];
+        fileLabel.innerHTML = theSplit[theSplit.length - 1];
     }
 }
 
@@ -1161,33 +1157,32 @@ function loadFileAsText(evt) {
 function processFile(e) {
 
     let file = e.target.result, lines;
-    _upload_file=true;
+    _upload_file = true;
     _just_upload_file["statsTable"] = true;
-    _just_upload_file["dataTable"]=true;
+    _just_upload_file["dataTable"] = true;
 
     lines = file.trim().split("\n");
     lines = lines.map(line => line.split(","));
     let header = lines[0];
+    header = header.map(x => x.replace(/_/g, ''));
 
     _atID = header[0];
-    if (_atID == "gene"){
+    if (_atID == "gene") {
         _atID = "geneID";
         header[0] = "geneID";
     }
 
-    let sort_by_col = header[1]+"_norm";
+    let sort_by_col = header[1] + "_norm";
     let raw_and_norm_data = lines.slice(1).map(norm_row);
-    let raw_and_norm_df = new DataFrame(raw_and_norm_data, [...header, ...header.slice(1).map(col => col+"_norm")]);
+    let raw_and_norm_df = new DataFrame(raw_and_norm_data, [...header, ...header.slice(1).map(col => col + "_norm")]);
     raw_and_norm_df = raw_and_norm_df.sortBy(sort_by_col);
-
-
 
 
     _total_df_RAW = raw_and_norm_df.select(...header);
     let columns = _total_df_RAW.listColumns();
 
 
-    _total_df = raw_and_norm_df.select(_atID,...header.slice(1).map(col => col+"_norm")).renameAll(columns);
+    _total_df = raw_and_norm_df.select(_atID, ...header.slice(1).map(col => col + "_norm")).renameAll(columns);
     _cur_df = _total_df;
 
     raw_and_norm_df.show();
@@ -1197,13 +1192,15 @@ function processFile(e) {
     all_cols = columns.slice(1);
 
 
-
-    let low_cpm  = lines.slice(1).map(get_row_low_cpm).filter(function(n){return n; });
-    let low_log2fold  = lines.slice(1).map(row => get_row_low_log2fold(row.slice(0, normal_cols.length+1))).filter(function(n){return n; });
+    let low_cpm = lines.slice(1).map(get_row_low_cpm).filter(function (n) {
+        return n;
+    });
+    let low_log2fold = lines.slice(1).map(row => get_row_low_log2fold(row.slice(0, normal_cols.length + 1))).filter(function (n) {
+        return n;
+    });
 
     console.log("low_cpm", low_cpm);
     console.log("low_log2fold", low_log2fold);
-
 
 
     _set_data_venn = read_data_for_venn_with_upload_file(low_cpm, low_log2fold);
@@ -1221,7 +1218,7 @@ function processFile(e) {
     normal_class = get_class_type(normal_cols);
     mutant_class = get_class_type(mutant_cols);
 
-    if (normal_class == "" && mutant_class == ""){
+    if (normal_class == "" && mutant_class == "") {
         let common_name = get_class_type([normal_cols[0], mutant_cols[0]]);
         normal_class = normal_cols[0].replace(common_name, "")
         mutant_class = mutant_cols[0].replace(common_name, "");
@@ -1229,7 +1226,6 @@ function processFile(e) {
     }
     MAP_CLASS["normal"] = normal_class;
     MAP_CLASS["mutant"] = mutant_class;
-
 
 
     pairwise_class = "pairwise";
@@ -1240,7 +1236,6 @@ function processFile(e) {
     document.getElementById("p_normal_intro").innerHTML = `Compare each <b>${normal_class}</b> conditioned test with <b>${base_col_of_normal}</b>`;
     document.getElementById("p_mutant_intro").innerHTML = `Compare each <b>${mutant_class}</b> conditioned test with <b>${base_col_of_mutant}</b>`;
     document.getElementById("p_pairwise_intro").innerHTML = `Pairwise comparison: <b>${mutant_class}</b> vs. <b>${normal_class}</b>`;
-
 
 
     document.getElementById("normal_tab").innerHTML = `${normal_class.toUpperCase()}(s) Comparision`;
@@ -1413,7 +1408,6 @@ function processFile(e) {
         });
 
 
-
     // focus - circle when point on the chart
     _focus = svgCharts.append("g")
         .attr("class", "focus")
@@ -1482,7 +1476,6 @@ function processFile(e) {
     });
 
 
-
     $('.normal_filter_btn').click(filter_btn_click_func);
     $('.mutant_filter_btn').click(filter_btn_click_func);
     $('.pairwise_filter_btn').click(filter_btn_click_func);
@@ -1528,7 +1521,6 @@ function processFile(e) {
 
     } else if (cur_active_tab == tab_names["mutant_class"]) {
         mutant_ctrl_btn();
-
 
 
     } else if (cur_active_tab == tab_names["pairwise_class"]) {
