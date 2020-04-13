@@ -3,16 +3,7 @@ document.getElementById("loader").style.display = "block";
 
 
 // draw filter btns and their sliders
-normal_condition_cols.forEach(wt => {
-    create_filter_btn_and_slider(wt, "normal", base_col_of_normal, false);
-});
 
-mutant_condition_cols.forEach(s1 => {
-    create_filter_btn_and_slider(s1, "mutant", base_col_of_mutant, false);
-});
-pairwise_condition_cols.forEach(p => {
-    create_filter_btn_and_slider(p, "pairwise", "", true, "mutant", "normal");
-});
 
 // Define the line.
 var valueLine = d3.svg.line()
@@ -93,9 +84,7 @@ function filter_btn_click_func() {
 
 }
 
-$('.normal_filter_btn').click(filter_btn_click_func);
-$('.mutant_filter_btn').click(filter_btn_click_func);
-$('.pairwise_filter_btn').click(filter_btn_click_func);
+
 comparison_radio.on("click", function () {
     let _this = this;
 
@@ -115,8 +104,32 @@ $("#option_form").on("change", () => {
 function read_plant_data() {
     DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
 
+        normal_condition_cols.forEach(wt => {
+            create_filter_btn_and_slider(wt, "normal", base_col_of_normal, false);
+        });
 
-    plot_stop1 = true;
+        mutant_condition_cols.forEach(s1 => {
+            create_filter_btn_and_slider(s1, "mutant", base_col_of_mutant, false);
+        });
+        pairwise_condition_cols.forEach(p => {
+            create_filter_btn_and_slider(p, "pairwise", "", true, "mutant", "normal");
+        });
+
+        $('.normal_filter_btn').click(filter_btn_click_func);
+        $('.mutant_filter_btn').click(filter_btn_click_func);
+        $('.pairwise_filter_btn').click(filter_btn_click_func);
+
+
+        normal_condition_cols.forEach(wt => update_text_when_sliders_change(wt, false));
+        mutant_condition_cols.forEach(s1 => update_text_when_sliders_change(s1, false));
+        pairwise_condition_cols.forEach(pairwise_col => update_text_when_sliders_change(pairwise_col, true));
+
+
+        normal_master_slider.oninput = master_slider_oninput;
+        mutant_master_slider.oninput = master_slider_oninput;
+        pairwise_master_slider.oninput = master_slider_oninput;
+
+        plot_stop1 = true;
 
 
         _atID = data.listColumns()[0];
