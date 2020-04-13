@@ -119,10 +119,8 @@ function updateTableAndVenn(tbl = dataTable, rows = display_df.toCollection(), u
         }
     }
 
-
-
     //// circel stop1 gene
-    if (!_upload_file) {
+    if (plot_stop1) {
         let stop1_row = display_df.find(row => row.get(_atID).replace(S1_TEXT, "") == STOP1);
         let tmp = _focus_s1[0].filter(g => _cur_condition_cols.includes(g.__data__.gene));
 

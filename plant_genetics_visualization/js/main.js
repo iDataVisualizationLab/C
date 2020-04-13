@@ -80,15 +80,6 @@ function auto_filter() {
     });
 
 
-    // todo:
-    // if (display_df.count() < 6){
-    //     console.log("123 123 123 123 123 123 123 123 123 123 123 123; display_df.count()", display_df.count()-1);
-    //     xAxis.ticks(display_df.count()).tickFormat((_, i) => {
-    //         console.log("==============123");
-    //         return display_df.select(_atID).toArray().flat()[i];
-    //     });
-    // }
-
 }
 
 
@@ -121,285 +112,310 @@ $("#option_form").on("change", () => {
     updateCharts();
 });
 
-
-DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
-    _atID = data.listColumns()[0];
-    DataFrame.fromCSV("data/data_ALL_raw_sorted_by_wthp6Norm.csv").then(df => {
-        _total_df_RAW = df;
-    })
-    data = data.sortBy(base_col_of_normal);
-    set_global_varibles_by_CurActiveTab();
-    console.log("here, DataFrame.fromCSV");
-
-    _total_df = data;
-    _cur_df = _total_df;
-
-    if (_total_df.count() > MAXIMUM_DISPLAY) {
-        display_index = MAXIMUM_DISPLAY;
-    } else {
-        display_index = _total_df.count();
-    }
-
-    _cur_index = display_index;
-    document.getElementById("next_page_sms").innerText = `${display_index}/ ${_cur_df.count()} genes, page ${Math.ceil(_cur_index / MAXIMUM_DISPLAY)}/${Math.ceil(_cur_df.count() / MAXIMUM_DISPLAY)}`;
-
-    display_df = _total_df.slice(0, display_index);
+function read_plant_data() {
+    DataFrame.fromCSV("data/" + "data_ALL_norm.csv").then(data => {
 
 
-    read_data_for_venn().then(set_data_venn => {
-        _set_data_venn = set_data_venn;
-        let sets_venn = create_sets_obj_for_venn();
-        draw_venn(sets_venn);
-    }).then((x) => document.getElementById("loader").style.display = "none");
+    plot_stop1 = true;
 
 
-    let my_all_data = {};
-    all_cols.forEach((gene_name) => {
-        let df = display_df.select(_atID, gene_name);
-        df = df.rename(gene_name, "gene_value");
-        df = df.withColumn('index', (row, i) => i)
-            .withColumn('gene', () => gene_name);
-        my_all_data[gene_name] = df.toCollection();
+        _atID = data.listColumns()[0];
+        DataFrame.fromCSV("data/data_ALL_raw_sorted_by_wthp6Norm.csv").then(df => {
+            _total_df_RAW = df;
+        })
+        data = data.sortBy(base_col_of_normal);
+        set_global_varibles_by_CurActiveTab();
+        console.log("here, DataFrame.fromCSV");
 
-    });
+        _total_df = data;
+        _cur_df = _total_df;
 
+        if (_total_df.count() > MAXIMUM_DISPLAY) {
+            display_index = MAXIMUM_DISPLAY;
+        } else {
+            display_index = _total_df.count();
+        }
 
-    let geneChartData = [];
-    for (let gene in my_all_data) {
-        let d = {};
-        d.gene = gene;
-        d.series = my_all_data;
-        geneChartData.push(d);
-    }
+        _cur_index = display_index;
+        document.getElementById("next_page_sms").innerText = `${display_index}/ ${_cur_df.count()} genes, page ${Math.ceil(_cur_index / MAXIMUM_DISPLAY)}/${Math.ceil(_cur_df.count() / MAXIMUM_DISPLAY)}`;
 
-    var geneOptions = d3.select("#geneOptions");
-    var geneComparisons = d3.select("#geneComparisonListdown");
-
-
-    let tick_ = new Date;
-    console.log(".... Inside CHART + READ CSV");
-    geneChartData.forEach(function (d) {
-
-        //option checkbox
-        var option = geneOptions
-            .append("label")
-            .datum(d.gene);
+        display_df = _total_df.slice(0, display_index);
 
 
-        //check for base col
-        option.append("input")
-            .attr("type", "checkbox")
-            .property("checked", function (d) {
-                return (d == base_col_of_normal)
+        read_data_for_venn().then(set_data_venn => {
+            _set_data_venn = set_data_venn;
+            let sets_venn = create_sets_obj_for_venn();
+            draw_venn(sets_venn);
+        }).then((x) => document.getElementById("loader").style.display = "none");
+
+
+        let my_all_data = {};
+        all_cols.forEach((gene_name) => {
+            let df = display_df.select(_atID, gene_name);
+            df = df.rename(gene_name, "gene_value");
+            df = df.withColumn('index', (row, i) => i)
+                .withColumn('gene', () => gene_name);
+            my_all_data[gene_name] = df.toCollection();
+
+        });
+
+
+        let geneChartData = [];
+        for (let gene in my_all_data) {
+            let d = {};
+            d.gene = gene;
+            d.series = my_all_data;
+            geneChartData.push(d);
+        }
+
+        var geneOptions = d3.select("#geneOptions");
+        var geneComparisons = d3.select("#geneComparisonListdown");
+
+
+        let tick_ = new Date;
+        console.log(".... Inside CHART + READ CSV");
+        geneChartData.forEach(function (d) {
+
+            //option checkbox
+            var option = geneOptions
+                .append("label")
+                .datum(d.gene);
+
+
+            //check for base col
+            option.append("input")
+                .attr("type", "checkbox")
+                .property("checked", function (d) {
+                    return (d == base_col_of_normal)
+                })
+                .attr("name", "geneSelection")
+                .attr("id", removeWhitespace)
+                .on("click", changeChartDisplay);
+
+            option.append("text")
+                .text(d.gene);
+
+            option.append("br");
+
+            //dropdown boxes
+            var comparison = geneComparisons.append("option")
+                .datum(d.gene)
+                .attr("value", d.gene)
+                .text(d.gene);
+
+        });
+
+        // re-Scale the range of the data
+        xScale.domain([0, display_index - 1]);
+        // y.domain([0, d3.max(data, function(d) { return d.gene_value; })]);
+
+        // Create the svgs for the charts.
+        svgCharts = d3.select("#unemploymentCharts").selectAll("svg")
+            .data(geneChartData, d => d.gene)
+            .enter()
+            .append("svg")
+            .style("display", "block")
+            .attr("id", function (d) {
+                return removeWhitespace(d.gene);
             })
-            .attr("name", "geneSelection")
-            .attr("id", removeWhitespace)
-            .on("click", changeChartDisplay);
+            .classed("chartActive", function (d) {
+                return d.gene == base_col_of_normal;
+            })
+            .attr("width", svgWidth)
+            .attr("height", function (d) {
+                if (d.gene == base_col_of_normal) {
+                    return svgHeight;
+                } else {
+                    return 0;
+                }
+            })
+            .append("g")
+            .attr("transform", "translate(" + padding.left + "," + padding.top + ")");
 
-        option.append("text")
-            .text(d.gene);
+        var defs = svgCharts.append("defs");
 
-        option.append("br");
+        // Add background.
+        svgCharts.append("rect")
+            .classed("rect_class", true)
+            .attr("transform", "translate(0,-" + padding.top + ")")
+            .attr("width", w)
+            .attr("height", h + padding.top + padding.bottom)
+            .attr("fill", "white");
 
-        //dropdown boxes
-        var comparison = geneComparisons.append("option")
-            .datum(d.gene)
-            .attr("value", d.gene)
-            .text(d.gene);
+        // Side clip-path.
+        defs.append("clipPath")
+            .attr("id", "sideClip")
+            .append("rect")
+            .attr("transform", "translate(0,-" + padding.top + ")")
+            .attr("width", w)
+            .attr("height", h + padding.top);
 
-    });
+        // Add the baseline.
+        svgCharts.append("path")
+            .attr("clip-path", "url(#sideClip)")
+            .attr("class", "baseline")
+            .attr("d", (d) => {
+                return zeroLine(d.series[d.gene]);
+            });
 
-    // re-Scale the range of the data
-    xScale.domain([0, display_index - 1]);
-    // y.domain([0, d3.max(data, function(d) { return d.gene_value; })]);
+        // Add the areas.
+        svgCharts.append("path")
+            .attr("clip-path", "url(#sideClip)")
+            .attr("class", "area below")
+            .attr("fill", "steelblue")
+            .attr("d", function (d) {
+                return zeroArea(d.series[d.gene]);
+            });
 
-    // Create the svgs for the charts.
-    svgCharts = d3.select("#unemploymentCharts").selectAll("svg")
-        .data(geneChartData, d => d.gene)
-        .enter()
-        .append("svg")
-        .style("display", "block")
-        .attr("id", function (d) {
-            return removeWhitespace(d.gene);
-        })
-        .classed("chartActive", function (d) {
-            return d.gene == base_col_of_normal;
-        })
-        .attr("width", svgWidth)
-        .attr("height", function (d) {
-            if (d.gene == base_col_of_normal) {
-                return svgHeight;
-            } else {
-                return 0;
-            }
-        })
-        .append("g")
-        .attr("transform", "translate(" + padding.left + "," + padding.top + ")");
-
-    var defs = svgCharts.append("defs");
-
-    // Add background.
-    svgCharts.append("rect")
-        .classed("rect_class", true)
-        .attr("transform", "translate(0,-" + padding.top + ")")
-        .attr("width", w)
-        .attr("height", h + padding.top + padding.bottom)
-        .attr("fill", "white");
-
-    // Side clip-path.
-    defs.append("clipPath")
-        .attr("id", "sideClip")
-        .append("rect")
-        .attr("transform", "translate(0,-" + padding.top + ")")
-        .attr("width", w)
-        .attr("height", h + padding.top);
-
-    // Add the baseline.
-    svgCharts.append("path")
-        .attr("clip-path", "url(#sideClip)")
-        .attr("class", "baseline")
-        .attr("d", (d) => {
-            return zeroLine(d.series[d.gene]);
-        });
-
-    // Add the areas.
-    svgCharts.append("path")
-        .attr("clip-path", "url(#sideClip)")
-        .attr("class", "area below")
-        .attr("fill", "steelblue")
-        .attr("d", function (d) {
-            return zeroArea(d.series[d.gene]);
-        });
-
-    svgCharts.append("path")
-        .attr("clip-path", "url(#sideClip)")
-        .attr("class", "area above")
-        .attr("d",
-            d => {
-                // console.log(d);
-                zeroArea(d.series[d.gene]);
-            }
-        );
+        svgCharts.append("path")
+            .attr("clip-path", "url(#sideClip)")
+            .attr("class", "area above")
+            .attr("d",
+                d => {
+                    // console.log(d);
+                    zeroArea(d.series[d.gene]);
+                }
+            );
 
 // Area gets drawn in updateCharts()
 // Draw the axes.
-    svgCharts.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + h + ")")
+        svgCharts.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + h + ")")
 
 
 // text label for the x axis
-    svgCharts.append("text")
-        .classed("y_label", true)
-        .attr("transform",
-            "translate(" + (w) + " ," +
-            (h) + ")")
-        .style("text-anchor", "end")
-        .text("Gene Name");
+        svgCharts.append("text")
+            .classed("y_label", true)
+            .attr("transform",
+                "translate(" + (w) + " ," +
+                (h) + ")")
+            .style("text-anchor", "end")
+            .text("Gene Name");
 
 
-    svgCharts.append("g")
-        .attr("class", "y axis");
+        svgCharts.append("g")
+            .attr("class", "y axis");
 
 // Add y-axis label.
-    svgCharts.append("text")
-        .attr("text-anchor", "end")
-        .attr("y", 6)
-        .attr("dy", ".75em")
-        .attr("transform", "rotate(-90)")
-        .text("Expressed (norm)");
+        svgCharts.append("text")
+            .attr("text-anchor", "end")
+            .attr("y", 6)
+            .attr("dy", ".75em")
+            .attr("transform", "rotate(-90)")
+            .text("Expressed (norm)");
 
-    // todo: change name of the chart
-    svgCharts.append("text")
-        .classed("chart_name_on_the_right", true)
-        .datum(function (d) {
-            return d.gene;
-        })
-        .attr("x", w)
-        .attr("y", 0)
-        .attr("text-anchor", "end")
-        .style("font", "15px Arial")
-        .attr("fill", "#888")
-        .text(function (d) {
-            return d;
-        });
+        // todo: change name of the chart
+        svgCharts.append("text")
+            .classed("chart_name_on_the_right", true)
+            .datum(function (d) {
+                return d.gene;
+            })
+            .attr("x", w)
+            .attr("y", 0)
+            .attr("text-anchor", "end")
+            .style("font", "15px Arial")
+            .attr("fill", "#888")
+            .text(function (d) {
+                return d;
+            });
 
-    _focus_s1 = svgCharts.append("g")
-        .attr("class", "s1_focus")
-        .style("display", "none");
+        _focus_s1 = svgCharts.append("g")
+            .attr("class", "s1_focus")
+            .style("display", "none");
 
-    _focus_s1.append("circle")
-        .classed("s1_cirle", true)
-        .attr("r", 4);
+        _focus_s1.append("circle")
+            .classed("s1_cirle", true)
+            .attr("r", 4);
 
-    // focus - circle when point on the chart
-    _focus = svgCharts.append("g")
-        .attr("class", "focus")
-        .style("display", "none");
+        // focus - circle when point on the chart
+        _focus = svgCharts.append("g")
+            .attr("class", "focus")
+            .style("display", "none");
 
-    _focus.append("circle")
-        .attr("r", 4);
+        _focus.append("circle")
+            .attr("r", 4);
 
-    _focus.append("rect")
-        .attr("class", "tooltip")
-        .attr("width", 78)
-        .attr("height", 35)
-        .attr("x", 10)
-        .attr("y", -22)
-        .attr("rx", 4)
-        .attr("ry", 4);
+        _focus.append("rect")
+            .attr("class", "tooltip")
+            .attr("width", 78)
+            .attr("height", 35)
+            .attr("x", 10)
+            .attr("y", -22)
+            .attr("rx", 4)
+            .attr("ry", 4);
 
-    _focus.append("text")
-        .attr("class", "tooltip-atID")
-        .attr("x", 18)
-        .attr("y", -12);
+        _focus.append("text")
+            .attr("class", "tooltip-atID")
+            .attr("x", 18)
+            .attr("y", -12);
 
-    _focus.append("text")
-        .attr("class", "tooltip-value")
-        .attr("x", 18)
-        .attr("y", 4);
+        _focus.append("text")
+            .attr("class", "tooltip-value")
+            .attr("x", 18)
+            .attr("y", 4);
 
-    let new_height_for_dataTable = this.innerHeight - parseFloat(d3.select("#options").style("height")) -
-        parseFloat(d3.select("#export").style("height"))
-        - parseFloat(d3.select("#next_btn_and_raw_checkbox").style("height")) - 40;
+        let new_height_for_dataTable = this.innerHeight - parseFloat(d3.select("#options").style("height")) -
+            parseFloat(d3.select("#export").style("height"))
+            - parseFloat(d3.select("#next_btn_and_raw_checkbox").style("height")) - 40;
 
-    d3.select("#ipdatacsvDiv")
-        .style("height", new_height_for_dataTable);
+        d3.select("#ipdatacsvDiv")
+            .style("height", new_height_for_dataTable);
 
-    console.log(`..... END of read+svg ${(new Date - tick_) / 100}s`);
+        console.log(`..... END of read+svg ${(new Date - tick_) / 100}s`);
 
 
 // Register mouse handlers.
-    d3.select("#unemploymentCharts").selectAll("svg")
-        .on("mouseover", function (d) {
-            _focus.style("display", null);
+        d3.select("#unemploymentCharts").selectAll("svg")
+            .on("mouseover", function (d) {
+                _focus.style("display", null);
 
-        })
-        .on("mouseout", function (d) {
-            let rows = document.querySelectorAll("#ipdatacsvTbl tr");
-            Array.from(rows).forEach((d, i) => {
-                d.style.fontWeight = "normal";
-                d.style.backgroundColor = i % 2 == 0 ? '#ececec' : '#ffffff'
+            })
+            .on("mouseout", function (d) {
+                let rows = document.querySelectorAll("#ipdatacsvTbl tr");
+                Array.from(rows).forEach((d, i) => {
+                    d.style.fontWeight = "normal";
+                    d.style.backgroundColor = i % 2 == 0 ? '#ececec' : '#ffffff'
+                });
+
+                _focus.style("display", "none");
+            })
+            .on("mousemove", function (d) {
+
+
+                let _this = this;
+                mousemove_chart(d, _this)
+            })
+            .on("dblclick", function (d) {
+                changeChartDisplay(d.gene);
             });
 
-            _focus.style("display", "none");
-        })
-        .on("mousemove", function (d) {
+
+        normal_ctrl_btn();
+
+    });
+}
+
+function start() {
+    let dataName = "";
+    try {
+        dataName = window.location.search.substring(1).split("data=")[1].split('&')[0].replace(/%20/g, ' '); // get data name after app
+    } catch (e) {
+    }
 
 
-            let _this = this;
-            mousemove_chart(d, _this)
-        })
-        .on("dblclick", function (d) {
-            changeChartDisplay(d.gene);
-        });
+
+    if (dataName.includes("mice"))
+    {
+        processFile("", true);
+    }
+    else{
+        read_plant_data();
+    }
 
 
-    normal_ctrl_btn();
-
-});
-
-
+}
+start();
 function show_circle_when_mouseenter_the_dataTable(index, data_and_columnNames) {
     let tmp = _focus[0].filter(g => _cur_condition_cols.includes(g.__data__.gene));
 
@@ -515,7 +531,7 @@ function normal_ctrl_btn(update_venn = true) {
 
 }
 
-function mutant_ctrl_btn(update_venn = true) {
+function mutant_ctrl_btn(update_venn = true, ) {
 
     calc_and_show_stats_table();
 
@@ -538,7 +554,7 @@ function mutant_ctrl_btn(update_venn = true) {
 
     }
 
-    updateTableAndVenn(dataTable, display_df.toCollection(), update_venn)
+    updateTableAndVenn(dataTable, display_df.toCollection(), update_venn);
     // mark comparison
     comparison_radio.prop("checked", true).trigger("click");
     $("#geneComparisonListdown").attr("disabled", false);
@@ -568,7 +584,7 @@ function pairwise_ctrl_btn(update_venn = true) {
         }
     }
 
-    updateTableAndVenn(dataTable, display_df.toCollection(), update_venn)
+    updateTableAndVenn(dataTable, display_df.toCollection(), update_venn);
     // mark comparison for s1
     comparison_radio.prop("checked", true);
     $("#geneComparisonListdown").attr("disabled", true);
@@ -608,6 +624,9 @@ function changeChartDisplay(d) {
     var geneChart = d3.select("#unemploymentCharts")
         .select("#" + id);
 
+
+    console.log("geneChart", geneChart);
+    console.log("id", id);
 
     var geneCheckBox = d3.select("#geneOptions").select("#" + id);
     var active = geneChart.classed("chartActive");
@@ -702,13 +721,13 @@ function updateChartgeneComparison(d, pairwise) {
 function updateCharts(pairwise = _pairwise) {
 
     xScale.domain([0, display_index - 1]);
-    if (display_index < 10) {
+    if (display_index < num_ticks) {
         xAxis.tickValues([...Array(display_index).keys()]
         ).tickFormat((i) => {
             return display_df.select(_atID).toArray().flat()[i];
         });
     } else {
-        xAxis.ticks(10).tickValues(null);
+        xAxis.ticks(num_ticks).tickValues(null);
 
     }
 
@@ -854,7 +873,7 @@ function filter_data(button_list, pairwise, df, slider_class) {
             let col = bt.text().split(" ")[0];
             cur_base_condition = get_responding_normal_from_mutant(col);
             let slider = slider_ctrl_list.find((slider => (slider.id.split("_")[1] == col.replace(mutant_class, "")
-                || (slider.id.split("pairwise")[0] == col.replace(mutant_class, "")) ) ) );
+                || (slider.id.split("pairwise")[0] == col.replace(mutant_class, "")))));
 
 
             if (bt.style("background-color").toString() == color_arr[0]) {
@@ -1154,53 +1173,89 @@ function loadFileAsText(evt) {
 }
 
 
-function processFile(e) {
+async function processFile(e, mice_data = false) {
 
-    let file = e.target.result, lines;
-    _upload_file = true;
-    _just_upload_file["statsTable"] = true;
-    _just_upload_file["dataTable"] = true;
+    document.getElementById("fileLabel").innerText = "mice_data.csv";
+    plot_stop1 = false;
 
-    lines = file.trim().split("\n");
-    lines = lines.map(line => line.split(","));
-    let header = lines[0];
-    header = header.map(x => x.replace(/_/g, ''));
+    let low_cpm, low_log2fold;
+    if (!mice_data) {
+        let file = e.target.result, lines;
+        _upload_file = true;
+        _just_upload_file["statsTable"] = true;
+        _just_upload_file["dataTable"] = true;
 
-    _atID = header[0];
-    if (_atID == "gene") {
-        _atID = "geneID";
-        header[0] = "geneID";
+        lines = file.trim().split("\n");
+        lines = lines.map(line => line.split(","));
+        let header = lines[0];
+        header = header.map(x => x.replace(/_/g, '')).map(x => x.replace(/./g, ''));
+
+        _atID = header[0];
+        if (_atID == "gene") {
+            _atID = "geneID";
+            header[0] = "geneID";
+        }
+
+        let sort_by_col = header[1] + "_norm";
+        let raw_and_norm_data = lines.slice(1).map(norm_row);
+        let raw_and_norm_df = new DataFrame(raw_and_norm_data, [...header, ...header.slice(1).map(col => col + "_norm")]);
+        raw_and_norm_df = raw_and_norm_df.sortBy(sort_by_col);
+
+
+        _total_df_RAW = raw_and_norm_df.select(...header);
+        let columns = _total_df_RAW.listColumns();
+
+
+        _total_df = raw_and_norm_df.select(_atID, ...header.slice(1).map(col => col + "_norm")).renameAll(columns);
+        _cur_df = _total_df;
+
+        raw_and_norm_df.show();
+
+        normal_cols = columns.slice(1, Math.floor(columns.length / 2) + 1);
+        mutant_cols = columns.slice(Math.floor(columns.length / 2) + 1);
+        all_cols = columns.slice(1);
+
+
+        low_cpm = lines.slice(1).map(get_row_low_cpm).filter(function (n) {
+            return n;
+        });
+        low_log2fold = lines.slice(1).map(row => get_row_low_log2fold(row.slice(0, normal_cols.length + 1))).filter(function (n) {
+            return n;
+        });
+
+
+    } else {
+
+
+         await DataFrame.fromCSV("data/" + "mice_pseudocounts_cpm_raw.csv").then(df => _total_df_RAW = df).then(() =>
+             DataFrame.fromCSV("data/" + "mice_pseudocounts_cpm_norm.csv").then(data => {
+                 _total_df = data;
+
+                 _cur_df = _total_df;
+                 _atID = data.listColumns()[0];
+                 let columns = data.listColumns();
+
+                 normal_cols = columns.slice(1, Math.floor(columns.length / 2) + 1);
+                 mutant_cols = columns.slice(Math.floor(columns.length / 2) + 1);
+                 all_cols = columns.slice(1);
+             }
+         )).then( () =>  DataFrame.fromCSV("data/" + "mice_pseudocounts_LOW.csv").then(data => {
+            data.show();
+            low_cpm = data.filter(row => row.get("low_cpm") == 1).select(_atID).toArray().flat();
+            low_log2fold = data.filter(row => row.get("low_log2fold") == 1).select(_atID).toArray().flat();
+        }) );
+
+
+
+
     }
+    d3.select("#geneOptions").selectAll("label").remove();
+    d3.select("#unemploymentCharts").selectAll("svg").remove();
+    d3.select("#geneComparisonListdown").selectAll("option").remove();
 
-    let sort_by_col = header[1] + "_norm";
-    let raw_and_norm_data = lines.slice(1).map(norm_row);
-    let raw_and_norm_df = new DataFrame(raw_and_norm_data, [...header, ...header.slice(1).map(col => col + "_norm")]);
-    raw_and_norm_df = raw_and_norm_df.sortBy(sort_by_col);
-
-
-    _total_df_RAW = raw_and_norm_df.select(...header);
-    let columns = _total_df_RAW.listColumns();
-
-
-    _total_df = raw_and_norm_df.select(_atID, ...header.slice(1).map(col => col + "_norm")).renameAll(columns);
-    _cur_df = _total_df;
-
-    raw_and_norm_df.show();
-
-    normal_cols = columns.slice(1, Math.floor(columns.length / 2) + 1);
-    mutant_cols = columns.slice(Math.floor(columns.length / 2) + 1);
-    all_cols = columns.slice(1);
-
-
-    let low_cpm = lines.slice(1).map(get_row_low_cpm).filter(function (n) {
-        return n;
-    });
-    let low_log2fold = lines.slice(1).map(row => get_row_low_log2fold(row.slice(0, normal_cols.length + 1))).filter(function (n) {
-        return n;
-    });
-
-    console.log("low_cpm", low_cpm);
-    console.log("low_log2fold", low_log2fold);
+    d3.select("#mutant_comparison").selectAll(".btn-group").selectAll("*").remove();
+    d3.select("#normal_comparison").selectAll(".btn-group").selectAll("*").remove();
+    d3.select("#pairwise_comparison").selectAll(".btn-group").selectAll("*").remove();
 
 
     _set_data_venn = read_data_for_venn_with_upload_file(low_cpm, low_log2fold);
@@ -1262,9 +1317,7 @@ function processFile(e) {
     var geneOptions = d3.select("#geneOptions");
     var geneComparisons = d3.select("#geneComparisonListdown");
 
-    d3.select("#geneOptions").selectAll("label").remove();
 
-    d3.select("#geneComparisonListdown").selectAll("option").remove();
     geneChartData.forEach(function (d) {
 
         //option checkbox
@@ -1296,7 +1349,6 @@ function processFile(e) {
 
     });
 
-    d3.select("#unemploymentCharts").selectAll("svg").remove();
     svgCharts = d3.select("#unemploymentCharts").selectAll("svg")
         .data(geneChartData, d => d.gene)
         .enter()
@@ -1460,9 +1512,6 @@ function processFile(e) {
             changeChartDisplay(d.gene);
         });
 
-    d3.select("#mutant_comparison").selectAll(".btn-group").selectAll("*").remove();
-    d3.select("#normal_comparison").selectAll(".btn-group").selectAll("*").remove();
-    d3.select("#pairwise_comparison").selectAll(".btn-group").selectAll("*").remove();
 
     normal_condition_cols.forEach(wt => {
         create_filter_btn_and_slider(wt, "normal", base_col_of_normal, false);
@@ -1516,15 +1565,14 @@ function processFile(e) {
 
 
     if (cur_active_tab == tab_names["normal_class"]) {
-        normal_ctrl_btn();
-
+        normal_ctrl_btn(true);
 
     } else if (cur_active_tab == tab_names["mutant_class"]) {
-        mutant_ctrl_btn();
+        mutant_ctrl_btn(true);
 
 
     } else if (cur_active_tab == tab_names["pairwise_class"]) {
-        pairwise_ctrl_btn();
+        pairwise_ctrl_btn(true);
 
     }
     document.getElementById("loader").style.display = "none";

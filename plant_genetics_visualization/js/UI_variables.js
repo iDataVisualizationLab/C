@@ -79,10 +79,10 @@ let svgWidth = w + padding.left + padding.right;
 
 let xScale = d3.scale.linear().range([0, w]);
 let yScale = d3.scale.linear().domain([0, 1]).range([h, 0]);
-
+let num_ticks = 10;
 // todo: auto update num ticks when having a few datum.
 let xAxis = d3.svg.axis().scale(xScale).orient("bottom")
-    .ticks(10).tickFormat((_, i) => {
+    .ticks(num_ticks).tickFormat((_, i) => {
     return display_df.select(_atID).toArray().flat()[i];
 });
 
@@ -110,8 +110,11 @@ let venn_chart_pairwise = venn.VennDiagram()
 
 
 
-let _cur_venn_chart, _cur_venn_div;
+let _cur_venn_chart = venn_chart_normal;
+let _cur_venn_div = venn_div_normal;
 let _focus, _focus_s1;
+
+let plot_stop1 = false;
 
 let _cur_low_log2fold_set;
 let my_data_table, my_stats_table;
