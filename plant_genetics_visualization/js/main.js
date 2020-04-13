@@ -1226,6 +1226,7 @@ async function processFile(e, mice_data = false) {
 
     } else {
 
+        $("#document").attr("href", "https://www.notion.so/Mice-Genetics-Visualization-1fd994fcb10344028ae55a119b460414")
 
          await DataFrame.fromCSV("data/" + "mice_pseudocounts_cpm_raw.csv").then(df => _total_df_RAW = df).then(() =>
              DataFrame.fromCSV("data/" + "mice_pseudocounts_cpm_norm.csv").then(data => {
