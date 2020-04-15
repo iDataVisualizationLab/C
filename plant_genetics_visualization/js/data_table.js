@@ -85,9 +85,9 @@ function updateTAbleWithColor() {
                     } else {
                         responding_base = _cur_base;
                     }
-                    if (text > rowDt[responding_base]) {
+                    if (parseFloat(text) > parseFloat(rowDt[responding_base]) ) {
                         cell.style.color = cell_colors["greater"];
-                    } else if (text < rowDt[responding_base]) {
+                    } else if (parseFloat(text) < parseFloat(rowDt[responding_base]) ) {
                         cell.style.color = cell_colors["less"];
                     }
                 }

@@ -1194,14 +1194,13 @@ async function processFile(e, mice_data = false) {
     let low_cpm, low_log2fold;
     if (!mice_data) {
         let file = e.target.result, lines;
-        _upload_file = true;
         _just_upload_file["statsTable"] = true;
         _just_upload_file["dataTable"] = true;
 
         lines = file.trim().split("\n");
         lines = lines.map(line => line.split(","));
         let header = lines[0];
-        header = header.map(x => x.replace(/_/g, '')).map(x => x.replace(/./g, ''));
+        header = header.map(x => x.replace(/_/g, '')).map(x => x.replace(/\./g, ''));
 
         _atID = header[0];
         if (_atID == "gene") {
@@ -1222,7 +1221,6 @@ async function processFile(e, mice_data = false) {
         _total_df = raw_and_norm_df.select(_atID, ...header.slice(1).map(col => col + "_norm")).renameAll(columns);
         _cur_df = _total_df;
 
-        raw_and_norm_df.show();
 
         normal_cols = columns.slice(1, Math.floor(columns.length / 2) + 1);
         mutant_cols = columns.slice(Math.floor(columns.length / 2) + 1);
@@ -1238,10 +1236,9 @@ async function processFile(e, mice_data = false) {
 
 
     } else {
-
         $("#document").attr("href", "https://www.notion.so/Mice-Genetics-Visualization-1fd994fcb10344028ae55a119b460414")
 
-         await DataFrame.fromCSV("data/" + "mice_pseudocounts_cpm_raw.csv").then(df => _total_df_RAW = df).then(() =>
+        await DataFrame.fromCSV("data/" + "mice_pseudocounts_cpm_raw.csv").then(df => _total_df_RAW = df).then(() =>
              DataFrame.fromCSV("data/" + "mice_pseudocounts_cpm_norm.csv").then(data => {
                  _total_df = data;
 
@@ -1254,13 +1251,9 @@ async function processFile(e, mice_data = false) {
                  all_cols = columns.slice(1);
              }
          )).then( () =>  DataFrame.fromCSV("data/" + "mice_pseudocounts_LOW.csv").then(data => {
-            data.show();
             low_cpm = data.filter(row => row.get("low_cpm") == 1).select(_atID).toArray().flat();
             low_log2fold = data.filter(row => row.get("low_log2fold") == 1).select(_atID).toArray().flat();
         }) );
-
-
-
 
     }
     d3.select("#geneOptions").selectAll("label").remove();
@@ -1600,10 +1593,10 @@ function get_class_type(arr) {
         let sub_arr = arr.map(x => x.slice(0, i));
         let unique_sub_arr = sub_arr.filter((v, i, a) => a.indexOf(v) === i);
         if (unique_sub_arr.length == 1) {
-            return unique_sub_arr[0]
+            return unique_sub_arr[0];
         }
     }
-    return "Unknown";
+    return "";
 }
 
 
