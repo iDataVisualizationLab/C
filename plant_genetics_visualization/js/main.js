@@ -1188,7 +1188,6 @@ function loadFileAsText(evt) {
 
 async function processFile(e, mice_data = false) {
 
-    document.getElementById("fileLabel").innerText = "mice_data.csv";
     plot_stop1 = false;
 
     let low_cpm, low_log2fold;
@@ -1236,6 +1235,8 @@ async function processFile(e, mice_data = false) {
 
 
     } else {
+        document.getElementById("fileLabel").innerText = "mice_data.csv";
+
         $("#document").attr("href", "https://www.notion.so/Mice-Genetics-Visualization-1fd994fcb10344028ae55a119b460414")
 
         await DataFrame.fromCSV("data/" + "mice_pseudocounts_cpm_raw.csv").then(df => _total_df_RAW = df).then(() =>
