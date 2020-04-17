@@ -263,6 +263,25 @@ function read_plant_data() {
             .attr("width", w)
             .attr("height", h + padding.top);
 
+        svgCharts.append("clipPath")
+            .attr("id", d=>`clip-above-${d.gene}`)
+            .append('path')
+            .attr("d", function (d) {
+                var y1 = function (a, i) {
+                    return yScale(d.series[d.gene][i].gene_value);
+                };
+                return valueArea.y0(yScale.range()[0]).y1(y1)(d.series[d.gene]);
+            }).attr('fill','black');
+        svgCharts.append("clipPath")
+            .attr("id", d=>`clip-below-${d.gene}`)
+            .append('path')
+            .attr("d", function (d) {
+                var y1 = function (a, i) {
+                    return yScale(d.series[d.gene][i].gene_value);
+                };
+                return valueArea.y0(yScale.range()[1]).y1(y1)(d.series[d.gene]);
+            }).attr('fill','black');
+
         // Add the baseline.
         svgCharts.append("path")
             .attr("clip-path", "url(#sideClip)")
@@ -273,7 +292,8 @@ function read_plant_data() {
 
         // Add the areas.
         svgCharts.append("path")
-            .attr("clip-path", "url(#sideClip)")
+            // .attr("clip-path", "url(#sideClip)")
+            .attr("clip-path",d=> `url(#clip-below-${d.gene})`)
             .attr("class", "area below")
             .attr("fill", "steelblue")
             .attr("d", function (d) {
@@ -281,7 +301,8 @@ function read_plant_data() {
             });
 
         svgCharts.append("path")
-            .attr("clip-path", "url(#sideClip)")
+            // .attr("clip-path", "url(#sideClip)")
+            .attr("clip-path",d=> `url(#clip-above-${d.gene})`)
             .attr("class", "area above")
             .attr("d",
                 d => {
@@ -664,12 +685,17 @@ function changeChartDisplay(d) {
 
 function updateChartNoComparison() {
     this.select(".area.below")
-        .attr("fill", "white")
+        .attr("clip-path", "url(#sideClip)")
+        // .attr("clip-path",d=> `url(#clip-above-${d.gene})`)
+        // .attr("fill", "white")
+        .attr("opacity", 0)
         .attr("d", function (d) {
             return valueArea.y0(yScale(0))(d.series[d.gene]);
         });
 
     this.select(".area.above")
+        .attr("clip-path", "url(#sideClip)")
+        // .attr("clip-path",d=> `url(#clip-above-${d.gene})`)
         .attr("d", function (d) {
             return zeroArea.y0(yScale(0))(d.series[d.gene]);
         });
@@ -697,22 +723,50 @@ function updateChartgeneComparison(d, pairwise) {
         comparedgene = _cur_base;
     }
 
+    let data = d.datum();
     // Update areas.
+    this.select(`#clip-below-${data.gene} path`)
+        .attr("d", function (d) {
+            var y1 = function (a, i) {
+                return yScale(d.series[d.gene][i].gene_value);
+            };
+            return valueArea.y0(yScale.range()[0]).y1(y1)(d.series[d.gene]);
+        });
+    this.select(`#clip-above-${data.gene} path`)
+        .attr("d", function (d) {
+            var y1 = function (a, i) {
+                return yScale(d.series[d.gene][i].gene_value);
+            };
+            return valueArea.y0(yScale.range()[1]).y1(y1)(d.series[d.gene]);
+        });
     this.select(".area.below")
+        // .attr("clip-path", "url(#sideClip)")
+        .attr("clip-path",d=> `url(#clip-below-${d.gene})`)
         .attr("fill", MY_COLORS.green)
+        .attr("opacity", null)
         .attr("d", function (d) {
             var y0 = function (a, i) {
-                return yScale(d3.min([d.series[comparedgene][i].gene_value, d.series[d.gene][i].gene_value]));
+                return yScale(d.series[comparedgene][i].gene_value);
             };
-            return valueArea.y0(y0)(d.series[d.gene]);
+            var y1 = function (a, i) {
+                return yScale(d.series[d.gene][i].gene_value);
+            };
+
+            return valueArea.y0(y0).y1(y1)(d.series[d.gene]);
         });
     this.select(".area.above")
+        // .attr("clip-path", "url(#sideClip)")
+        .attr("clip-path",d=> `url(#clip-above-${d.gene})`)
         .attr("d", function (d) {
             var y0 = function (a, i) {
-                return yScale(d3.max([d.series[comparedgene][i].gene_value, d.series[d.gene][i].gene_value]));
+                return yScale(d.series[comparedgene][i].gene_value);
                 //return y(d.series[comparedgene][i].gene_value);
             };
-            return valueArea.y0(y0)(d.series[d.gene]);
+
+            var y1 = function (a, i) {
+                return yScale(d.series[d.gene][i].gene_value);
+            };
+            return valueArea.y0(y0).y1(y1)(d.series[d.gene]);
         });
 
     this.select(".baseline")
@@ -1397,6 +1451,26 @@ async function processFile(e, mice_data = false) {
         .attr("width", w)
         .attr("height", h + padding.top);
 
+    // area clip-path
+    svgCharts.append("clipPath")
+        .attr("id", d=>`clip-above-${d.gene}`)
+        .append('path')
+        .attr("d", function (d) {
+            var y1 = function (a, i) {
+                return yScale(d.series[d.gene][i].gene_value);
+            };
+            return valueArea.y0(yScale.range()[0]).y1(y1)(d.series[d.gene]);
+        }).attr('fill','black');
+    svgCharts.append("clipPath")
+        .attr("id", d=>`clip-below-${d.gene}`)
+        .append('path')
+        .attr("d", function (d) {
+            var y1 = function (a, i) {
+                return yScale(d.series[d.gene][i].gene_value);
+            };
+            return valueArea.y0(yScale.range()[1]).y1(y1)(d.series[d.gene]);
+        }).attr('fill','black');
+
     // Add the baseline.
     svgCharts.append("path")
         .attr("clip-path", "url(#sideClip)")
@@ -1407,7 +1481,8 @@ async function processFile(e, mice_data = false) {
 
     // Add the areas.
     svgCharts.append("path")
-        .attr("clip-path", "url(#sideClip)")
+        // .attr("clip-path", "url(#sideClip)")
+        .attr("clip-path",d=> `url(#clip-below-${d.gene})`)
         .attr("class", "area below")
         .attr("fill", "steelblue")
         .attr("d", function (d) {
@@ -1415,7 +1490,8 @@ async function processFile(e, mice_data = false) {
         });
 
     svgCharts.append("path")
-        .attr("clip-path", "url(#sideClip)")
+        // .attr("clip-path", "url(#sideClip)")
+        .attr("clip-path", d=> `url(#clip-above-${d.gene})`)
         .attr("class", "area above")
         .attr("d",
             d => {
