@@ -245,7 +245,8 @@ function read_plant_data() {
             .append("g")
             .attr("transform", "translate(" + padding.left + "," + padding.top + ")");
 
-        var defs = svgCharts.append("defs");
+        // var defs = svgCharts.append("defs");
+
 
         // Add background.
         svgCharts.append("rect")
@@ -255,13 +256,28 @@ function read_plant_data() {
             .attr("height", h + padding.top + padding.bottom)
             .attr("fill", "white");
 
+
+
+        svgCharts.append("clipPath")
+            .attr("id", "clip-below")
+            .append("path")
+            .attr("d",
+                valueArea.y0(h)
+            );
+
+        svgCharts.append("clipPath")
+            .attr("id", "clip-above")
+            .append("path")
+            .attr("d",
+                valueArea.y0(0)
+            );
         // Side clip-path.
-        defs.append("clipPath")
-            .attr("id", "sideClip")
-            .append("rect")
-            .attr("transform", "translate(0,-" + padding.top + ")")
-            .attr("width", w)
-            .attr("height", h + padding.top);
+        // defs.append("clipPath")
+        //     .attr("id", "sideClip")
+        //     .append("rect")
+        //     .attr("transform", "translate(0,-" + padding.top + ")")
+        //     .attr("width", w)
+        //     .attr("height", h + padding.top);
 
         svgCharts.append("clipPath")
             .attr("id", d=>`clip-above-${d.gene}`)
@@ -284,7 +300,7 @@ function read_plant_data() {
 
         // Add the baseline.
         svgCharts.append("path")
-            .attr("clip-path", "url(#sideClip)")
+            // .attr("clip-path", "url(#sideClip)")
             .attr("class", "baseline")
             .attr("d", (d) => {
                 return zeroLine(d.series[d.gene]);
@@ -754,6 +770,7 @@ function updateChartgeneComparison(d, pairwise) {
 
             return valueArea.y0(y0).y1(y1)(d.series[d.gene]);
         });
+
     this.select(".area.above")
         // .attr("clip-path", "url(#sideClip)")
         .attr("clip-path",d=> `url(#clip-above-${d.gene})`)
