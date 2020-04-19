@@ -186,7 +186,6 @@ function read_plant_data() {
 
 
         let tick_ = new Date;
-        console.log(".... Inside CHART + READ CSV");
         geneChartData.forEach(function (d) {
 
             //option checkbox
@@ -245,8 +244,6 @@ function read_plant_data() {
             .append("g")
             .attr("transform", "translate(" + padding.left + "," + padding.top + ")");
 
-        // var defs = svgCharts.append("defs");
-
 
         // Add background.
         svgCharts.append("rect")
@@ -271,13 +268,6 @@ function read_plant_data() {
             .attr("d",
                 valueArea.y0(0)
             );
-        // Side clip-path.
-        // defs.append("clipPath")
-        //     .attr("id", "sideClip")
-        //     .append("rect")
-        //     .attr("transform", "translate(0,-" + padding.top + ")")
-        //     .attr("width", w)
-        //     .attr("height", h + padding.top);
 
         svgCharts.append("clipPath")
             .attr("id", d=>`clip-above-${d.gene}`)
@@ -288,6 +278,7 @@ function read_plant_data() {
                 };
                 return valueArea.y0(yScale.range()[0]).y1(y1)(d.series[d.gene]);
             }).attr('fill','black');
+
         svgCharts.append("clipPath")
             .attr("id", d=>`clip-below-${d.gene}`)
             .append('path')
@@ -1306,7 +1297,7 @@ async function processFile(e, mice_data = false) {
 
 
     } else {
-        document.getElementById("fileLabel").innerText = "mice_data.csv";
+        document.getElementById("fileLabel").innerText = "DATA AND FINAL ANALYSIS RKO PKO RPKO.csv";
 
         $("#document").attr("href", "https://www.notion.so/Mice-Genetics-Visualization-1fd994fcb10344028ae55a119b460414")
 
@@ -1372,9 +1363,9 @@ async function processFile(e, mice_data = false) {
     document.getElementById("p_pairwise_intro").innerHTML = `Pairwise comparison: <b>${mutant_class}</b> vs. <b>${normal_class}</b>`;
 
 
-    document.getElementById("normal_tab").innerHTML = `${normal_class.toUpperCase()}(s) Comparision`;
-    document.getElementById("mutant_tab").innerHTML = `${mutant_class.toUpperCase()}(s) Comparision`;
-    document.getElementById("pairwise_tab").innerHTML = `${pairwise_class.toUpperCase()} Comparision`;
+    document.getElementById("normal_tab").innerHTML = `${normal_class.toUpperCase()}(s) Comparison`;
+    document.getElementById("mutant_tab").innerHTML = `${mutant_class.toUpperCase()}(s) Comparison`;
+    document.getElementById("pairwise_tab").innerHTML = `${pairwise_class.toUpperCase()} Comparison`;
 
     my_all_data = {};
     all_cols.forEach((gene_name) => {

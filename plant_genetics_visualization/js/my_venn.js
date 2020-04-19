@@ -151,16 +151,11 @@ function create_sets_obj_for_venn() {
     let all_set_ids = get_all_subsets_id(Object.keys(_set_data_venn).length);
     let tick = new Date;
 
-    let time = 0;
     for (let i = 0; i < all_set_ids.length; i++) {
 
         let tmp = calc_overlapping_number_for_venn(sets_venn, all_set_ids[i], _set_data_venn);
         sets_venn.push(tmp);
     }
-    time += new Date - tick;
-
-
-    console.log("running time of creating set obj === --- ", (time) / 1000);
     return sets_venn;
 }
 
