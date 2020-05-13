@@ -1,0 +1,136 @@
+<meta charset="utf-8">
+<head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://gmousse.github.io/dataframe-js/dist/dataframe.min.js">
+
+
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">-->
+    <title>Plant Genes Visualizations</title>
+</head>
+
+
+<body>
+
+<!-- Where the unemployment visualization svgs go -->
+<div id="unemploymentCharts">
+</div>
+
+<!-- All the options for the visualization -->
+<form enctype="multipart/form-data" action="/upload" method="post" id="upload">
+    <div><input type='file' id="file-input" title="Choose a file"><label id="fileLabel">transcriptome_cpm_all_expressed_genes.csv</label></div>
+</form>
+
+<!--<a id="document" href="https://www.notion.so/Plant-Genetics-Visualization-3a264b02f0614768b951548c4476e4d3">Home Page</a>-->
+<a id="document" href="index.html">Home Page</a>
+
+<div id="options">
+    <div style="font-size: 17px">Control Panel</div>
+    <div class="tab">
+        <button id="normal_tab" class="tablinks active" onclick="openTab(event, 'normal_comparison')">WT(s) Comparison</button>
+        <button id="mutant_tab" class="tablinks" onclick="openTab(event, 'mutant_comparison')">S1(s) Comparison</button>
+        <button id="pairwise_tab" class="tablinks" onclick="openTab(event, 'pairwise_comparison')">S1(s) vs. WT(s)</button>
+        <button id="custom_tab" class="tablinks" onclick="openTab(event, 'custom_mode')">Custom Mode</button>
+
+    </div>
+
+    <div id="custom_mode" class="tabcontent">
+        <div id="comparisonOptions">
+            <h4>Compare To</h4>
+            <form id="option_form">
+                <input type="radio" name="comparison" id="noComparison" value="none" checked> No Comparison<br>
+                <input type="radio" name="comparison" id="geneComparison" value="gene" display="inline"> Base
+                Condition
+            </form>
+            <select id="geneComparisonListdown" name="genes" disabled>
+            </select>
+            <br>
+            <br>
+            <br>
+        </div>
+        <div id="geneOptions">
+            <input type="checkbox" id="all" name="geneSelection"> Select All<br>
+        </div>
+    </div>
+
+    <div id="normal_comparison" class="tabcontent" style="display:block">
+        <p id="p_normal_intro">Compare each conditioned test with <b>wthp6</b></p>
+        <div class="btn-group"></div>
+        <div class="statTable_and_Venn_div">
+            <div class="statsTable_and_MasterSlider">
+                <div class="master_slider_div"></div>
+            </div>
+            <div id="venn_normal" class="venn_diagram"></div>
+        </div>
+    </div>
+
+    <div id="mutant_comparison" class="tabcontent">
+        <p id="p_mutant_intro">Compare each conditioned test s1 with <b>s1hp6</b></p>
+        <div class="btn-group"></div>
+        <div class="statTable_and_Venn_div">
+            <div class="statsTable_and_MasterSlider">
+                <div class="master_slider_div"></div>
+            </div>
+            <div id="venn_mutant" class="venn_diagram"></div>
+        </div>
+    </div>
+
+    <div id="pairwise_comparison" class="tabcontent">
+        <p id="p_pairwise_intro">Compare each conditioned <b>s1</b> with its responding <b>wt</b> (e.g., <i>s1hp6 vs. wthp6</i>)</p>
+        <div class="btn-group"></div>
+        <div class="statTable_and_Venn_div">
+            <div class="statsTable_and_MasterSlider">
+                <div class="master_slider_div"></div>
+            </div>
+            <div id="venn_pairwise" class="venn_diagram"></div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="dataTable" id="ipdatacsvDiv">
+    <table id="ipdatacsvTbl"></table>
+</div>
+
+<div id = next_btn_and_raw_checkbox>
+    <div class="next_and_previous_page_btn">
+        <a href="#" id="previous_page" class="previous round">&#8249;</a>
+        <a href="#" id="next_page" class="next round">&#8250;</a>
+        <p id="next_page_sms"></p>
+    </div>
+
+    <form id="raw_data_form">
+        <input type="checkbox" id="raw_data" name="raw_data" value="raw_data">
+        <label for="raw_data">Raw data</label>
+    </form>
+
+    <a href="#" class="down_btn" id="export"><i class="fa fa-download"></i> Export Table</a>
+
+</div>
+
+<div id="loader" style="display:none"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://gmousse.github.io/dataframe-js/dist/dataframe.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="js/venn.js"></script>
+
+<!--<script src="js/d3-3.3.13/d3.js"></script>-->
+<script src="js/logic_variables.js"></script>
+<script src="js/UI_variables.js"></script>
+<script src="js/utilities.js"></script>
+
+<script src="js/my_venn.js"></script>
+
+<script src="js/main.js"></script>
+<script src="js/data_table.js"></script>
+<script src="js/tab_options.js"></script>
+<script src="js/slider_controller.js"></script>
+<script src="js/stats_table.js"></script>
+
+
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>-->
+</body>

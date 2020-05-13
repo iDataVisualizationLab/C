@@ -1,0 +1,525 @@
+html {
+    height: 100%;
+}
+
+body, table {
+    font: 11px Arial;
+}
+
+h4 {
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+body {
+    /*background: #EEEEEE;*/
+    background: url("img/pattern.png") repeat;
+
+}
+
+p {
+    display: inline;
+}
+
+
+.inactive {
+    fill: #AAA;
+}
+
+.active {
+    fill: orange;
+}
+
+.area.below {
+    fill: rgb(145,207,96);
+}
+
+.area.above {
+    fill: rgb(252, 141, 89);
+}
+
+.baseLine { /*alarm in HTML only*/
+    stroke: black;
+    stroke-width: 1.5;
+    fill: none;
+}
+
+
+.focus circle {
+    fill: white;
+    stroke: black;
+    stroke-width: 2px;
+}
+
+
+.chartHover {
+    fill: #FD0;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+
+.master_slider::-webkit-slider-thumb {
+    background: black !important;
+
+}
+
+.master_slider {
+    width: 200px !important;
+
+
+}
+
+.master_slider_div {
+    display: inline-block;
+    display: inline-block;
+    margin-left: 0px;
+    float: left;
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 60px;
+    height: 3px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .01s;
+    transition: opacity .01s;
+    display: inline;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: black;
+    cursor: pointer;
+}
+
+
+#unemploymentCharts {
+    float: left;
+    width: 62%;
+    height: 98%;
+    margin: 0px 0px 0px 1px;
+    padding: 1px;
+    border-style: solid;
+    border-color: #AAA;
+    overflow-y: scroll;
+    background: white;
+}
+
+#options {
+    float: left;
+    width: 37%;
+    height: 435px;
+    /*min-height: 350px;*/
+    /*max-height: 400px;*/
+    padding: 2px;
+}
+
+h1 {
+    margin-top: 0px
+
+}
+
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: white;
+    width: fit-content;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+    /*background-color: white;*/
+    float: left;
+    /*border: None;*/
+    outline: none;
+    cursor: pointer;
+    /*padding: 5px 8px;*/
+    font-size: 12px;
+
+    padding: 1px 0.5em;
+    margin-left: 3px;
+    border: 1px solid #778;
+    border-bottom: none;
+    background-color: #c9e4ee;
+    text-decoration: none;
+
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: lightskyblue;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: steelblue;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 3px 5px;
+    border: 1px solid #ccc;
+    border-top: none;
+    height: 385px;
+    /*min-height: 300px;*/
+    /*max-height: 400px;*/
+    width: 100%;
+    min-width: 420px;
+    background: white;
+}
+
+#stateOptions {
+    height: 220px;
+    width: 150px;
+    float: left;
+    border-style: solid;
+    border-color: #CCC;
+    overflow-y: scroll;
+    margin: 0px 5px 5px 0px;
+}
+
+#comparisonOptions {
+    float: left;
+    height: 40%;
+    width: 35%;
+    margin: 0px 60px 0px 0px;
+}
+
+
+.filter_btn {
+    background-color: rgb(231, 231, 231);
+    border: none;
+    color: black !important;
+    padding: 2px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 11px;
+    margin: 2px 10px 2px 2px;
+    border-radius: 1px;
+    width: 90px;
+    height: 30px;
+    cursor: pointer;
+    background-image: linear-gradient(to right, rgb(145, 207, 96), rgb(252, 141, 89)); /* Standard syntax (must be last) */
+}
+
+.filter_btn:hover {
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.19), 0 1px 1px rgba(0, 0, 0, 0.23);
+    margin: 1px 1px 1px 1px;
+}
+
+
+.btn-group {
+    width: 100%;
+    float: left;
+    font-size: 11px;
+    margin-bottom: 2px;
+    display: inline-block;
+
+}
+
+
+table {
+    margin: 5px 10px 10px 10px;
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    background: white;
+}
+
+thead td {
+    font-weight: bold;
+    border: 1px solid #999999;
+    background-color: #cdcdcd;
+    padding: 8px;
+    font-size: 12px;
+    position: sticky;
+    top: -1;
+    text-align: right;
+
+}
+
+tbody td {
+    border: 1px solid #dddddd;
+    padding: 3px;
+    font-size: 11px;
+}
+
+tr:nth-child(even) {
+    background-color: #ececec;
+}
+
+
+.btn_and_slide_container {
+    width: 90px;
+    height: 50px;
+    display: inline-block;
+    margin-right: 10px;
+    margin-top: 0px;
+}
+
+
+.dataTable {
+    width: 37%;
+    min-width: 100px;
+    height: 300px;
+    overflow-y: auto;
+    display: inline-block;
+
+
+}
+
+.statTable_and_Venn_div {
+    margin-top: 5px;
+    display: inline-block;
+    width: 100%;
+    height: 200px;
+}
+
+.statsTable_and_masterSlider {
+    margin-top: 0px;
+    display: inline-block;
+    width: 37%;
+    max-width: 185px;
+
+    height: 300px;
+    float: left;
+
+    margin-left: 0px;
+    /*font-size: 10px;*/
+
+}
+
+.statsTableClass {
+    display: block;
+    width: 100%;
+    height: 290px;
+    overflow-y: scroll;
+    /*overflow-x: hidden;*/
+    padding-right: 15px;
+    padding-left: 0px;
+}
+
+.statsTableClass thead td, .statsTableClass tbody td, .dataTable tbody td {
+    padding: 2px;
+    font-size: 10px;
+    text-align: right;
+
+}
+
+.printNumber {
+    margin-left: 10px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 10px;
+    display: block;
+    float: left;
+}
+
+#document {
+    display: inline-block;
+    float: right;
+}
+
+a {
+    text-decoration: none;
+    display: inline-block;
+    padding: 8px 16px;
+}
+
+a:hover {
+    background-color: lightskyblue;
+    color: black;
+}
+
+.previous, .next {
+    background-color: lightblue;
+    color: black;
+}
+
+.round {
+    border-radius: 50%;
+}
+
+/*.sort_btn{*/
+/*    background-color: lightskyblue;*/
+/*    border: none;*/
+/*    color: black !important;*/
+/*    padding: 2px 20px;*/
+/*    text-align: center;*/
+/*    text-decoration: none;*/
+/*    display: inline-block;*/
+/*    font-size: 10px;*/
+/*    margin: 2px 2px 2px 10px;*/
+/*    border-radius: 1px;*/
+/*    width: fit-content;*/
+/*    min-width: 190px;*/
+/*    max-width: 220px;*/
+/*    height: fit-content;*/
+/*    cursor: pointer;*/
+
+/*}*/
+
+/*.sort_btn:hover{*/
+/*    box-shadow: 0 2px 3px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);*/
+/*    margin: 1px 1px 1px 8px;*/
+/*}*/
+
+.venntooltip {
+    position: absolute;
+    text-align: center;
+    width: 80px;
+    height: 25px;
+    background: #333;
+    color: #ddd;
+    padding: 2px;
+    border: 0px;
+    border-radius: 8px;
+    opacity: 0;
+}
+
+.venn_diagram {
+    display: inline-block;
+    float: right;
+}
+
+
+.focus text {
+    font-size: 12px;
+}
+
+.tooltip {
+    fill: #BCD4EC;
+    stroke: #000;
+}
+
+.tooltip-atID, .tooltip-value {
+    font-weight: bold;
+}
+
+tr.highlight {
+    background-color: #BCD4EC !important;
+    border: 2px solid black
+}
+
+.next_and_previous_page_btn {
+    float: left;
+    display: inline-block;
+
+
+}
+
+#next_page_sms {
+    margin-top: 12px;
+    display: inline-block;
+
+}
+
+#raw_data_form {
+    margin-left: 20px;
+    float: left;
+    display: block;
+    margin-top: 10px;
+    margin-right: 15px;
+}
+
+.down_btn {
+    margin-top: 4px;
+    margin-right: 15px;
+    background-color: lightblue;
+    border: none;
+    color: black;
+    padding: 2px 2px;
+    cursor: pointer;
+    font-size: 13px;
+    float: right;
+}
+
+/* Darker background on mouse-over */
+.down_btn:hover {
+    background-color: deepskyblue;
+    display: inline-block;
+    float: right;
+}
+
+
+#upload {
+    display: inline-block;
+    float: left;
+    margin-top: 5px;
+    margin-left: 2px;
+}
+
+#next_btn_and_raw_checkbox {
+    width: 36%;
+    display: inline-block;
+    float: left;
+    margin-left: 5px;
+
+}
+
+
+#geneOptions{
+    display: inline-block;
+    float: left;
+}
+
+#loader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 1;
+    width: 150px;
+    height: 150px;
+    margin: -75px 0 0 -75px;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+input[type=file] {
+    width: 90px;
+    color: transparent;
+}
