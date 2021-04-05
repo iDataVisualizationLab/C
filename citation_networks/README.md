@@ -3,6 +3,18 @@ citation_networks
 
 Citation networks
 
+--------
+
+Ver 1.1. 
+Paper Similarity Using BibliographicCouplings and CoCitations
+
+
+
+
+
+
+
+
 Project Organization
 ------------
 

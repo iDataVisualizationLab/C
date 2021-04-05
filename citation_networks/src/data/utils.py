@@ -36,6 +36,8 @@ def unique_exploration(df):
 def map_doi_to_id(doi, doi_to_id_mapping):
     return doi_to_id_mapping.get(doi)
 
-def remove_none_in_list(my_list):
-    res = [l for l in my_list if l is not None]
+def remove_none_and_dups_in_list(my_list):
+    res = list(set([l for l in my_list if l is not None]))
     return res
+
+
