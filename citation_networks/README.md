@@ -1,12 +1,17 @@
-citation_networks
+Citation Networks
 ==============================
 
-Citation networks
+Citation Networks
 
 --------
 
-Ver 1.1. 
+**Ver 1.2** 
 Paper Similarity Using BibliographicCouplings and CoCitations
+
+
+![image](https://github.com/iDataVisualizationLab/C/blob/master/citation_networks/reports/figures/ref_similarity/networks/Paper%20Similarity%20Using%20BibliographicCouplings%20and%20CoCitations.png)
+
+
 
 
 
