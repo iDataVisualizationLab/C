@@ -109,7 +109,7 @@ class MyDoc2Vec():
         return keywords
 
     @staticmethod
-    def run_doc2vec(check_self_acc = False,save_model = True, re_train=True):
+    def train_doc2vec_model(check_self_acc = False,save_model = True, re_train=True):
         dataset = pd.read_csv(MyDoc2Vec.dataset_path)
 
 
@@ -205,27 +205,35 @@ class MyDoc2Vec():
             plt.savefig(img_path)
             print("saved image!")
 
+    @staticmethod
+    def run_doc2vec_similarity(similarity_path, fill_diagonal, heatmap_path, check_self_acc, save_model, re_train):
+        MyDoc2Vec.train_doc2vec_model(check_self_acc, save_model, re_train)
+        MyDoc2Vec.calc_doc2vec_similarity(similarity_path, fill_diagonal)
+        MyDoc2Vec.plot_heatmap(heatmap_path)
+
+
 
 if __name__ == '__main__':
     print("Running...")
 
-    # similarity_output_path = "../../data/processed/vis_dataset/similarity_doc2vec.csv"
-    # heatmap_path = "../../reports/figures/doc2vec_similarity/heatmaps/heatmap_doc2vec.png"
-    # MyDoc2Vec.run_doc2vec(False, False, False)
-    # MyDoc2Vec.calc_doc2vec_similarity(similarity_output_path, fill_diagonal)
-    # MyDoc2Vec.plot_heatmap(heatmap_path)
-
-    ## Plot network
-    fill_diagonal = -1
-    thres_to_plot = 0.85
-
     similarity_path = "../../data/processed/vis_dataset/similarity_doc2vec.csv"
     dataset_path = "../../data/processed/vis_dataset/vis_data.csv"
     output_path = "../../reports/figures/doc2vec_similarity/similarity_Doc2Vec.html"
+    heatmap_path = "../../reports/figures/doc2vec_similarity/heatmaps/heatmap_doc2vec.png"
+
     heading = 'Paper Similarity Using Doc2Vec'
+
+    check_self_acc = False
+    save_model = False
+    re_train = False
+    fill_diagonal = -1
+    thres_to_plot = 0.87
+
+    ## Generate doc2vec embedding
+    MyDoc2Vec.run_doc2vec_similarity(similarity_path, fill_diagonal, heatmap_path, check_self_acc, save_model, re_train)
+
+    ## Plot network
     network = NetworkPlot(similarity_path, dataset_path, output_path, heading)
     network.plot_network_using_pyvis(thres_to_plot)
     print("=== Done MyDoc2Vec ===!")
-
-
 
