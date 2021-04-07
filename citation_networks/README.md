@@ -16,8 +16,7 @@ Citation Networks
 
 ## Paper Similarity Using Doc2Vec
 
-![image](https://github.com/iDataVisualizationLab/C/blob/master/citation_networks/reports/figures/ref_similarity/networks/Paper%20Similarity%20Using%20Doc2Vec.png)
-
+![image](https://github.com/iDataVisualizationLab/C/blob/master/citation_networks/reports/figures/doc2vec_similarity/networks/Paper%20Similarity%20Using%20Doc2Vec.png)
 
 
 
@@ -25,7 +24,12 @@ Citation Networks
 
 
 ------------
+### Datasets
+#### 1. Vis dataset
+- Data: [https://docs.google.com/spreadsheets/d/1xgoOPu28dQSSGPIp_HHQs0uvvcyLNdkMF9XtRajhhxU/edit](https://nam04.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1xgoOPu28dQSSGPIp_HHQs0uvvcyLNdkMF9XtRajhhxU%2Fedit&data=02%7C01%7Cchaupham%40ttu.edu%7Ce19eb53c23ab4d9f373008d8574a4b32%7C178a51bf8b2049ffb65556245d5c173c%7C0%7C0%7C637355323890786919&sdata=rJSn%2FuHYfk%2BjI0g9FcXTDxD0h%2BTZJ8mOEnfYyfiQsv0%3D&reserved=0)
+- Data description: [https://sites.google.com/site/vispubdata/data-details](https://nam04.safelinks.protection.outlook.com/?url=https%3A%2F%2Fsites.google.com%2Fsite%2Fvispubdata%2Fdata-details&data=02%7C01%7Cchaupham%40ttu.edu%7Ce19eb53c23ab4d9f373008d8574a4b32%7C178a51bf8b2049ffb65556245d5c173c%7C0%7C0%7C637355323890786919&sdata=oG59IH2HmxsFds%2FY3JYbNW%2F4e2o0a9DlB%2BgNfcwTrqc%3D&reserved=0)
 
+------------
 ### Project Organization
 
     ├── LICENSE
