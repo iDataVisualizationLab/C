@@ -3,15 +3,14 @@ from ast import literal_eval
 import numpy as np
 from scipy.spatial.distance import euclidean, pdist, squareform
 from os.path import join as os_join
-import seaborn as sns
 import matplotlib.pylab as plt
 
+from src.visualization.NetworkPlot import NetworkPlot
 
 class Ref_Similarity:
     @staticmethod
     def count_overlapping(list_1, list_2):
         return len( set.intersection(set(list_1), set(list_2)) )
-
 
     @staticmethod
     def similarity_func(u, v):
@@ -78,4 +77,11 @@ if __name__ == '__main__':
     Ref_Similarity.plot_heatmap_sparse_matrix(df_similarity_cite_to.values, os_join(heatmap_output_path, "heatmaps",  "heatmap_cite_to.png"))
     Ref_Similarity.plot_heatmap_sparse_matrix(df_similarity_combined.values, os_join(heatmap_output_path,"heatmaps",  "heatmap_combined.png"))
 
-    print("Done!")
+    ## Plot network
+    similarity_path = "../../data/processed/vis_dataset/similarity_combined.csv"
+    dataset_path =  "../../data/processed/vis_dataset/vis_data.csv"
+    output_path = "../../reports/figures/ref_similarity/similarity_using_citeTo_and_citedBy.html"
+    heading = 'Paper Similarity Using #BibliographicCouplings and #Co-citations'
+    network = NetworkPlot(similarity_path, dataset_path, output_path, heading)
+    network.plot_network_using_pyvis(0.0, 6)
+    print("=== Done ===!")

@@ -5,14 +5,18 @@ Citation Networks
 
 --------
 
-**Ver 1.2** 
-Paper Similarity Using BibliographicCouplings and CoCitations
+**Ver 1.3.** 
+
+## Paper Similarity Using BibliographicCouplings and CoCitations
 
 
 ![image](https://github.com/iDataVisualizationLab/C/blob/master/citation_networks/reports/figures/ref_similarity/networks/Paper%20Similarity%20Using%20BibliographicCouplings%20and%20CoCitations.png)
 
 
 
+## Paper Similarity Using Doc2Vec
+
+![image](https://github.com/iDataVisualizationLab/C/blob/master/citation_networks/reports/figures/ref_similarity/networks/Paper%20Similarity%20Using%20Doc2Vec.png)
 
 
 
@@ -20,8 +24,9 @@ Paper Similarity Using BibliographicCouplings and CoCitations
 
 
 
-Project Organization
 ------------
+
+### Project Organization
 
     ├── LICENSE
     ├── Makefile           <- Makefile with commands like `make data` or `make train`
