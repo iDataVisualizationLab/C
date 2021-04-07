@@ -16,7 +16,7 @@ Citation Networks
 
 ## Paper Similarity Using Doc2Vec
 
-![image](https://github.com/iDataVisualizationLab/C/blob/master/citation_networks/reports/figures/ref_similarity/networks/Paper%20Similarity%20Using%20Doc2Vec.png)
+![image](https://github.com/iDataVisualizationLab/C/blob/master/citation_networks/reports/figures/doc2vec_similarity/networks/Paper%20Similarity%20Using%20Doc2Vec.png)
 
 
 
