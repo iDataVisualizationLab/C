@@ -27,6 +27,11 @@ function calc_stat_for_1_combination(df, base_col, master_slider, all_cluster) {
 
 
 function calc_all_stats(df, base_col, master_slider) {
+
+    if (_cur_condition_cols.length > 7){
+        // TODO: give option to pick which columns to show.
+        return [];
+    }
     let compare_conditions_list = [];
     let all_cluster = {};
     permutator_base_3([], compare_conditions_list, _cur_condition_cols.length);

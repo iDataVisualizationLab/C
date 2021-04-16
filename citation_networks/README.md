@@ -5,7 +5,9 @@ Citation Networks
 
 --------
 
-**Ver 1.3.** 
+## Change log
+**Ver 1.4.** Add new NetworkPlot using Jaal  
+
 
 ## Paper Similarity Using BibliographicCouplings and CoCitations
 
@@ -80,4 +82,4 @@ Citation Networks
 
 --------
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a></p>

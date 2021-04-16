@@ -88,3 +88,17 @@ class NetworkPlot():
 
         g.show(file_name)
         print("Done, wrote file at ", file_name)
+
+    def plot_network_using_jaal(self, threshold_to_filter_out=None, thres_to_plot=None, plotting_all_nodes=False):
+        """
+
+        :param threshold_to_filter_out:
+        :param thres_to_plot:
+        :param plotting_all_nodes:
+        :return:
+        """
+
+
+
+
+
