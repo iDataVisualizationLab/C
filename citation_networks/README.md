@@ -8,17 +8,18 @@ Citation Networks
 ## Change log
 **Ver 1.4.** Add new NetworkPlot using Jaal  
 
+**Ver 2.0.** Add vis-network plots
 
-## Paper Similarity Using BibliographicCouplings and CoCitations
-
-
-![image](https://github.com/iDataVisualizationLab/C/blob/master/citation_networks/reports/figures/ref_similarity/networks/Paper%20Similarity%20Using%20BibliographicCouplings%20and%20CoCitations.png)
+**Ver 2.1.** Add demo link
 
 
+## Demo - Ver 2.1
+Link: https://share.streamlit.io/printdoc2020/citation_network/main/app.py
 
-## Paper Similarity Using Doc2Vec
 
-![image](https://github.com/iDataVisualizationLab/C/blob/master/citation_networks/reports/figures/doc2vec_similarity/networks/Paper%20Similarity%20Using%20Doc2Vec.png)
+
+
+![image](https://github.com/iDataVisualizationLab/C/blob/master/citation_networks/reports/figures/demo_ver2dot1.png)
 
 
 
