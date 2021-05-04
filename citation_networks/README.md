@@ -6,20 +6,21 @@ Citation Networks
 --------
 
 ## Change log
-**Ver 1.4.** Add new NetworkPlot using Jaal  
+**Ver 1.0.** Add new NetworkPlot using Jaal  
 
-**Ver 2.0.** Add vis-network plots
+**Ver 2.0.** Add vis-network plots, demo link
 
-**Ver 2.1.** Add demo link
+**Ver 3.0** Plot 2 networks in the same page
 
 
-## Demo - Ver 2.1
+
+## Demo - Ver 3.0
 Link: https://share.streamlit.io/printdoc2020/citation_network/main/app.py
 
 
 
 
-![image](https://github.com/iDataVisualizationLab/C/blob/master/citation_networks/reports/figures/demo_ver2dot1.png)
+![image](https://github.com/iDataVisualizationLab/C/blob/master/citation_networks/reports/figures/demo_ver3dot0.png)
 
 
 
