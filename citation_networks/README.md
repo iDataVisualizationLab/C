@@ -12,9 +12,11 @@ Citation Networks
 
 **Ver 3.0** Plot 2 networks in the same page
 
+**Ver 3.3** Add edge colors + edge labels
 
 
-## Demo - Ver 3.0
+
+## Demo
 Link: https://share.streamlit.io/printdoc2020/citation_network/main/app.py
 
 
