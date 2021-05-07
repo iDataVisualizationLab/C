@@ -16,7 +16,7 @@ Citation Networks
 
 
 
-## Demo
+## Demo - ver 3.3
 Link: https://share.streamlit.io/printdoc2020/citation_network/main/app.py
 
 
