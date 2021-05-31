@@ -3,6 +3,9 @@
 ### Citation Networks
 https://github.com/iDataVisualizationLab/C/tree/master/citation_networks
 
+### VAST 2021 - Mini Challenge 2
+https://github.com/iDataVisualizationLab/C/tree/master/vast2021_mini2
+
 ### Link Prediction for Biomedical Network
 https://github.com/iDataVisualizationLab/C/tree/master/bio_link_prediction
 
