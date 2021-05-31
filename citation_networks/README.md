@@ -14,6 +14,8 @@ Citation Networks
 
 **Ver 3.3** Add edge colors + edge labels
 
+## Project Descriptions
+https://www.notion.so/Citation-Network-36499fe198e94d4fa222e47f19980ca5
 
 
 ## Demo - ver 3.3
