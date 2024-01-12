@@ -1,5 +1,5 @@
 networkx==2.5
-streamlit==0.80.0
+streamlit==1.30.0
 pandas==1.2.2
 pyvis==0.1.9
 dill==0.3.3
